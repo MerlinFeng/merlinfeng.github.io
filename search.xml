@@ -180,6 +180,28 @@
       </tags>
   </entry>
   <entry>
+    <title>bootstrap modal 弹窗 数据清除</title>
+    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
+    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
+<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
+<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
+<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
+<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
+<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
+<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+]]></content>
+      <categories>
+        <category>JAVAScript</category>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>aggregation result exceeds maximum document size (16MB)</title>
     <url>/2017/03/10/aggregation-result-exceeds-maximum-document-size-16mb/</url>
     <content><![CDATA[<p>mongdb操作数据，数据格式如下，大概三百多条：</p>
@@ -253,28 +275,6 @@
       </tags>
   </entry>
   <entry>
-    <title>bootstrap modal 弹窗 数据清除</title>
-    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
-    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
-<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
-<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
-<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
-<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
-<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
-<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-]]></content>
-      <categories>
-        <category>JAVAScript</category>
-        <category>编程</category>
-      </categories>
-      <tags>
-        <tag>JS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CAS 与 AtomicInteger（乐观锁）</title>
     <url>/2017/06/04/cas-%E4%B8%8E-atomicinteger%EF%BC%88%E4%B9%90%E8%A7%82%E9%94%81%EF%BC%89/</url>
     <content><![CDATA[<h1 id="悲观锁与乐观锁"><a href="#悲观锁与乐观锁" class="headerlink" title="悲观锁与乐观锁"></a>悲观锁与乐观锁</h1><p>我们都知道，cpu是时分复用的，也就是把cpu的时间片，分配给不同的thread/process轮流执行，时间片与时间片之间，需要进行cpu切换，也就是会发生进程的切换。切换涉及到清空寄存器，缓存数据。然后重新加载新的thread所需数据。当一个线程被挂起时，加入到阻塞队列，在一定的时间或条件下，在通过notify()，notifyAll()唤醒回来。 </p>
@@ -297,34 +297,6 @@
       <tags>
         <tag>JAVA</tag>
         <tag>并发</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Centos系统git1.7升级</title>
-    <url>/2015/02/15/centos%E7%B3%BB%E7%BB%9Fgit1-7%E5%8D%87%E7%BA%A7/</url>
-    <content><![CDATA[<p>应用centos系统时，总有git报错，版本过低不能操作巴拉巴拉。。。</p>
-<h3 id="安装需求："><a href="#安装需求：" class="headerlink" title="安装需求："></a>安装需求：</h3><blockquote>
-<h1 id="yum-install-curl-devel-expat-devel-gettext-devel-openssl-devel-zlib-devel-asciidoc"><a href="#yum-install-curl-devel-expat-devel-gettext-devel-openssl-devel-zlib-devel-asciidoc" class="headerlink" title="yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel asciidoc"></a>yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel asciidoc</h1><h1 id="yum-install-gcc-perl-ExtUtils-MakeMaker"><a href="#yum-install-gcc-perl-ExtUtils-MakeMaker" class="headerlink" title="yum install  gcc perl-ExtUtils-MakeMaker"></a>yum install  gcc perl-ExtUtils-MakeMaker</h1></blockquote>
-<p>error: ```/utf8.c:463: undefined reference to `libiconv’```</p>
-<blockquote>
-<h1 id="wget-http-ftp-gnu-org-pub-gnu-libiconv-libiconv-1-14-tar-gz"><a href="#wget-http-ftp-gnu-org-pub-gnu-libiconv-libiconv-1-14-tar-gz" class="headerlink" title="wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz"></a>wget <a href="http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz">http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz</a></h1><h1 id="tar-zxvf-libiconv-1-14-tar-gz"><a href="#tar-zxvf-libiconv-1-14-tar-gz" class="headerlink" title="tar zxvf libiconv-1.14.tar.gz"></a>tar zxvf libiconv-1.14.tar.gz</h1><h1 id="cd-libiconv-1-14"><a href="#cd-libiconv-1-14" class="headerlink" title="cd libiconv-1.14"></a>cd libiconv-1.14</h1><h1 id="configure-–prefix-usr-local-libiconv"><a href="#configure-–prefix-usr-local-libiconv" class="headerlink" title="./configure –prefix=/usr/local/libiconv"></a>./configure –prefix=/usr/local/libiconv</h1><h1 id="make-amp-amp-make-install"><a href="#make-amp-amp-make-install" class="headerlink" title="make &amp;&amp; make install"></a>make &amp;&amp; make install</h1></blockquote>
-<h3 id="卸载centos自带的git1-7"><a href="#卸载centos自带的git1-7" class="headerlink" title="卸载centos自带的git1.7:"></a>卸载centos自带的git1.7:</h3><p>通过git –version查看系统带的版本，Cento6.5应该自带的是git版本是1.7.1</p>
-<blockquote>
-<h1 id="yum-remove-git"><a href="#yum-remove-git" class="headerlink" title="yum remove git"></a>yum remove git</h1></blockquote>
-<p> </p>
-<h3 id="下载git2-2-1并将git添加到环境变量中（版本自选-https-github-com-git-git-releases）"><a href="#下载git2-2-1并将git添加到环境变量中（版本自选-https-github-com-git-git-releases）" class="headerlink" title="下载git2.2.1并将git添加到环境变量中（版本自选 https://github.com/git/git/releases）"></a>下载git2.2.1并将git添加到环境变量中（版本自选 <a href="https://github.com/git/git/releases">https://github.com/git/git/releases</a>）</h3><blockquote>
-<h1 id="wget-https-github-com-git-git-archive-v2-2-1-tar-gz"><a href="#wget-https-github-com-git-git-archive-v2-2-1-tar-gz" class="headerlink" title="wget https://github.com/git/git/archive/v2.2.1.tar.gz"></a>wget <a href="https://github.com/git/git/archive/v2.2.1.tar.gz">https://github.com/git/git/archive/v2.2.1.tar.gz</a></h1><h1 id="tar-zxvf-v2-2-1-tar-gz"><a href="#tar-zxvf-v2-2-1-tar-gz" class="headerlink" title="tar zxvf v2.2.1.tar.gz"></a>tar zxvf v2.2.1.tar.gz</h1><h1 id="cd-git-2-2-1"><a href="#cd-git-2-2-1" class="headerlink" title="cd git-2.2.1"></a>cd git-2.2.1</h1><h1 id="make-configure"><a href="#make-configure" class="headerlink" title="make configure"></a>make configure</h1><h1 id="configure-–prefix-usr-local-git-–with-iconv-usr-local-libiconv"><a href="#configure-–prefix-usr-local-git-–with-iconv-usr-local-libiconv" class="headerlink" title="./configure –prefix=/usr/local/git –with-iconv=/usr/local/libiconv"></a>./configure –prefix=/usr/local/git –with-iconv=/usr/local/libiconv</h1><h1 id="make-all-doc"><a href="#make-all-doc" class="headerlink" title="make all doc"></a>make all doc</h1><h1 id="make-install-install-doc-install-html"><a href="#make-install-install-doc-install-html" class="headerlink" title="make install install-doc install-html"></a>make install install-doc install-html</h1><h1 id="echo-“export-PATH-PATH-usr-local-git-bin”-gt-gt-etc-bashrc"><a href="#echo-“export-PATH-PATH-usr-local-git-bin”-gt-gt-etc-bashrc" class="headerlink" title="echo “export PATH=$PATH:/usr/local/git/bin” &gt;&gt; /etc/bashrc"></a>echo “export PATH=$PATH:/usr/local/git/bin” &gt;&gt; /etc/bashrc</h1><h1 id="source-etc-bashrc"><a href="#source-etc-bashrc" class="headerlink" title="source /etc/bashrc"></a>source /etc/bashrc</h1></blockquote>
-<h3 id="查看版本号"><a href="#查看版本号" class="headerlink" title="查看版本号"></a>查看版本号</h3><blockquote>
-<h1 id="git-–version"><a href="#git-–version" class="headerlink" title="git –version"></a>git –version</h1><p>git version 2.2.1</p>
-</blockquote>
-<p>ok，解决，再次执行git命令就不会提示版本过低了！！</p>
-]]></content>
-      <categories>
-        <category>WEB技术</category>
-        <category>综合</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -394,6 +366,34 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
+    <title>Centos系统git1.7升级</title>
+    <url>/2015/02/15/centos%E7%B3%BB%E7%BB%9Fgit1-7%E5%8D%87%E7%BA%A7/</url>
+    <content><![CDATA[<p>应用centos系统时，总有git报错，版本过低不能操作巴拉巴拉。。。</p>
+<h3 id="安装需求："><a href="#安装需求：" class="headerlink" title="安装需求："></a>安装需求：</h3><blockquote>
+<h1 id="yum-install-curl-devel-expat-devel-gettext-devel-openssl-devel-zlib-devel-asciidoc"><a href="#yum-install-curl-devel-expat-devel-gettext-devel-openssl-devel-zlib-devel-asciidoc" class="headerlink" title="yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel asciidoc"></a>yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel asciidoc</h1><h1 id="yum-install-gcc-perl-ExtUtils-MakeMaker"><a href="#yum-install-gcc-perl-ExtUtils-MakeMaker" class="headerlink" title="yum install  gcc perl-ExtUtils-MakeMaker"></a>yum install  gcc perl-ExtUtils-MakeMaker</h1></blockquote>
+<p>error: ```/utf8.c:463: undefined reference to `libiconv’```</p>
+<blockquote>
+<h1 id="wget-http-ftp-gnu-org-pub-gnu-libiconv-libiconv-1-14-tar-gz"><a href="#wget-http-ftp-gnu-org-pub-gnu-libiconv-libiconv-1-14-tar-gz" class="headerlink" title="wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz"></a>wget <a href="http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz">http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz</a></h1><h1 id="tar-zxvf-libiconv-1-14-tar-gz"><a href="#tar-zxvf-libiconv-1-14-tar-gz" class="headerlink" title="tar zxvf libiconv-1.14.tar.gz"></a>tar zxvf libiconv-1.14.tar.gz</h1><h1 id="cd-libiconv-1-14"><a href="#cd-libiconv-1-14" class="headerlink" title="cd libiconv-1.14"></a>cd libiconv-1.14</h1><h1 id="configure-–prefix-usr-local-libiconv"><a href="#configure-–prefix-usr-local-libiconv" class="headerlink" title="./configure –prefix=/usr/local/libiconv"></a>./configure –prefix=/usr/local/libiconv</h1><h1 id="make-amp-amp-make-install"><a href="#make-amp-amp-make-install" class="headerlink" title="make &amp;&amp; make install"></a>make &amp;&amp; make install</h1></blockquote>
+<h3 id="卸载centos自带的git1-7"><a href="#卸载centos自带的git1-7" class="headerlink" title="卸载centos自带的git1.7:"></a>卸载centos自带的git1.7:</h3><p>通过git –version查看系统带的版本，Cento6.5应该自带的是git版本是1.7.1</p>
+<blockquote>
+<h1 id="yum-remove-git"><a href="#yum-remove-git" class="headerlink" title="yum remove git"></a>yum remove git</h1></blockquote>
+<p> </p>
+<h3 id="下载git2-2-1并将git添加到环境变量中（版本自选-https-github-com-git-git-releases）"><a href="#下载git2-2-1并将git添加到环境变量中（版本自选-https-github-com-git-git-releases）" class="headerlink" title="下载git2.2.1并将git添加到环境变量中（版本自选 https://github.com/git/git/releases）"></a>下载git2.2.1并将git添加到环境变量中（版本自选 <a href="https://github.com/git/git/releases">https://github.com/git/git/releases</a>）</h3><blockquote>
+<h1 id="wget-https-github-com-git-git-archive-v2-2-1-tar-gz"><a href="#wget-https-github-com-git-git-archive-v2-2-1-tar-gz" class="headerlink" title="wget https://github.com/git/git/archive/v2.2.1.tar.gz"></a>wget <a href="https://github.com/git/git/archive/v2.2.1.tar.gz">https://github.com/git/git/archive/v2.2.1.tar.gz</a></h1><h1 id="tar-zxvf-v2-2-1-tar-gz"><a href="#tar-zxvf-v2-2-1-tar-gz" class="headerlink" title="tar zxvf v2.2.1.tar.gz"></a>tar zxvf v2.2.1.tar.gz</h1><h1 id="cd-git-2-2-1"><a href="#cd-git-2-2-1" class="headerlink" title="cd git-2.2.1"></a>cd git-2.2.1</h1><h1 id="make-configure"><a href="#make-configure" class="headerlink" title="make configure"></a>make configure</h1><h1 id="configure-–prefix-usr-local-git-–with-iconv-usr-local-libiconv"><a href="#configure-–prefix-usr-local-git-–with-iconv-usr-local-libiconv" class="headerlink" title="./configure –prefix=/usr/local/git –with-iconv=/usr/local/libiconv"></a>./configure –prefix=/usr/local/git –with-iconv=/usr/local/libiconv</h1><h1 id="make-all-doc"><a href="#make-all-doc" class="headerlink" title="make all doc"></a>make all doc</h1><h1 id="make-install-install-doc-install-html"><a href="#make-install-install-doc-install-html" class="headerlink" title="make install install-doc install-html"></a>make install install-doc install-html</h1><h1 id="echo-“export-PATH-PATH-usr-local-git-bin”-gt-gt-etc-bashrc"><a href="#echo-“export-PATH-PATH-usr-local-git-bin”-gt-gt-etc-bashrc" class="headerlink" title="echo “export PATH=$PATH:/usr/local/git/bin” &gt;&gt; /etc/bashrc"></a>echo “export PATH=$PATH:/usr/local/git/bin” &gt;&gt; /etc/bashrc</h1><h1 id="source-etc-bashrc"><a href="#source-etc-bashrc" class="headerlink" title="source /etc/bashrc"></a>source /etc/bashrc</h1></blockquote>
+<h3 id="查看版本号"><a href="#查看版本号" class="headerlink" title="查看版本号"></a>查看版本号</h3><blockquote>
+<h1 id="git-–version"><a href="#git-–version" class="headerlink" title="git –version"></a>git –version</h1><p>git version 2.2.1</p>
+</blockquote>
+<p>ok，解决，再次执行git命令就不会提示版本过低了！！</p>
+]]></content>
+      <categories>
+        <category>WEB技术</category>
+        <category>综合</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>equals和==区别</title>
     <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
@@ -438,7 +438,7 @@ setcookie("sso", $_GET["sso"]);
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#x6d;&#97;&#105;&#108;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#111;&#109;">&#101;&#x6d;&#97;&#105;&#108;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#99;&#111;&#109;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#97;&#105;&#108;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#46;&#99;&#111;&#109;">&#x65;&#x6d;&#97;&#105;&#108;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#46;&#99;&#111;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -561,7 +561,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#109;">&#x67;&#105;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#x2e;&#99;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#109;</a>](mailto:<a href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#105;&#116;&#64;&#x67;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -1220,8 +1220,8 @@ public void testCallableCache() throws Exception&#123;
 ]]></content>
       <categories>
         <category>JAVA</category>
-        <category>JAVA并发</category>
         <category>JAVA提高</category>
+        <category>JAVA并发</category>
       </categories>
       <tags>
         <tag>JAVA</tag>
@@ -1596,7 +1596,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#x72;&#x6f;&#111;&#116;&#64;&#x31;&#57;&#50;&#x2e;&#49;&#54;&#56;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#x32;">&#x72;&#x6f;&#111;&#116;&#64;&#x31;&#57;&#50;&#x2e;&#49;&#54;&#56;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#x32;</a></p>
+<p>ssh <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#64;&#49;&#x39;&#50;&#46;&#49;&#x36;&#56;&#46;&#53;&#53;&#x2e;&#x32;&#52;&#50;">&#x72;&#x6f;&#111;&#x74;&#64;&#49;&#x39;&#50;&#46;&#49;&#x36;&#56;&#46;&#53;&#53;&#x2e;&#x32;&#52;&#50;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1616,11 +1616,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#98;&#x69;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#57;&#x39;&#x2e;&#x32;&#48;&#57;&#x2e;&#50;&#x34;&#x32;">&#98;&#x69;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#57;&#x39;&#x2e;&#x32;&#48;&#57;&#x2e;&#50;&#x34;&#x32;</a></p>
+<p>exit<br>ssh <a href="mailto:&#98;&#105;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#x39;&#46;&#x32;&#52;&#50;">&#98;&#105;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#x39;&#46;&#x32;&#52;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#x6c;&#64;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#50;&#48;&#57;&#x2e;&#x32;&#52;&#50;">&#98;&#x69;&#108;&#x6c;&#64;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#50;&#48;&#57;&#x2e;&#x32;&#52;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#x31;&#57;&#57;&#x2e;&#50;&#x30;&#x39;&#46;&#50;&#52;&#x32;">&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#x31;&#57;&#57;&#x2e;&#50;&#x30;&#x39;&#46;&#50;&#52;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -1772,45 +1772,6 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>MongoDB搭建副本集</title>
-    <url>/2017/01/23/mongodb%E6%90%AD%E5%BB%BA%E5%89%AF%E6%9C%AC%E9%9B%86/</url>
-    <content><![CDATA[<h1 id="MongoDB-复制（副本集）"><a href="#MongoDB-复制（副本集）" class="headerlink" title="MongoDB 复制（副本集）"></a>MongoDB 复制（副本集）</h1><p>MongoDB复制是将数据同步在多个服务器的过程。 复制提供了数据的冗余备份，并在多个服务器上存储数据副本，提高了数据的可用性， 并可以保证数据的安全性。 复制还允许您从硬件故障和服务中断中恢复数据。</p>
-<h2 id="什么是复制"><a href="#什么是复制" class="headerlink" title="什么是复制?"></a>什么是复制?</h2><ul>
-<li>保障数据的安全性</li>
-<li>数据高可用性 (24*7)</li>
-<li>灾难恢复</li>
-<li>无需停机维护（如备份，重建索引，压缩）</li>
-<li>分布式读取数据</li>
-</ul>
-<hr>
-<h2 id="MongoDB复制原理"><a href="#MongoDB复制原理" class="headerlink" title="MongoDB复制原理"></a>MongoDB复制原理</h2><p>mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。 mongodb各个节点常见的搭配方式为：一主一从、一主多从。 主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。 MongoDB复制结构图如下所示： <img src="http://www.runoob.com/wp-content/uploads/2013/12/replication.png" alt="MongoDB复制结构图"> 以上结构图总，客户端总主节点读取数据，在客户端写入数据到主节点是， 主节点与从节点进行数据交互保障数据的一致性。</p>
-<h3 id="副本集特征："><a href="#副本集特征：" class="headerlink" title="副本集特征："></a>副本集特征：</h3><ul>
-<li>N 个节点的集群</li>
-<li>任何节点可作为主节点</li>
-<li>所有写入操作都在主节点上</li>
-<li>自动故障转移</li>
-<li>自动恢复</li>
-</ul>
-<p>  <strong>副本集配置文件搭建</strong> [plain] view plaincopy #arbiter.conf dbpath=/mongodb/data/arbiter logpath=/mongodb/log/arbiter.log pidfilepath=/mongodb/arbiter.pid directoryperdb=true logappend=true replSet=testrs #bind_ip=192.168.56.14 port=27017 oplogSize=10000 fork=true noprealloc=true 参数解释： dbpath：数据存放目录 logpath：日志存放路径 pidfilepath：进程文件，方便停止mongodb directoryperdb：为每一个数据库按照数据库名建立文件夹存放 logappend：以追加的方式记录日志 replSet：replica set的名字 bind_ip：mongodb所绑定的ip地址 port：mongodb进程所使用的端口号，默认为27017 oplogSize：mongodb操作日志文件的最大大小。单位为Mb，默认为硬盘剩余空间的5% fork：以后台方式运行进程 noprealloc：不预先分配存储   <strong>接下来找到对应的启动配置及服务应用</strong> /usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod.conf 最好启动奇数台机器，如果为偶数台机器，请参考<a href="http://onwise.xyz/?p=104">仲裁节点</a> 然后进入其中一台机器 <img src="http://qiniu.fengmumiao.com/1.png"> 添加启动ip及对应的端口 然后执行</p>
-<blockquote>
-<p>rs.status()</p>
-</blockquote>
-<p>查看状态 <strong>遇见报错</strong> 启动不成功，查看日志文件</p>
-<blockquote>
-<p>tail -f /data/mongodb/log/mongdb.log</p>
-</blockquote>
-<p><strong>发现如下问题</strong> <img src="http://qiniu.fengmumiao.com/mongo_2.png">好多报错，大概的意思是存储引擎冲突巴拉巴拉。。。 这是因为可能你的集群节点中有有数据的，并且  directoryperdb没有设置是默认值false，原来数据存储不是按文件夹存储的，如果一定要设为true的话 ， 找到你配置mongo的数据库存储目录 备份清空，就万事大吉了，坑了好久，网上都是水帖。 <strong>还有可能出现的问题</strong> Error: error: { “ok” : 0, “errmsg” : “not master and slaveOk=false”, “code” : 13435 } 原因：这是因为从节点无法读写 解决：执行命令: rs.slaveOk();   感谢大家，欢迎转载</p>
-]]></content>
-      <categories>
-        <category>MongoDB</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MongoDB</tag>
-        <tag>大数据</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MongoDB内存篇</title>
     <url>/2017/02/23/mongodb%E5%86%85%E5%AD%98%E7%AF%87/</url>
     <content><![CDATA[<p>刚刚接触MongoDB，惊讶于它对内存的贪得无厌，至于个中缘由，先了解下Linux是如何管理内存的，再说说MongoDB是如何使用内存的，答案自然就清楚了。 首先查看MongoDB服务器的top命令结果：</p>
@@ -1870,6 +1831,45 @@ function validId15(_id){
       </categories>
       <tags>
         <tag>MongoDB</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MongoDB搭建副本集</title>
+    <url>/2017/01/23/mongodb%E6%90%AD%E5%BB%BA%E5%89%AF%E6%9C%AC%E9%9B%86/</url>
+    <content><![CDATA[<h1 id="MongoDB-复制（副本集）"><a href="#MongoDB-复制（副本集）" class="headerlink" title="MongoDB 复制（副本集）"></a>MongoDB 复制（副本集）</h1><p>MongoDB复制是将数据同步在多个服务器的过程。 复制提供了数据的冗余备份，并在多个服务器上存储数据副本，提高了数据的可用性， 并可以保证数据的安全性。 复制还允许您从硬件故障和服务中断中恢复数据。</p>
+<h2 id="什么是复制"><a href="#什么是复制" class="headerlink" title="什么是复制?"></a>什么是复制?</h2><ul>
+<li>保障数据的安全性</li>
+<li>数据高可用性 (24*7)</li>
+<li>灾难恢复</li>
+<li>无需停机维护（如备份，重建索引，压缩）</li>
+<li>分布式读取数据</li>
+</ul>
+<hr>
+<h2 id="MongoDB复制原理"><a href="#MongoDB复制原理" class="headerlink" title="MongoDB复制原理"></a>MongoDB复制原理</h2><p>mongodb的复制至少需要两个节点。其中一个是主节点，负责处理客户端请求，其余的都是从节点，负责复制主节点上的数据。 mongodb各个节点常见的搭配方式为：一主一从、一主多从。 主节点记录在其上的所有操作oplog，从节点定期轮询主节点获取这些操作，然后对自己的数据副本执行这些操作，从而保证从节点的数据与主节点一致。 MongoDB复制结构图如下所示： <img src="http://www.runoob.com/wp-content/uploads/2013/12/replication.png" alt="MongoDB复制结构图"> 以上结构图总，客户端总主节点读取数据，在客户端写入数据到主节点是， 主节点与从节点进行数据交互保障数据的一致性。</p>
+<h3 id="副本集特征："><a href="#副本集特征：" class="headerlink" title="副本集特征："></a>副本集特征：</h3><ul>
+<li>N 个节点的集群</li>
+<li>任何节点可作为主节点</li>
+<li>所有写入操作都在主节点上</li>
+<li>自动故障转移</li>
+<li>自动恢复</li>
+</ul>
+<p>  <strong>副本集配置文件搭建</strong> [plain] view plaincopy #arbiter.conf dbpath=/mongodb/data/arbiter logpath=/mongodb/log/arbiter.log pidfilepath=/mongodb/arbiter.pid directoryperdb=true logappend=true replSet=testrs #bind_ip=192.168.56.14 port=27017 oplogSize=10000 fork=true noprealloc=true 参数解释： dbpath：数据存放目录 logpath：日志存放路径 pidfilepath：进程文件，方便停止mongodb directoryperdb：为每一个数据库按照数据库名建立文件夹存放 logappend：以追加的方式记录日志 replSet：replica set的名字 bind_ip：mongodb所绑定的ip地址 port：mongodb进程所使用的端口号，默认为27017 oplogSize：mongodb操作日志文件的最大大小。单位为Mb，默认为硬盘剩余空间的5% fork：以后台方式运行进程 noprealloc：不预先分配存储   <strong>接下来找到对应的启动配置及服务应用</strong> /usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod.conf 最好启动奇数台机器，如果为偶数台机器，请参考<a href="http://onwise.xyz/?p=104">仲裁节点</a> 然后进入其中一台机器 <img src="http://qiniu.fengmumiao.com/1.png"> 添加启动ip及对应的端口 然后执行</p>
+<blockquote>
+<p>rs.status()</p>
+</blockquote>
+<p>查看状态 <strong>遇见报错</strong> 启动不成功，查看日志文件</p>
+<blockquote>
+<p>tail -f /data/mongodb/log/mongdb.log</p>
+</blockquote>
+<p><strong>发现如下问题</strong> <img src="http://qiniu.fengmumiao.com/mongo_2.png">好多报错，大概的意思是存储引擎冲突巴拉巴拉。。。 这是因为可能你的集群节点中有有数据的，并且  directoryperdb没有设置是默认值false，原来数据存储不是按文件夹存储的，如果一定要设为true的话 ， 找到你配置mongo的数据库存储目录 备份清空，就万事大吉了，坑了好久，网上都是水帖。 <strong>还有可能出现的问题</strong> Error: error: { “ok” : 0, “errmsg” : “not master and slaveOk=false”, “code” : 13435 } 原因：这是因为从节点无法读写 解决：执行命令: rs.slaveOk();   感谢大家，欢迎转载</p>
+]]></content>
+      <categories>
+        <category>MongoDB</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MongoDB</tag>
+        <tag>大数据</tag>
       </tags>
   </entry>
   <entry>
@@ -2613,20 +2613,6 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
-    <title>php实现先序、中序、后序遍历二叉树</title>
-    <url>/2017/10/23/php%E5%AE%9E%E7%8E%B0%E5%85%88%E5%BA%8F%E3%80%81%E4%B8%AD%E5%BA%8F%E3%80%81%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
-    <content><![CDATA[<p>二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用于实现二叉查找树和二叉堆</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Node&#123;</span><br><span class="line">    public $value;</span><br><span class="line">    public $left;</span><br><span class="line">    public $right;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;先序遍历 根节点 ---&gt; 左子树 ---\&gt; 右子树</span><br><span class="line">function preorder($root)&#123;</span><br><span class="line">    $stack&#x3D;array();</span><br><span class="line">    array_push($stack,$root);</span><br><span class="line">    while(!empty($stack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($stack);</span><br><span class="line">        echo $center_node-&gt;value.&#39; &#39;;&#x2F;&#x2F;先输出根节点</span><br><span class="line">        if($center_node-&gt;right!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;right);&#x2F;&#x2F;压入左子树</span><br><span class="line">        &#125;</span><br><span class="line">        if($center_node-&gt;left!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;left);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;中序遍历，左子树---&gt; 根节点 ---\&gt; 右子树</span><br><span class="line">function inorder($root)&#123;</span><br><span class="line">    $stack &#x3D; array();</span><br><span class="line">    $center_node &#x3D; $root;</span><br><span class="line">    while (!empty($stack) || $center_node !&#x3D; null) &#123;</span><br><span class="line">             while ($center_node !&#x3D; null) &#123;</span><br><span class="line">                 array_push($stack, $center_node);</span><br><span class="line">                 $center_node &#x3D; $center_node-&gt;left;</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             $center_node &#x3D; array_pop($stack);</span><br><span class="line">             echo $center_node-&gt;value . &quot; &quot;;</span><br><span class="line"></span><br><span class="line">             $center_node &#x3D; $center_node-&gt;right;</span><br><span class="line">         &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;后序遍历，左子树 ---&gt; 右子树 ---\&gt; 根节点</span><br><span class="line">function tailorder($root)&#123;</span><br><span class="line">    $stack&#x3D;array();</span><br><span class="line">    $outstack&#x3D;array();</span><br><span class="line">    array_push($stack,$root);</span><br><span class="line">    while(!empty($stack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($stack);</span><br><span class="line">        array_push($outstack,$center_node);&#x2F;&#x2F;最先压入根节点，最后输出</span><br><span class="line">        if($center_node-&gt;left!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;left);</span><br><span class="line">        &#125;</span><br><span class="line">        if($center_node-&gt;right!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    while(!empty($outstack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($outstack);</span><br><span class="line">        echo $center_node-&gt;value.&#39; &#39;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">$a&#x3D;new Node();</span><br><span class="line">$b&#x3D;new Node();</span><br><span class="line">$c&#x3D;new Node();</span><br><span class="line">$d&#x3D;new Node();</span><br><span class="line">$e&#x3D;new Node();</span><br><span class="line">$f&#x3D;new Node();</span><br><span class="line">$a-&gt;value&#x3D;&#39;A&#39;;</span><br><span class="line">$b-&gt;value&#x3D;&#39;B&#39;;</span><br><span class="line">$c-&gt;value&#x3D;&#39;C&#39;;</span><br><span class="line">$d-&gt;value&#x3D;&#39;D&#39;;</span><br><span class="line">$e-&gt;value&#x3D;&#39;E&#39;;</span><br><span class="line">$f-&gt;value&#x3D;&#39;F&#39;;</span><br><span class="line">$a-&gt;left&#x3D;$b;</span><br><span class="line">$a-&gt;right&#x3D;$c;</span><br><span class="line">$b-&gt;left&#x3D;$d;</span><br><span class="line">$c-&gt;left&#x3D;$e;</span><br><span class="line">$c-&gt;right&#x3D;$f;</span><br><span class="line">preorder($a);&#x2F;&#x2F;A B D C E F</span><br><span class="line">echo &#39;&lt;hr&#x2F;&gt;&#39;;</span><br><span class="line">inorder($a);&#x2F;&#x2F;D B A E C F</span><br><span class="line">echo &#39;&lt;hr&#x2F;&gt;&#39;;</span><br><span class="line">tailorder($a);&#x2F;&#x2F;D B E F C A</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PHP内存溢出解决方案</title>
     <url>/2017/02/08/php%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
     <content><![CDATA[<h2 id="一．内存溢出解决方案"><a href="#一．内存溢出解决方案" class="headerlink" title="一．内存溢出解决方案"></a>一．内存溢出解决方案</h2><p>在做数据统计分析时，经常会遇到大数组，可能会发生内存溢出，这里分享一下我的解决方案。还是用例子来说明这个问题，如下： 假定日志中存放的记录数为500000条，那么解决方案如下：</p>
@@ -2650,6 +2636,20 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </categories>
       <tags>
         <tag>内存溢出</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>php实现先序、中序、后序遍历二叉树</title>
+    <url>/2017/10/23/php%E5%AE%9E%E7%8E%B0%E5%85%88%E5%BA%8F%E3%80%81%E4%B8%AD%E5%BA%8F%E3%80%81%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91/</url>
+    <content><![CDATA[<p>二叉树是每个节点最多有两个子树的树结构。通常子树被称作“左子树”（left subtree）和“右子树”（right subtree）。二叉树常被用于实现二叉查找树和二叉堆</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Node&#123;</span><br><span class="line">    public $value;</span><br><span class="line">    public $left;</span><br><span class="line">    public $right;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;先序遍历 根节点 ---&gt; 左子树 ---\&gt; 右子树</span><br><span class="line">function preorder($root)&#123;</span><br><span class="line">    $stack&#x3D;array();</span><br><span class="line">    array_push($stack,$root);</span><br><span class="line">    while(!empty($stack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($stack);</span><br><span class="line">        echo $center_node-&gt;value.&#39; &#39;;&#x2F;&#x2F;先输出根节点</span><br><span class="line">        if($center_node-&gt;right!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;right);&#x2F;&#x2F;压入左子树</span><br><span class="line">        &#125;</span><br><span class="line">        if($center_node-&gt;left!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;left);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;中序遍历，左子树---&gt; 根节点 ---\&gt; 右子树</span><br><span class="line">function inorder($root)&#123;</span><br><span class="line">    $stack &#x3D; array();</span><br><span class="line">    $center_node &#x3D; $root;</span><br><span class="line">    while (!empty($stack) || $center_node !&#x3D; null) &#123;</span><br><span class="line">             while ($center_node !&#x3D; null) &#123;</span><br><span class="line">                 array_push($stack, $center_node);</span><br><span class="line">                 $center_node &#x3D; $center_node-&gt;left;</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             $center_node &#x3D; array_pop($stack);</span><br><span class="line">             echo $center_node-&gt;value . &quot; &quot;;</span><br><span class="line"></span><br><span class="line">             $center_node &#x3D; $center_node-&gt;right;</span><br><span class="line">         &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;后序遍历，左子树 ---&gt; 右子树 ---\&gt; 根节点</span><br><span class="line">function tailorder($root)&#123;</span><br><span class="line">    $stack&#x3D;array();</span><br><span class="line">    $outstack&#x3D;array();</span><br><span class="line">    array_push($stack,$root);</span><br><span class="line">    while(!empty($stack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($stack);</span><br><span class="line">        array_push($outstack,$center_node);&#x2F;&#x2F;最先压入根节点，最后输出</span><br><span class="line">        if($center_node-&gt;left!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;left);</span><br><span class="line">        &#125;</span><br><span class="line">        if($center_node-&gt;right!&#x3D;null)&#123;</span><br><span class="line">            array_push($stack,$center_node-&gt;right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    while(!empty($outstack))&#123;</span><br><span class="line">        $center_node&#x3D;array_pop($outstack);</span><br><span class="line">        echo $center_node-&gt;value.&#39; &#39;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">$a&#x3D;new Node();</span><br><span class="line">$b&#x3D;new Node();</span><br><span class="line">$c&#x3D;new Node();</span><br><span class="line">$d&#x3D;new Node();</span><br><span class="line">$e&#x3D;new Node();</span><br><span class="line">$f&#x3D;new Node();</span><br><span class="line">$a-&gt;value&#x3D;&#39;A&#39;;</span><br><span class="line">$b-&gt;value&#x3D;&#39;B&#39;;</span><br><span class="line">$c-&gt;value&#x3D;&#39;C&#39;;</span><br><span class="line">$d-&gt;value&#x3D;&#39;D&#39;;</span><br><span class="line">$e-&gt;value&#x3D;&#39;E&#39;;</span><br><span class="line">$f-&gt;value&#x3D;&#39;F&#39;;</span><br><span class="line">$a-&gt;left&#x3D;$b;</span><br><span class="line">$a-&gt;right&#x3D;$c;</span><br><span class="line">$b-&gt;left&#x3D;$d;</span><br><span class="line">$c-&gt;left&#x3D;$e;</span><br><span class="line">$c-&gt;right&#x3D;$f;</span><br><span class="line">preorder($a);&#x2F;&#x2F;A B D C E F</span><br><span class="line">echo &#39;&lt;hr&#x2F;&gt;&#39;;</span><br><span class="line">inorder($a);&#x2F;&#x2F;D B A E C F</span><br><span class="line">echo &#39;&lt;hr&#x2F;&gt;&#39;;</span><br><span class="line">tailorder($a);&#x2F;&#x2F;D B E F C A</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -3131,6 +3131,19 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>vertx 多个cpu应用提高并发</title>
+    <url>/2017/07/07/vertx-%E5%A4%9A%E4%B8%AAcpu%E5%BA%94%E7%94%A8%E6%8F%90%E9%AB%98%E5%B9%B6%E5%8F%91/</url>
+    <content><![CDATA[<p>DeploymentOptions options = new DeploymentOptions().setInstances(16); vertx.deployVerticle(“com.mycompany.MyOrderProcessorVerticle”, options);</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>vertx</category>
+      </categories>
+      <tags>
+        <tag>vertx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>WEB API加密认证</title>
     <url>/2017/02/13/web-api%E5%8A%A0%E5%AF%86%E8%AE%A4%E8%AF%81/</url>
     <content><![CDATA[<p><strong>WEB API接口加密认证：</strong></p>
@@ -3159,19 +3172,6 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       <tags>
         <tag>PHP</tag>
         <tag>程序设计</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>vertx 多个cpu应用提高并发</title>
-    <url>/2017/07/07/vertx-%E5%A4%9A%E4%B8%AAcpu%E5%BA%94%E7%94%A8%E6%8F%90%E9%AB%98%E5%B9%B6%E5%8F%91/</url>
-    <content><![CDATA[<p>DeploymentOptions options = new DeploymentOptions().setInstances(16); vertx.deployVerticle(“com.mycompany.MyOrderProcessorVerticle”, options);</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>vertx</category>
-      </categories>
-      <tags>
-        <tag>vertx</tag>
       </tags>
   </entry>
   <entry>
@@ -3621,27 +3621,6 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>进程与线程</title>
-    <url>/2017/05/04/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="进程与线程-—"><a href="#进程与线程-—" class="headerlink" title="进程与线程 —"></a>进程与线程 —</h1><p><strong>进程：是一个正在执行中的程序</strong></p>
-<p>每一个进程执行都有一个执行顺序。该顺序是一个执行路径，或者叫一个控制单元。</p>
-<p><strong>线程：就是进程中的一个独立的控制单元</strong></p>
-<p>线程在控制着进程的执行。 一个进程中至少有一个线程。 Java VM 启动的时候会有一个进程java.exe. 该进程中至少一个线程负责java程序的执行。 而且这个线程运行的代码存在于main方法中。 该线程称之为主线程。 扩展：其实更细节说明jvm，jvm启动不止一个线程，还有负责垃圾回收机制的线程。</p>
-<p>1,如何在自定义的代码中，自定义一个线程呢？ 通过对api的查找，java已经提供了对线程这类事物的描述。就Thread类。</p>
-<p>创建线程的第一种方式：继承Thread类。<br>步骤：<br> 1，定义类继承Thread。<br> 2，复写Thread类中的run方法。 目的：将自定义代码存储在run方法。让线程运行。<br> 3，调用线程的start方法， 该方法两个作用：启动线程，调用run方法。 发现运行结果每一次都不同。 因为多个线程都获取cpu的执行权。cpu执行到谁，谁就运行。 明确一点，在某一个时刻，只能有一个程序在运行。(多核除外) cpu在做着快速的切换，以达到看上去是同时运行的效果。 我们可以形象把多线程的运行行为在互相抢夺cpu的执行权。 这就是多线程的一个特性：随机性。谁抢到谁执行，至于执行多长，cpu说的算。</p>
-<p><strong>为什么要覆盖run方法呢？</strong></p>
-<p>Thread类用于描述线程。 该类就定义了一个功能，用于存储线程要运行的代码。该存储功能就是run方法。 也就是说Thread类中的run方法，用于存储线程要运行的代码。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>登录重放攻击预防</title>
     <url>/2017/04/01/%E7%99%BB%E5%BD%95%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB%E9%A2%84%E9%98%B2/</url>
     <content><![CDATA[<p>** 现在的应用系统中，大部分密码存储都是采用md5加密后存储，常用的登录基本流程如下：**</p>
@@ -3679,6 +3658,27 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </categories>
       <tags>
         <tag>WEB技术</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>进程与线程</title>
+    <url>/2017/05/04/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="进程与线程-—"><a href="#进程与线程-—" class="headerlink" title="进程与线程 —"></a>进程与线程 —</h1><p><strong>进程：是一个正在执行中的程序</strong></p>
+<p>每一个进程执行都有一个执行顺序。该顺序是一个执行路径，或者叫一个控制单元。</p>
+<p><strong>线程：就是进程中的一个独立的控制单元</strong></p>
+<p>线程在控制着进程的执行。 一个进程中至少有一个线程。 Java VM 启动的时候会有一个进程java.exe. 该进程中至少一个线程负责java程序的执行。 而且这个线程运行的代码存在于main方法中。 该线程称之为主线程。 扩展：其实更细节说明jvm，jvm启动不止一个线程，还有负责垃圾回收机制的线程。</p>
+<p>1,如何在自定义的代码中，自定义一个线程呢？ 通过对api的查找，java已经提供了对线程这类事物的描述。就Thread类。</p>
+<p>创建线程的第一种方式：继承Thread类。<br>步骤：<br> 1，定义类继承Thread。<br> 2，复写Thread类中的run方法。 目的：将自定义代码存储在run方法。让线程运行。<br> 3，调用线程的start方法， 该方法两个作用：启动线程，调用run方法。 发现运行结果每一次都不同。 因为多个线程都获取cpu的执行权。cpu执行到谁，谁就运行。 明确一点，在某一个时刻，只能有一个程序在运行。(多核除外) cpu在做着快速的切换，以达到看上去是同时运行的效果。 我们可以形象把多线程的运行行为在互相抢夺cpu的执行权。 这就是多线程的一个特性：随机性。谁抢到谁执行，至于执行多长，cpu说的算。</p>
+<p><strong>为什么要覆盖run方法呢？</strong></p>
+<p>Thread类用于描述线程。 该类就定义了一个功能，用于存储线程要运行的代码。该存储功能就是run方法。 也就是说Thread类中的run方法，用于存储线程要运行的代码。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
