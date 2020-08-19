@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介 Apache Kafka是分布式发布-订阅消息系统。它最初由LinkedIn公司开发，之后成为Apache项目的一部分。Kafka是一种快速、可扩展的、设计内在就是分布式的，分区的和可复制的提交日志服务。 Kafka**架构** 它的架构包括以下组件： 话题（Topic）：是特定类型的消息流。消息是字节的有效负载（Payload），话题是消息的分类名或种子（Feed）名。 生产者（Produ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper原理">
+<meta property="og:url" content="locallhost/2017/07/02/zookeeper%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="风慕苗">
+<meta property="og:description" content="简介 Apache Kafka是分布式发布-订阅消息系统。它最初由LinkedIn公司开发，之后成为Apache项目的一部分。Kafka是一种快速、可扩展的、设计内在就是分布式的，分区的和可复制的提交日志服务。 Kafka**架构** 它的架构包括以下组件： 话题（Topic）：是特定类型的消息流。消息是字节的有效负载（Payload），话题是消息的分类名或种子（Feed）名。 生产者（Produ">
+<meta property="og:locale">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/434101/201605/434101-20160514145613421-1488903046.png">
+<meta property="og:image" content="http://images2015.cnblogs.com/blog/434101/201605/434101-20160514145722812-631325437.png">
+<meta property="article:published_time" content="2017-07-02T03:46:42.000Z">
+<meta property="article:modified_time" content="2020-08-19T09:05:56.748Z">
+<meta property="article:author" content="FengQiang">
+<meta property="article:tag" content="JAVA">
+<meta property="article:tag" content="kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images2015.cnblogs.com/blog/434101/201605/434101-20160514145613421-1488903046.png">
+
+<link rel="canonical" href="locallhost/2017/07/02/zookeeper%E5%8E%9F%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>ZooKeeper原理 | 风慕苗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">风慕苗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苗慕风</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="locallhost/2017/07/02/zookeeper%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="FengQiang">
+      <meta itemprop="description" content="眼盛星光，心向远方">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风慕苗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZooKeeper原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-07-02 11:46:42" itemprop="dateCreated datePublished" datetime="2017-07-02T11:46:42+08:00">2017-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 17:05:56" itemprop="dateModified" datetime="2020-08-19T17:05:56+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index"><span itemprop="name">JAVA</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA%E6%8F%90%E9%AB%98/" itemprop="url" rel="index"><span itemprop="name">JAVA提高</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>简介</strong></p>
+<p><a target="_blank" rel="noopener" href="http://kafka.apache.org/">Apache Kafka</a>是分布式发布-订阅消息系统。它最初由LinkedIn公司开发，之后成为Apache项目的一部分。Kafka是一种快速、可扩展的、设计内在就是分布式的，分区的和可复制的提交日志服务。</p>
+<p><strong>Kafka**</strong>架构**</p>
+<p>它的架构包括以下组件：</p>
+<p><strong>话题（Topic）：</strong>是特定类型的消息流。消息是字节的有效负载（Payload），话题是消息的分类名或种子（Feed）名。</p>
+<p><strong>生产者（Producer）：</strong>是能够发布消息到话题的任何对象。</p>
+<p><strong>服务代理（Broker）：</strong>已发布的消息保存在一组服务器中，它们被称为代理（Broker）或Kafka集群。</p>
+<p><strong>消费者（Consumer）：</strong>可以订阅一个或多个话题，并从Broker拉数据，从而消费这些已发布的消息。</p>
+<p><img src="http://images2015.cnblogs.com/blog/434101/201605/434101-20160514145613421-1488903046.png"></p>
+<p><strong>Kafka**</strong>存储策略**</p>
+<p>1）kafka以topic来进行消息管理，每个topic包含多个partition，每个partition对应一个逻辑log，有多个segment组成。</p>
+<p>2）每个segment中存储多条消息（见下图），消息id由其逻辑位置决定，即从消息id可直接定位到消息的存储位置，避免id到位置的额外映射。</p>
+<p>3）每个part在内存中对应一个index，记录每个segment中的第一条消息偏移。</p>
+<p>4）发布者发到某个topic的消息会被均匀的分布到多个partition上（或根据用户指定的路由规则进行分布），broker收到发布消息往对应partition的最后一个segment上添加该消息，当某个segment上的消息条数达到配置值或消息发布时间超过阈值时，segment上的消息会被flush到磁盘，只有flush到磁盘上的消息订阅者才能订阅到，segment达到一定的大小后将不会再往该segment写数据，broker会创建新的segment。</p>
+<p><img src="http://images2015.cnblogs.com/blog/434101/201605/434101-20160514145722812-631325437.png"></p>
+<p><strong>Kafka删除策略</strong></p>
+<p>1）N天前的删除。</p>
+<p>2）保留最近的MGB数据。</p>
+<p><strong>Kafka broker</strong></p>
+<p>与其它消息系统不同，Kafka broker是无状态的。这意味着消费者必须维护已消费的状态信息。这些信息由消费者自己维护，broker完全不管（有offset managerbroker管理）。</p>
+<ul>
+<li>从代理删除消息变得很棘手，因为代理并不知道消费者是否已经使用了该消息。Kafka创新性地解决了这个问题，它将一个简单的基于时间的SLA应用于保留策略。当消息在代理中超过一定时间后，将会被自动删除。</li>
+<li>这种创新设计有很大的好处，消费者可以故意倒回到老的偏移量再次消费数据。这违反了队列的常见约定，但被证明是许多消费者的基本特征。</li>
+</ul>
+<p>以下摘抄自kafka官方文档： <strong>Kafka Design</strong> 目标 1) 高吞吐量来支持高容量的事件流处理 2) 支持从离线系统加载数据 3) 低延迟的消息系统 持久化 1) 依赖文件系统，持久化到本地 2) 数据持久化到log 效率 1) 解决”small IO problem“： 使用”message set“组合消息。 server使用”chunks of messages“写到log。 consumer一次获取大的消息块。 2）解决”byte copying“： 在producer、broker和consumer之间使用统一的binary message format。 使用系统的pagecache。 使用sendfile传输log，避免拷贝。 端到端的批量压缩（<a target="_blank" rel="noopener" href="https://kafka.apache.org/documentation.html#design_compression">End-to-end Batch Compression</a>） Kafka支持GZIP和Snappy压缩协议。 <strong>The Producer</strong> 负载均衡 1）producer可以自定义发送到哪个partition的路由规则。默认路由规则：hash(key)%numPartitions，如果key为null则随机选择一个partition。 2）自定义路由：如果key是一个user id，可以把同一个user的消息发送到同一个partition，这时consumer就可以从同一个partition读取同一个user的消息。 异步批量发送 批量发送：配置不多于固定消息数目一起发送并且等待时间小于一个固定延迟的数据。 <strong>The Consumer</strong> consumer控制消息的读取。 Push vs Pull 1)producer push data to broker，consumer pull data from broker 2)consumer pull的优点：consumer自己控制消息的读取速度和数量。 3)consumer pull的缺点：如果broker没有数据，则可能要pull多次忙等待，Kafka可以配置consumer long pull一直等到有数据。 Consumer Position 1)大部分消息系统由broker记录哪些消息被消费了，但Kafka不是。 2)Kafka由consumer控制消息的消费，consumer甚至可以回到一个old offset的位置再次消费消息。 Message Delivery Semantics 三种： At most once—Messages may be lost but are never redelivered. At least once—Messages are never lost but may be redelivered. Exactly once—this is what people actually want, each message is delivered once and only once. Producer：有个”acks“配置可以控制接收的leader的在什么情况下就回应producer消息写入成功。 Consumer： * 读取消息，写log，处理消息。如果处理消息失败，log已经写入，则无法再次处理失败的消息，对应”At most once“。 * 读取消息，处理消息，写log。如果消息处理成功，写log失败，则消息会被处理两次，对应”At least once“。 * 读取消息，同时处理消息并把result和log同时写入。这样保证result和log同时更新或同时失败，对应”Exactly once“。 Kafka默认保证at-least-once delivery，容许用户实现at-most-once语义，exactly-once的实现取决于目的存储系统，kafka提供了读取offset，实现也没有问题。 <strong>复制（Replication）</strong> 1）一个partition的复制个数（replication factor）包括这个partition的leader本身。 2）所有对partition的读和写都通过leader。 3）Followers通过pull获取leader上log（message和offset） 4）如果一个follower挂掉、卡住或者同步太慢，leader会把这个follower从”in sync replicas“（ISR）列表中删除。 5）当所有的”in sync replicas“的follower把一个消息写入到自己的log中时，这个消息才被认为是”committed“的。 6）如果针对某个partition的所有复制节点都挂了，Kafka选择最先复活的那个节点作为leader（这个节点不一定在ISR里）。 <strong>日志压缩（Log Compaction）</strong> 1）针对一个topic的partition，压缩使得Kafka至少知道每个key对应的最后一个值。 2）压缩不会重排序消息。 3）消息的offset是不会变的。 4）消息的offset是顺序的。 <strong>Distribution</strong> Consumer Offset Tracking 1）High-level consumer记录每个partition所消费的maximum offset，并定期commit到offset manager（broker）。 2）Simple consumer需要手动管理offset。现在的Simple consumer Java API只支持commit offset到zookeeper。 Consumers and Consumer Groups 1）consumer注册到zookeeper 2）属于同一个group的consumer（group id一样）平均分配partition，每个partition只会被一个consumer消费。 3）当broker或同一个group的其他consumer的状态发生变化的时候，consumer rebalance就会发生。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/JAVA/" rel="tag"><i class="fa fa-tag"></i> JAVA</a>
+              <a href="/tags/kafka/" rel="tag"><i class="fa fa-tag"></i> kafka</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="prev" title="HashMap与HashTable的区别">
+      <i class="fa fa-chevron-left"></i> HashMap与HashTable的区别
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/07/07/vertx-%E5%A4%9A%E4%B8%AAcpu%E5%BA%94%E7%94%A8%E6%8F%90%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="next" title="vertx 多个cpu应用提高并发">
+      vertx 多个cpu应用提高并发 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="FengQiang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">FengQiang</p>
+  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/merlinfeng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;merlinfeng" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feng_qiang@yeah.net" title="E-Mail → mailto:feng_qiang@yeah.net" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">merlinfeng</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

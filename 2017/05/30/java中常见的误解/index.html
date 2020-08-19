@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="概述Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。 变量要么是引用 ，要么是基础类型这是对的，变量不是对象。也就是说在下面这个例子里，s不是个对象，也不是字符串，它只是一个字符串的引用。 String s &#x3D; “Hello”;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中常见的误解">
+<meta property="og:url" content="locallhost/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/index.html">
+<meta property="og:site_name" content="风慕苗">
+<meta property="og:description" content="概述Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。 变量要么是引用 ，要么是基础类型这是对的，变量不是对象。也就是说在下面这个例子里，s不是个对象，也不是字符串，它只是一个字符串的引用。 String s &#x3D; “Hello”;">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-05-30T03:38:40.000Z">
+<meta property="article:modified_time" content="2020-08-19T09:05:56.733Z">
+<meta property="article:author" content="FengQiang">
+<meta property="article:tag" content="JAVA">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="locallhost/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java中常见的误解 | 风慕苗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">风慕苗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苗慕风</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="locallhost/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="FengQiang">
+      <meta itemprop="description" content="眼盛星光，心向远方">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风慕苗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java中常见的误解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-05-30 11:38:40" itemprop="dateCreated datePublished" datetime="2017-05-30T11:38:40+08:00">2017-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 17:05:56" itemprop="dateModified" datetime="2020-08-19T17:05:56+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA/" itemprop="url" rel="index"><span itemprop="name">JAVA</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h5><p>Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。</p>
+<h5 id="变量要么是引用-，要么是基础类型"><a href="#变量要么是引用-，要么是基础类型" class="headerlink" title="变量要么是引用 ，要么是基础类型"></a><strong>变量要么是引用 ，要么是基础类型</strong></h5><p>这是对的，变量不是对象。也就是说在下面这个例子里，s不是个对象，也不是字符串，它只是一个字符串的引用。</p>
+<p>String s = “Hello”;</p>
+<p> </p>
+<p>这个能解释很多的问题，比如： 问题:如果说字符 串是不可变的，为什么我能修改它？ s+=“！” 回答：在Java里是不可变的，你改变的只是引用而已。</p>
+<h5 id="比较的是引用，不是内容"><a href="#比较的是引用，不是内容" class="headerlink" title="==比较的是引用，不是内容"></a><strong>==比较的是引用，不是内容</strong></h5><p>让人更混乱的是，有时候用==是能比较内容的。如果你有两个一样的不可变值，JVM会尝试引用 同一个对象 。</p>
+<p>String s1 = “Hi”, s2 = “Hi”;<br>Integer a = 12, b = 12;</p>
+<p> </p>
+<p>这两个例子中用到了对象池，所以最后引用 的是同样的对象。s1==s2和a==b都是返回true,JVM已经把两个引用 都指向了同一个对象。然而，如果稍微改下代码，JVM没有把对象放到池里的话，==就会返回false，可能会让你意想不到。这个时候你得用equals了。</p>
+<p>String s3 = new String(s1);<br>   Integer c = -222, d = -222;<br>s1 == s2      // is true<br>  s1 == s3      // is false<br>  s1.equals(s3) // is true<br>  a == b        // is true<br>  c == d        // is false (different objects were created)<br>  c.equals(d)   // is true</p>
+<p> </p>
+<p>对于整型来说，对象池缓存的范围是-128到127（还有可能更高）。</p>
+<h5 id="Java通过传值进行引用传递"><a href="#Java通过传值进行引用传递" class="headerlink" title="Java通过传值进行引用传递"></a><strong>Java通过传值进行引用传递</strong></h5><p>所有的变量都是传值，包括引用。这就是说如果你有个变量，它是一个对象的引用，这个引用会被拷贝后再传参，而不是传递的对应的那个对象。</p>
+<p>public static void addAWord(StringBuilder sb) {<br>     sb.append(“ word”);<br>     sb = null;<br>}  </p>
+<p>StringBuilder sb = new StringBuilder(“first “);<br>addWord(sb);<br>addWord(sb);<br>System.out.println(sb); // prints “first word word”</p>
+<p> </p>
+<p>引用的对象可以改变，不过如果修改拷贝的这个引用，对调用方是没有影响的。</p>
+<h5 id="在大多数JVM实现里，Object-hashCode和内存地址无关"><a href="#在大多数JVM实现里，Object-hashCode和内存地址无关" class="headerlink" title="在大多数JVM实现里，Object.hashCode和内存地址无关"></a><strong>在大多数JVM实现里，Object.hashCode和内存地址无关</strong></h5><p>hashCode必须是保持不变的。不然的话HashSet或者ConcurrentHashMap就没法玩了。然而对象可以在内存的任何地方，并且它的位置还可能不断变化，而这个对你的程序来说是透明的。使用内存地址来当做hashCode是不可行的（除非你自己有一个JVM，对象是固定不动的）。 对于 OpenJDK和Hotspot JVM来说，hashCode是按需生成的，并存储在对象的头部。使用Unsafe API你看到hashCode是否已经生成了，甚至还可以修改它。</p>
+<h5 id="Object-toString那些不为人知的事情"><a href="#Object-toString那些不为人知的事情" class="headerlink" title="Object.toString那些不为人知的事情"></a><strong>Object.toString那些不为人知的事情</strong></h5><p>toString的默认行为是打印类的的内部名称还有对象的hashCode。 上面已经提到，hashCode并不是内存地址，尽管它是用16进制打印的。同样的，类名，尤其是数组的类名，更容易让人头晕。比如说String[]的名称是[Ljava.lang.String; 这个[表明它是个数组，L说明它是Java语言（Language）创建的类，并不是基础类型比如byte这些，顺便提一下byte内部名称是B。;号标识类的结束。比如你有个这样的数组：</p>
+<p>String[] words = { “Hello”, “World” };<br>System.out.println(words);</p>
+<p> </p>
+<p>输出会是这样：</p>
+<p>[Ljava.lang.String;@45ee12a7</p>
+<p> </p>
+<p>很不幸你只知道这是个对象数组。如果你只有一个Object实例words，这样是不够的，你得调用下Arrays.toString(words)。这极其恶劣地破坏了封装的原则，在StackOverflow上面这也是最常见的一类问题。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/JAVA/" rel="tag"><i class="fa fa-tag"></i> JAVA</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/05/30/java%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E5%8F%8A%E7%AD%94%E6%A1%88/" rel="prev" title="java常见面试题及答案">
+      <i class="fa fa-chevron-left"></i> java常见面试题及答案
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/05/30/java%E6%B3%9B%E5%9E%8B/" rel="next" title="JAVA泛型">
+      JAVA泛型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%A6%81%E4%B9%88%E6%98%AF%E5%BC%95%E7%94%A8-%EF%BC%8C%E8%A6%81%E4%B9%88%E6%98%AF%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">变量要么是引用 ，要么是基础类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E7%9A%84%E6%98%AF%E5%BC%95%E7%94%A8%EF%BC%8C%E4%B8%8D%E6%98%AF%E5%86%85%E5%AE%B9"><span class="nav-number">3.</span> <span class="nav-text">&#x3D;&#x3D;比较的是引用，不是内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Java%E9%80%9A%E8%BF%87%E4%BC%A0%E5%80%BC%E8%BF%9B%E8%A1%8C%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">4.</span> <span class="nav-text">Java通过传值进行引用传递</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%A4%A7%E5%A4%9A%E6%95%B0JVM%E5%AE%9E%E7%8E%B0%E9%87%8C%EF%BC%8CObject-hashCode%E5%92%8C%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80%E6%97%A0%E5%85%B3"><span class="nav-number">5.</span> <span class="nav-text">在大多数JVM实现里，Object.hashCode和内存地址无关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-toString%E9%82%A3%E4%BA%9B%E4%B8%8D%E4%B8%BA%E4%BA%BA%E7%9F%A5%E7%9A%84%E4%BA%8B%E6%83%85"><span class="nav-number">6.</span> <span class="nav-text">Object.toString那些不为人知的事情</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="FengQiang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">FengQiang</p>
+  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/merlinfeng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;merlinfeng" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feng_qiang@yeah.net" title="E-Mail → mailto:feng_qiang@yeah.net" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">merlinfeng</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

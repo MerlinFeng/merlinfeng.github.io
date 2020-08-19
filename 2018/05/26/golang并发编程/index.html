@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Goroutine在Go语言中，语言本身就已经实现和支持了并发， 我们只需要通过go关键字来开启goroutine即可。 gouroutine其实就是一种协程，类似其他语言中的coroutine， 是在编译器或虚拟机层面上的多任务。它可以运行在一个或多个线程上，但不同于线程，它是非抢占式的，所以协程很轻量。 func main() &amp;#123;     for i :&#x3D; 0; i &lt; 100">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang并发编程">
+<meta property="og:url" content="locallhost/2018/05/26/golang%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="风慕苗">
+<meta property="og:description" content="Goroutine在Go语言中，语言本身就已经实现和支持了并发， 我们只需要通过go关键字来开启goroutine即可。 gouroutine其实就是一种协程，类似其他语言中的coroutine， 是在编译器或虚拟机层面上的多任务。它可以运行在一个或多个线程上，但不同于线程，它是非抢占式的，所以协程很轻量。 func main() &amp;#123;     for i :&#x3D; 0; i &lt; 100">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-05-26T02:04:26.000Z">
+<meta property="article:modified_time" content="2020-08-19T09:05:56.731Z">
+<meta property="article:author" content="FengQiang">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="locallhost/2018/05/26/golang%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Golang并发编程 | 风慕苗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">风慕苗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苗慕风</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="locallhost/2018/05/26/golang%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="FengQiang">
+      <meta itemprop="description" content="眼盛星光，心向远方">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风慕苗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Golang并发编程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-05-26 10:04:26" itemprop="dateCreated datePublished" datetime="2018-05-26T10:04:26+08:00">2018-05-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 17:05:56" itemprop="dateModified" datetime="2020-08-19T17:05:56+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h2><p>在Go语言中，语言本身就已经实现和支持了并发， 我们只需要通过<code>go</code>关键字来开启<code>goroutine</code>即可。 gouroutine其实就是一种协程，类似其他语言中的coroutine， 是在编译器或虚拟机层面上的多任务。它可以运行在一个或多个线程上，但不同于线程，它是<strong>非抢占式的</strong>，所以协程很轻量。</p>
+<pre><code>func main() &#123;
+    for i := 0; i &lt; 1000; i++ &#123;
+    go func(ii int) &#123;
+        for &#123;
+            fmt.Printf(&quot;Hello %d\n&quot;, ii)
+        &#125;
+        &#125;(i)
+    &#125;
+
+    time.Sleep(time.Millisecond)
+&#125;</code></pre>
+<p>上述代码就开启了1000个协程，在1ms内不断的打印字符串，这里需要注意两个点：</p>
+<ol>
+<li>time.Sleep 在main函数退出前，Sleep了1ms。这是因为当main函数退出时，之前开的协程也会随着退出，如果不Sleep，则无法看到打印信息。</li>
+<li>匿名函数将变量i作为参数赋值传入。 如果不传参，变量i也能被使用，但是是以引用的方式。而i在main函数中在不断自增，导致在goroutine打印信息中，无法知道是第几个协程打印的。</li>
+</ol>
+<p>从打印信息上看，跟开线程没什么区别，无非就是数量上不同。但是在操作系统层面，线程是抢占式，而我们之前说协程是非抢占式的，这怎么会一样呢？ 出现上述问题的原因在于，在调用<code>Printf</code>的时候，进行了切换， goroutine主动让出了控制权。我们修改代码如下，演示下非抢占：</p>
+<pre><code>a := [10]int&#123;&#125;
+for i := 0; i &lt; 10; i++ &#123;
+    go func(ii int) &#123;
+        for &#123;
+            a[ii]++
+        &#125;
+    &#125;(i)
+&#125;
+
+time.Sleep(time.Millisecond)
+fmt.Println(a)</code></pre>
+<p>运行上述代码，出现了死循环。因为在开辟的第一个goroutine中，一直循环执行<code>a[ii]++</code>，一直没有让出控制权；而<code>main</code>本质上也是个goroutine，所以后面的代码都没有执行完，也没有退出。 遇到这种情况，我们可以在goroutine中主动让出控制权，例如：</p>
+<pre><code>a[ii]++
+runtime.Gosched()</code></pre>
+<p>goroutine 可能会切换的点 （不能保证）:</p>
+<ul>
+<li>I/O,select</li>
+<li>channel</li>
+<li>等待锁</li>
+<li>runtime.Gosched()</li>
+</ul>
+<h2 id="CSP并发模型"><a href="#CSP并发模型" class="headerlink" title="CSP并发模型"></a>CSP并发模型</h2><p>Go实现了两种并发形式：</p>
+<ol>
+<li>共享内存 + 锁同步</li>
+<li>CSP. 通过goroutine和channel来实现的.</li>
+</ol>
+<p>CSP并发模型是在1970年左右提出的概念，属于比较新的概念，不同于传统的多线程通过共享内存来通信，CSP讲究的是“以通信的方式来共享内存”。</p>
+<blockquote>
+<p>Do not communicate by sharing memory; instead, share memory by communicating 不要以共享内存的方式来通信，相反，要通过通信来共享内存。</p>
+</blockquote>
+<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p>channel 是用来在不同goroutine之间进行通信的，无论传值还是取值， 它都是阻塞的。</p>
+<pre><code>c := make(chan int)
+c &lt;- 1</code></pre>
+<p>上面代码直接运行会造成死锁：</p>
+<pre><code>all goroutines are asleep - deadlock!</code></pre>
+<p>所以一般在使用channel前先开一个goroutine去接收channel:</p>
+<pre><code>func createWorker() chan int &#123;
+    c := make(chan int)
+    go func() &#123;
+        for n := range c &#123;
+            fmt.Println(&quot;received:&quot;, n)
+        &#125;
+    &#125;()
+
+    return c
+&#125;
+
+func main() &#123;
+    var channels [10]chan int
+
+    for i, _ := range channels &#123;
+        channels[i] = createWorker()
+    &#125;
+
+    for i, c := range channels &#123;
+        c &lt;- i
+    &#125;
+
+    time.Sleep(time.Millisecond)
+&#125;</code></pre>
+<p>在上述代码中，我们定义了一个<code>createWorker</code>，用来创建一个接收者，同时返回了一个channel。同时我们可以对返回的channel做限制，例如：</p>
+<pre><code>func createWorker() chan&lt;- int // 只能发送数据
+func createWorker() &lt;-chan int // 只能接收数据</code></pre>
+<p>一般可以通过<code>n := &lt;- c</code>来接收数据，在上述例子中使用了range，因为channel是可以close的。 <code>close(c)</code>关闭channel， 但是关闭后在worker中依然能接收到channel（只要goroutine没有退出）。而接收到的数据是定义的channel的零值，在上述例子中，则收到0.</p>
+<ul>
+<li>通过<code>n,ok := &lt;- c</code>的ok来判断channel是否关闭；也可以通过range来接收；</li>
+<li>如果往已经关闭的channel写数据，会panic：<code>send on closed channel</code>. <strong>不要从接收端关闭channel，也不要关闭有多个并发发送者的channel</strong></li>
+</ul>
+<h3 id="等待任务结束"><a href="#等待任务结束" class="headerlink" title="等待任务结束"></a>等待任务结束</h3><p>在之前的例子中，我们都是通过Sleep方法来粗略的控制任务的执行，这在实际生产中肯定不能这么干。之前也说了channel是用来通信的，那么我们可以通过channel来告诉使用者任务已经执行完了。 代码优化如下：</p>
+<pre><code>type worker struct &#123;
+    in   chan int
+    done chan bool
+&#125;
+
+func createWorker() worker &#123;
+    w := worker&#123;
+        in:   make(chan int),
+        done: make(chan bool),
+    &#125;
+
+    go func(w worker) &#123;
+        for n := range w.in &#123;
+            fmt.Println(&quot;received:&quot;, n)
+            w.done &lt;- true
+        &#125;
+    &#125;(w)
+
+    return w
+&#125;
+
+func chanNormal() &#123;
+    var workers [10]worker
+
+    for i, _ := range workers &#123;
+        workers[i] = createWorker()
+    &#125;
+
+    for i, w := range workers &#123;
+        w.in &lt;- i
+    &#125;
+
+    for _, w := range workers &#123;
+        &lt;-w.done
+    &#125;
+
+&#125;
+
+func main() &#123;
+    chanNormal()
+&#125;</code></pre>
+<p>除了我们自己定义channel，go也为我们提供了<code>sync.WaitGroup</code>，来管理一组任务。</p>
+<pre><code>var wg sync.WaitGroup
+wg.Add(1)
+wg.Done()
+wg.Wait()</code></pre>
+<h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>将struct中的done抽象成一个方法，在<code>create</code>的时候实现，这样在<code>worker</code>中就不用管具体代码了，只要调用done方法即可。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"><i class="fa fa-tag"></i> golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/05/15/Nginx%E5%A4%9A%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B/" rel="prev" title="Nginx多进程模型">
+      <i class="fa fa-chevron-left"></i> Nginx多进程模型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/27/%E4%B9%9F%E8%B0%88-redis-%E5%92%8C-memcached-%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="next" title="也谈 Redis 和 Memcached 的区别">
+      也谈 Redis 和 Memcached 的区别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Goroutine"><span class="nav-number">1.</span> <span class="nav-text">Goroutine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSP%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">CSP并发模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#channel"><span class="nav-number">3.</span> <span class="nav-text">channel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%89%E5%BE%85%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9D%9F"><span class="nav-number">3.1.</span> <span class="nav-text">等待任务结束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip"><span class="nav-number">3.2.</span> <span class="nav-text">Tip</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="FengQiang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">FengQiang</p>
+  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/merlinfeng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;merlinfeng" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feng_qiang@yeah.net" title="E-Mail → mailto:feng_qiang@yeah.net" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">merlinfeng</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

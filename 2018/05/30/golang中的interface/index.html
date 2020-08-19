@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="interface 是一种类型 123type I interface &amp;#123;   Get() int&amp;#125;    首先 interface 是一种类型，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种具有一组方法的类型，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang中的interface">
+<meta property="og:url" content="locallhost/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/index.html">
+<meta property="og:site_name" content="风慕苗">
+<meta property="og:description" content="interface 是一种类型 123type I interface &amp;#123;   Get() int&amp;#125;    首先 interface 是一种类型，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种具有一组方法的类型，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 e">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-05-30T09:40:35.000Z">
+<meta property="article:modified_time" content="2020-08-19T09:05:56.731Z">
+<meta property="article:author" content="FengQiang">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="locallhost/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>golang中的interface | 风慕苗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">风慕苗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苗慕风</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="locallhost/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="FengQiang">
+      <meta itemprop="description" content="眼盛星光，心向远方">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风慕苗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          golang中的interface
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-05-30 17:40:35" itemprop="dateCreated datePublished" datetime="2018-05-30T17:40:35+08:00">2018-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 17:05:56" itemprop="dateModified" datetime="2020-08-19T17:05:56+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="interface-是一种类型"><a href="#interface-是一种类型" class="headerlink" title="interface 是一种类型"></a>interface 是一种类型</h2><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">   Get() int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>首先 <strong>interface 是一种类型</strong>，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种<strong>具有一组方法的类型</strong>，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 <strong>empty interface</strong>。 <strong>如果一个类型实现了一个 interface 中所有方法，我们说类型实现了该 interface</strong>，所以所有类型都实现了 empty interface，因为任何一种类型至少实现了 0 个方法。go 没有显式的关键字用来实现 interface，只需要实现 interface 包含的方法即可。</p>
+<h2 id="interface-变量存储的是实现者的值"><a href="#interface-变量存储的是实现者的值" class="headerlink" title="interface 变量存储的是实现者的值"></a>interface 变量存储的是实现者的值</h2><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;1</span><br><span class="line">type I interface &#123;    </span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;2</span><br><span class="line">type S struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func(s S) Get()int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func(s *S) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;3</span><br><span class="line">func f(i I)&#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    s :&#x3D; S&#123;&#125;</span><br><span class="line">    f(&amp;s)  &#x2F;&#x2F;4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>这段代码在 <code>#1</code> 定义了 interface I，在 <code>#2</code> 用 struct S 实现了 I 定义的两个方法，接着在 <code>#3</code> 定义了一个函数 f 参数类型是 I，S 实现了 I 的两个方法就说 S 是 I 的实现者，执行 <code>f(&amp;s)</code> 就完了一次 interface 类型的使用。 interface 的重要用途就体现在<strong>函数 f 的参数中</strong>，如果有多种类型实现了某个 interface，<strong>这些类型的值都可以直接使用 interface 的变量存储</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s :&#x3D; S&#123;&#125;</span><br><span class="line">var i I &#x2F;&#x2F;声明 i</span><br><span class="line">i &#x3D; &amp;s &#x2F;&#x2F;赋值 s 到 i</span><br><span class="line">fmt.Println(i.Get())</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>不难看出 interface 的变量中存储的是实现了 interface 的类型的对象值，这种能力是 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Duck_typing">duck typing</a>。在使用 interface 时不需要显式在 struct 上声明要实现哪个 interface ，只需要实现对应 interface 中的方法即可，go 会自动进行 interface 的检查，并在运行时执行从其他类型到 interface 的自动转换，即使实现了多个 interface，go 也会在使用对应 interface 时实现自动转换，这就是 interface 的魔力所在。</p>
+<h2 id="如何判断-interface-变量存储的是哪种类型"><a href="#如何判断-interface-变量存储的是哪种类型" class="headerlink" title="如何判断 interface 变量存储的是哪种类型"></a>如何判断 interface 变量存储的是哪种类型</h2><hr>
+<p>一个 interface 被多种类型实现时，有时候我们需要区分 interface 的变量究竟存储哪种类型的值，go 可以使用 <code>comma, ok</code> 的形式做区分 <code>value, ok := em.(T)</code>：<strong>em 是 interface 类型的变量，T代表要断言的类型，value 是 interface 变量存储的值，ok 是 bool 类型表示是否为该断言的类型 T</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if t, ok :&#x3D; i.(*S); ok &#123;</span><br><span class="line">    fmt.Println(&quot;s implements I&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>ok 是 true 表明 i 存储的是 <code>*S</code> 类型的值，false 则不是，这种区分能力叫 <a target="_blank" rel="noopener" href="https://tour.golang.org/methods/15">Type assertions</a> (类型断言)。 如果需要区分多种类型，可以使用 switch 断言，更简单直接，这种断言方式只能在 switch 语句中使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">switch t :&#x3D; i.(type) &#123;</span><br><span class="line">case *S:</span><br><span class="line">    fmt.Println(&quot;i store *S&quot;, t)</span><br><span class="line">case *R:</span><br><span class="line">    fmt.Println(&quot;i store *R&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="空的-interface"><a href="#空的-interface" class="headerlink" title="空的 interface"></a>空的 interface</h2><hr>
+<p><code>interface&#123;&#125;</code> 是一个空的 interface 类型，根据前文的定义：一个类型如果实现了一个 interface 的所有方法就说该类型实现了这个 interface，空的 interface 没有方法，所以可以认为所有的类型都实现了 <code>interface&#123;&#125;</code>。如果定义一个函数参数是 <code>interface&#123;&#125;</code> 类型，这个函数应该可以接受任何类型作为它的参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">func doSomething(v interface&#123;&#125;)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果函数的参数 v 可以接受任何类型，那么函数被调用时在函数内部 v 是不是表示的是任何类型？并不是，虽然函数的参数可以接受任何类型，并不表示 v 就是任何类型，在函数 doSomething 内部 v 仅仅是一个 interface 类型，之所以函数可以接受任何类型是在 go 执行时传递到函数的任何类型都被自动转换成 <code>interface&#123;&#125;</code>。go 是如何进行转换的，以及 v 存储的值究竟是怎么做到可以接受任何类型的，感兴趣的可以看看 <a target="_blank" rel="noopener" href="https://research.swtch.com/interfaces">Russ Cox 关于 interface 的实现</a> 。 既然空的 interface 可以接受任何类型的参数，那么一个 <code>interface&#123;&#125;</code>类型的 slice 是不是就可以接受任何类型的 slice ?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func printAll(vals []interface&#123;&#125;) &#123; &#x2F;&#x2F;1</span><br><span class="line">    for _, val :&#x3D; range vals &#123;</span><br><span class="line">        fmt.Println(val)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">    names :&#x3D; \[\]string&#123;&quot;stanley&quot;, &quot;david&quot;, &quot;oscar&quot;&#125;</span><br><span class="line">    printAll(names)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>上面的代码是按照我们的假设修改的，执行之后竟然会报 <code>cannot use names (type []string) as type []interface &#123;&#125; in argument to printAll</code> 错误，why？ 这个错误说明 go 没有帮助我们自动把 slice 转换成 <code>interface&#123;&#125;</code> 类型的 slice，所以出错了。<strong>go 不会对 类型是<code>interface&#123;&#125;</code> 的 slice 进行转换</strong> 。为什么 go 不帮我们自动转换，一开始我也很好奇，最后终于在 go 的 wiki 中找到了答案 <a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/InterfaceSlice">https://github.com/golang/go/wiki/InterfaceSlice</a> 大意是 <code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的 methods 数据，一个是指向其存储值的指针，也就是 interface 变量存储的值，因而 slice []interface{} 其长度是固定的<code>N*2</code>，但是 []T 的长度是<code>N*sizeof(T)</code>，两种 slice 实际存储值的大小是有区别的(文中只介绍两种 slice 的不同，至于为什么不能转换猜测可能是 runtime 转换代价比较大)。 但是我们可以手动进行转换来达到我们的目的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var dataSlice []int &#x3D; foo()</span><br><span class="line">var interfaceSlice []interface&#123;&#125; &#x3D; make([]interface&#123;&#125;, len(dataSlice))</span><br><span class="line">for i, d :&#x3D; range dataSlice &#123;</span><br><span class="line">    interfaceSlice[i] &#x3D; d</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="interface-的实现者的-receiver-如何选择"><a href="#interface-的实现者的-receiver-如何选择" class="headerlink" title="interface 的实现者的 receiver 如何选择"></a>interface 的实现者的 receiver 如何选择</h2><hr>
+<p>在我们上文的例子中调用 f 是 <code>f(&amp;s)</code> 也就是 S 的指针类型，为什么不能是 <code>f(s)</code> 呢，如果是 s 会有什么问题？改成 f(s) 然后执行代码。</p>
+<p>cannot use s (type S) as type I in argument to f:<br>    S does not implement I (Set method has pointer receiver)</p>
+<p> </p>
+<p>这个错误的意思是 S 没有实现 I，哪里出了问题？*<em>关键点是 S 中 set 方法的 receiver 是个 pointer <em>S</em></em> 。 interface 定义时并没有严格规定实现者的方法 receiver 是个 value receiver 还是 pointer receiver，上面代码中的 S 的 Set receiver 是 pointer，也就是实现 I 的两个方法的 receiver 一个是 value 一个是 pointer，使用 <code>f(s)</code>的形势调用，传递给 f 的是个 s 的一份拷贝，在进行 s 的拷贝到 I 的转换时，s 的拷贝不满足 Set 方法的 receiver 是个 pointer，也就没有实现 I。<strong>go 中函数都是按值传递即 passed by value</strong>。 那反过来会怎样，如果 receiver 是 value，函数用 pointer 的形式调用？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">type SS struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Get() int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">func f(i I) &#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">      ss :&#x3D; SS&#123;&#125;</span><br><span class="line">    f(&amp;ss) &#x2F;&#x2F;ponter</span><br><span class="line">    f(ss)  &#x2F;&#x2F;value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>I 的实现者 SS 的方法 receiver 都是 value receiver，执行代码可以看到无论是 pointer 还是 value 都可以正确执行。 导致这一现象的原因是什么？ 如果是按 pointer 调用，go 会自动进行转换，因为有了指针总是能得到指针指向的值是什么，如果是 value 调用，go 将无从得知 value 的原始值是什么，因为 value 是份拷贝。<strong>go 会把指针进行隐式转换得到 value，但反过来则不行</strong>。 对于 receiver 是 value 的 method，任何在 method 内部对 value 做出的改变都不影响调用者看到的 value，这就是按值传递。 另一个说明上述现象的例子是这样的来自 <a target="_blank" rel="noopener" href="https://play.golang.org/p/TvR758rfre">https://play.golang.org/p/TvR758rfre</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line">type Animal interface &#123;</span><br><span class="line">    Speak() string</span><br><span class="line">&#125;</span><br><span class="line">type Dog struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (d Dog) Speak() string &#123;</span><br><span class="line">    return &quot;Woof!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Cat struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;1</span><br><span class="line">func (c *Cat) Speak() string &#123;</span><br><span class="line">    return &quot;Meow!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Llama struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (l Llama) Speak() string &#123;</span><br><span class="line">    return &quot;?????&quot;</span><br><span class="line">&#125;</span><br><span class="line">type JavaProgrammer struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (j JavaProgrammer) Speak() string &#123;</span><br><span class="line">    return &quot;Design patterns!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    animals :&#x3D; \[\]Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, Llama&#123;&#125;, JavaProgrammer&#123;&#125;&#125;</span><br><span class="line">    for _, animal :&#x3D; range animals &#123;</span><br><span class="line">        fmt.Println(animal.Speak())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p><code>#1</code> Cat 的 speak receiver 是 pointer，interface Animal 的 slice，Cat 的值是一个 value，同样会因为 receiver 不一致而导致无法执行。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"><i class="fa fa-tag"></i> golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/05/27/%E4%B9%9F%E8%B0%88-redis-%E5%92%8C-memcached-%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="prev" title="也谈 Redis 和 Memcached 的区别">
+      <i class="fa fa-chevron-left"></i> 也谈 Redis 和 Memcached 的区别
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/09/10/MySQL%E4%B8%ADB+Tree%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" rel="next" title="MySQL中B+Tree索引原理">
+      MySQL中B+Tree索引原理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#interface-%E6%98%AF%E4%B8%80%E7%A7%8D%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">interface 是一种类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interface-%E5%8F%98%E9%87%8F%E5%AD%98%E5%82%A8%E7%9A%84%E6%98%AF%E5%AE%9E%E7%8E%B0%E8%80%85%E7%9A%84%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">interface 变量存储的是实现者的值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD-interface-%E5%8F%98%E9%87%8F%E5%AD%98%E5%82%A8%E7%9A%84%E6%98%AF%E5%93%AA%E7%A7%8D%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">如何判断 interface 变量存储的是哪种类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E7%9A%84-interface"><span class="nav-number">4.</span> <span class="nav-text">空的 interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#interface-%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%80%85%E7%9A%84-receiver-%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9"><span class="nav-number">5.</span> <span class="nav-text">interface 的实现者的 receiver 如何选择</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="FengQiang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">FengQiang</p>
+  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/merlinfeng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;merlinfeng" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feng_qiang@yeah.net" title="E-Mail → mailto:feng_qiang@yeah.net" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">merlinfeng</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

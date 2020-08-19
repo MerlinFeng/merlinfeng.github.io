@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一．内存溢出解决方案在做数据统计分析时，经常会遇到大数组，可能会发生内存溢出，这里分享一下我的解决方案。还是用例子来说明这个问题，如下： 假定日志中存放的记录数为500000条，那么解决方案如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP内存溢出解决方案">
+<meta property="og:url" content="locallhost/2017/02/08/php%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="风慕苗">
+<meta property="og:description" content="一．内存溢出解决方案在做数据统计分析时，经常会遇到大数组，可能会发生内存溢出，这里分享一下我的解决方案。还是用例子来说明这个问题，如下： 假定日志中存放的记录数为500000条，那么解决方案如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-02-08T04:16:22.000Z">
+<meta property="article:modified_time" content="2020-08-19T09:05:56.742Z">
+<meta property="article:author" content="FengQiang">
+<meta property="article:tag" content="内存溢出">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="locallhost/2017/02/08/php%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>PHP内存溢出解决方案 | 风慕苗</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">风慕苗</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苗慕风</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="locallhost/2017/02/08/php%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="FengQiang">
+      <meta itemprop="description" content="眼盛星光，心向远方">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风慕苗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PHP内存溢出解决方案
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-02-08 12:16:22" itemprop="dateCreated datePublished" datetime="2017-02-08T12:16:22+08:00">2017-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-19 17:05:56" itemprop="dateModified" datetime="2020-08-19T17:05:56+08:00">2020-08-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一．内存溢出解决方案"><a href="#一．内存溢出解决方案" class="headerlink" title="一．内存溢出解决方案"></a>一．内存溢出解决方案</h2><p>在做数据统计分析时，经常会遇到大数组，可能会发生内存溢出，这里分享一下我的解决方案。还是用例子来说明这个问题，如下： 假定日志中存放的记录数为500000条，那么解决方案如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">ini_set(‘memory_limit’,’64M’);　&#x2F;&#x2F;重置php可以使用的内存大小为64M，一般在远程主机上是不能修改php.ini文件的，只能通过程序设置。注：在safe_mode（安全模式）下，ini_set失效</span><br><span class="line"></span><br><span class="line">set_time_limit(600);&#x2F;&#x2F;设置超时限制为６分钟</span><br><span class="line"></span><br><span class="line">$farr &#x3D; $Uarr &#x3D; $Marr &#x3D; $IParr &#x3D; $data &#x3D; $_sub &#x3D; array();</span><br><span class="line"></span><br><span class="line">$spt &#x3D; ”$@#!$”;</span><br><span class="line"></span><br><span class="line">$root &#x3D; ”&#x2F;Data&#x2F;webapps&#x2F;VisitLog”;</span><br><span class="line"></span><br><span class="line">$path &#x3D; $dpath &#x3D; $fpath &#x3D; NULL;</span><br><span class="line"></span><br><span class="line">$path &#x3D; $root.”&#x2F;”.date(“Y-m”,$timestamp);</span><br><span class="line"></span><br><span class="line">$dpath &#x3D; $path.”&#x2F;”.date(“m-d”,$timestamp);</span><br><span class="line"></span><br><span class="line">for($j&#x3D;0;$j&lt;24;$j++)&#123;</span><br><span class="line"></span><br><span class="line">$v &#x3D; ($j &lt; 10) ? ”0″.$j : $j;</span><br><span class="line"></span><br><span class="line">$gpath &#x3D; $dpath.”&#x2F;”.$v.”.php”;</span><br><span class="line"></span><br><span class="line">if(!file_exists($gpath))&#123;</span><br><span class="line"></span><br><span class="line">continue;</span><br><span class="line"></span><br><span class="line">&#125; else &#123;</span><br><span class="line"></span><br><span class="line">$arr &#x3D; file($gpath);&#x2F;&#x2F;&#x2F;&#x2F;将文件读入数组中</span><br><span class="line"></span><br><span class="line">array_shift($arr);&#x2F;&#x2F;移出第一个单元－》&lt;?php exit;?&gt;</span><br><span class="line"></span><br><span class="line">$farr &#x3D; array_merge($farr,$arr);</span><br><span class="line"></span><br><span class="line">unset($arr);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if(empty($this-&gt;farr))&#123;</span><br><span class="line"></span><br><span class="line">echo ”&lt;p&gt;&lt;center&gt;没有相关记录！&lt;&#x2F;center&gt;&lt;&#x2F;p&gt;”;</span><br><span class="line"></span><br><span class="line">exit;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">while(!empty($farr))&#123;</span><br><span class="line"></span><br><span class="line">$_sub &#x3D; array_splice($farr, 0, 10000); &#x2F;&#x2F;每次取出$farr中1000个</span><br><span class="line"></span><br><span class="line">for($i&#x3D;0,$scount&#x3D;count($_sub);$i&lt;$scount;$i++)&#123;</span><br><span class="line"></span><br><span class="line">$arr &#x3D; explode($spt,$_sub[$i]);</span><br><span class="line"></span><br><span class="line">$Uarr[] &#x3D; $arr[1]; &#x2F;&#x2F;vurl</span><br><span class="line"></span><br><span class="line">$Marr[] &#x3D; $arr[2]; &#x2F;&#x2F;vmark</span><br><span class="line"></span><br><span class="line">$IParr[] &#x3D; $arr[3].” |$nbsp;”.$arr[1]; &#x2F;&#x2F;IP</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unset($_sub);&#x2F;&#x2F;用完及时销毁</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unset($farr);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>  这里，不难看出，一方面，我们要增加PHP可用内存大小，另一方面，只要我们想办法对数组进行分批处理，分而治之，将用过的变量及时销毁(unset)，一般是不会出现溢出问题的。 另外，为了节省PHP程序内存损耗，我们应当尽可能减少静态变量的使用，在需要数据重用时，可以考虑使用引用(&amp;)。再一点就是：数据库操作完成后，要马上关闭连接；一个对象使用完，要及时调用析构函数（<code>__destruct()</code>）。</p>
+<h2 id="二．unset销毁变量并释放内存问题"><a href="#二．unset销毁变量并释放内存问题" class="headerlink" title="二．unset销毁变量并释放内存问题"></a>二．unset销毁变量并释放内存问题</h2><p>PHP的unset()函数用来清除、销毁变量，不用的变量，我们可以用unset()将它销毁。但是某些时候，用unset()却无法达到销毁变 量占用的内存！我们先看一个例子：   最后输出unset()之前占用内存减去unset()之后占用内存，如果是正数，那么说明unset(s)已经将s从内存中销毁(或者说，unset()之后内存占用减少了)，可是我在PHP5和windows平台下，得到的结果是：0。这是否可以说明，unset(s)并没有起到销毁变量s所占用内存的作用呢？我们再作下面的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$s&#x3D;str_repeat(&#39;1&#39;,256); &#x2F;&#x2F;产生由256个1组成的字符串</span><br><span class="line">$m&#x3D;memory_get_usage(); &#x2F;&#x2F;获取当前占用内存</span><br><span class="line">unset($s);</span><br><span class="line">$mm&#x3D;memory_get_usage(); &#x2F;&#x2F;unset()后再查看当前占用内存</span><br><span class="line">echo $m-$mm;</span><br><span class="line">?&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个例子，和上面的例子几乎相同，唯一的不同是，s由256个1组成，即比第一个例子多了一个1，得到结果是：272。这是否可以说明，unset(s)已经将$s所占用的内存销毁了？ 通过上面两个例子，我们可以得出以下结论： 结论一、unset()函数只能在变量值占用内存空间超过256字节时才会释放内存空间。 那么是不是只要变量值超过256，使用unset就可以释放内存空间呢？我们再通过一个例子来测试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$s&#x3D;str_repeat(&#39;1&#39;,256); &#x2F;&#x2F;这和第二个例子完全相同</span><br><span class="line">$p&#x3D;&amp;$s;</span><br><span class="line">$m&#x3D;memory_get_usage();</span><br><span class="line">unset($s); &#x2F;&#x2F;销毁$s</span><br><span class="line">$mm&#x3D;memory_get_usage();</span><br><span class="line">echo $p.&#39;&lt;br &#x2F;&gt;&#39;;</span><br><span class="line">echo $m-$mm;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>  刷新页面，我们看到第一行有256个1，第二行是0，按理说我们已经销毁了s，而p只是引用s的变量，应该是没有内容了，另外，unset(s)前后内存占用没变化！现在我们再做以下的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$s&#x3D;str_repeat(&#39;1&#39;,256); &#x2F;&#x2F;这和第二个例子完全相同</span><br><span class="line">$p&#x3D;&amp;$s;</span><br><span class="line">$m&#x3D;memory_get_usage();</span><br><span class="line">$s&#x3D;null; &#x2F;&#x2F;设置$s为null</span><br><span class="line">$mm&#x3D;memory_get_usage();</span><br><span class="line">echo $p.&#39;&lt;br &#x2F;&gt;&#39;;</span><br><span class="line">echo $m-$mm;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>  现在刷新页面，我们看到，输出p已经是没有内容了，unset()前后内存占用量之差是272，即已经清除了变量占用的内存。本例中的s=null也 可以换成unset()，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$s&#x3D;str_repeat(&#39;1&#39;,256); &#x2F;&#x2F;这和第二个例子完全相同</span><br><span class="line">$p&#x3D;&amp;$s;</span><br><span class="line">$m&#x3D;memory_get_usage();</span><br><span class="line">unset($s); &#x2F;&#x2F;销毁$s</span><br><span class="line">unset($p);</span><br><span class="line">$mm&#x3D;memory_get_usage();</span><br><span class="line">echo $p.&#39;&lt;br &#x2F;&gt;&#39;;</span><br><span class="line">echo $m-$mm;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>  我们将s和p都使用unset()销毁，这时再看内存占用量之差也是272，说明这样也可以释放内存。那么，我们可以得到另外一条结论： 结论二、只有当指向该变量的所有变量（如引用变量）都被销毁后，才会释放内存。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/" rel="tag"><i class="fa fa-tag"></i> 内存溢出</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/" rel="prev" title="git常用命令二">
+      <i class="fa fa-chevron-left"></i> git常用命令二
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/02/08/mysql%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/" rel="next" title="ＭySQL隔离级别">
+      ＭySQL隔离级别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%EF%BC%8E%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">一．内存溢出解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%EF%BC%8Eunset%E9%94%80%E6%AF%81%E5%8F%98%E9%87%8F%E5%B9%B6%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">二．unset销毁变量并释放内存问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="FengQiang"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">FengQiang</p>
+  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/merlinfeng" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;merlinfeng" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feng_qiang@yeah.net" title="E-Mail → mailto:feng_qiang@yeah.net" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">merlinfeng</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
