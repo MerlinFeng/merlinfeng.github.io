@@ -450,7 +450,7 @@ setcookie("sso", $_GET["sso"]);
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;">&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#x6d;&#x61;&#x69;&#108;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#101;&#x6d;&#x61;&#x69;&#108;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -573,7 +573,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#109;">&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#109;</a>](mailto:<a href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;">&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;">&#103;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#99;&#111;&#109;">&#x67;&#x69;&#116;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#99;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -1097,30 +1097,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>Java中this和super的用法总结</title>
-    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<p><strong>this</strong> </p>
-<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
-<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
-<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
-<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
-<p>super和this的异同：</p>
-<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java中常见的误解</title>
     <url>/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/</url>
     <content><![CDATA[<h5 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h5><p>Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。</p>
@@ -1148,6 +1124,30 @@ public void testCallableCache() throws Exception&#123;
 <p>[Ljava.lang.String;@45ee12a7</p>
 <p> </p>
 <p>很不幸你只知道这是个对象数组。如果你只有一个Object实例words，这样是不够的，你得调用下Arrays.toString(words)。这极其恶劣地破坏了封装的原则，在StackOverflow上面这也是最常见的一类问题。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java中this和super的用法总结</title>
+    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p><strong>this</strong> </p>
+<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
+<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
+<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
+<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
+<p>super和this的异同：</p>
+<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
 ]]></content>
       <categories>
         <category>JAVA</category>
@@ -1223,6 +1223,22 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>JAVA的异常处理</title>
+    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
+<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
+<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JAVA泛型</title>
     <url>/2017/05/30/java%E6%B3%9B%E5%9E%8B/</url>
     <content><![CDATA[<p><strong>一. 泛型概念的提出（为什么需要泛型）？</strong> 首先，我们看下下面这段简短的代码:</p>
@@ -1263,22 +1279,6 @@ public void testCallableCache() throws Exception&#123;
       </categories>
       <tags>
         <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JAVA的异常处理</title>
-    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
-<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
-<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1590,7 +1590,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#x72;&#x6f;&#x6f;&#116;&#x40;&#49;&#57;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#53;&#53;&#46;&#x32;&#52;&#50;">&#x72;&#x6f;&#x6f;&#116;&#x40;&#49;&#57;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#53;&#53;&#46;&#x32;&#52;&#50;</a></p>
+<p>ssh <a href="mailto:&#114;&#x6f;&#111;&#x74;&#x40;&#49;&#x39;&#x32;&#x2e;&#x31;&#x36;&#56;&#x2e;&#53;&#53;&#x2e;&#50;&#x34;&#x32;">&#114;&#x6f;&#111;&#x74;&#x40;&#49;&#x39;&#x32;&#x2e;&#x31;&#x36;&#56;&#x2e;&#53;&#53;&#x2e;&#50;&#x34;&#x32;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1610,11 +1610,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#50;">&#x62;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#50;</a></p>
+<p>exit<br>ssh <a href="mailto:&#x62;&#105;&#x6c;&#x6c;&#x40;&#49;&#x32;&#56;&#x2e;&#49;&#x39;&#x39;&#x2e;&#50;&#x30;&#x39;&#46;&#50;&#52;&#x32;">&#x62;&#105;&#x6c;&#x6c;&#x40;&#49;&#x32;&#56;&#x2e;&#49;&#x39;&#x39;&#x2e;&#50;&#x30;&#x39;&#46;&#50;&#52;&#x32;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#x32;&#52;&#50;">&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#x32;&#52;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#57;&#57;&#46;&#50;&#x30;&#x39;&#x2e;&#x32;&#x34;&#x32;">&#98;&#x69;&#108;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#57;&#57;&#46;&#50;&#x30;&#x39;&#x2e;&#x32;&#x34;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
