@@ -19,7 +19,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1.  安装 Github 查看是否安装git: $ gitThe program ‘git’ is currently not installed.You can install it by typing: sudo apt-get install git   安装git命令：sudo apt-get install git （cenos使用yum install）   安装完成后，还需要最后一">
@@ -263,7 +263,7 @@
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#109;&#x61;&#x69;&#108;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#101;&#109;&#x61;&#x69;&#108;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;">&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -551,6 +551,8 @@
 <script src="/js/next-boot.js"></script>
 
 
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
 
 
   

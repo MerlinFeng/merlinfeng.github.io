@@ -180,6 +180,30 @@
       </tags>
   </entry>
   <entry>
+    <title>aggregation result exceeds maximum document size (16MB)</title>
+    <url>/2017/03/10/aggregation-result-exceeds-maximum-document-size-16mb/</url>
+    <content><![CDATA[<p>mongdb操作数据，数据格式如下，大概三百多条：</p>
+<p>&gt; db.dcclog20170228.find().pretty().limit(1)<br>{<br>    “<em>id” : ObjectId(“58b7c5560717180be2ff0314”),<br>    “time” : 1488211200,<br>    “hour” : “00”,<br>    “ip” : “2947333517”,<br>    “cookieid” : “a74f75dac519271585c2e9bcf16f31ab”,<br>    “page” : “2bdb399e28604845ca1a2db96e066809”,<br>    “dcac” : 163,<br>    “dcv_0” : 9,<br>    “dcv_1” : 5,<br>    “dcv” : “9.5”,<br>    “dcvt” : [<br>        “1479222012”,<br>        “1488211162”,<br>        “1488211162”,<br>        “1488211162”,<br>        “1488211203”,<br>        “110”<br>    ],<br>    “dctp” : 1,<br>    “dcrf” : “m.baidu.com/from=844b/bd_page_type=1/ssid=0/uid=0/pu=sz%401320_2001%2Cta%40iphone_1_8.0_3_600%2Cusm%401/baiduid=262B871AB239F6D1108F0EC5971B6678/w=0_10</em>/t=iphone/l=1/tc?ref=www_iphone&amp;lid=14455673909231382786&amp;order=1&amp;fm=alop&amp;waplogo=1&amp;tj=www_normal_1_0_10_title&amp;vit=osres&amp;waput=1&amp;cltj=normal_title&amp;asres=1&amp;nt=wnor&amp;title=%E5%9B%BE%E4%BA%8C%E6%89%8B%E9%A9%AC%E8%87%AA%E8%BE%BE3%E4%B8%A4%E5%8E%A2_%E9%A9%AC%E8%87%AA%E8%BE%BE3%E4%B8%A4%E5%8E%A2%E4%BA%8C%E6%89%8B…_%E6%98%93%E8%BD%A6%E4%BA%8C%E6%89%8B%E8%BD%A6&amp;dict=-1&amp;w_qd=IlPT2AEptyoA_yk66ewbwge6BkdPlWgayEjCsPWUdxVw&amp;sec=19191&amp;di=1f88a683a4ebe1f1&amp;bdenc=1&amp;tch=124.1467.319.468.1.1132&amp;nsrc=IlPT2AEptyoA_yixCFOxXnANedT62v3IFw3UKydF0XSz96m7h44nJRhdXTqqAp73Gkf9xXiHhM9CbC8qQT2ek1EZebdmpK&amp;eqid=c89cded4bc9e70001000000358b44cce&amp;wd=&amp;clk_info=%7B%22srcid%22%3A%221599%22%2C%22tplname%22%3A%22www_normal%22%2C%22t%22%3A1488211160518%2C%22xpath%22%3A%22div-a-h3%22%7D”,<br>    “recomand_domain” : “5487”,<br>    “recomand_url” : 107835484,<br>    “dccv” : “null|1:page:mlist|1:prov:0|1:serial:2752|1:mbrand:18”,<br>    “provinceid” : 210000,<br>    “domain_id” : “2102”,<br>    “url_id” : 107977259<br>}</p>
+<blockquote>
+</blockquote>
+<p>  需求时根据字段dccv拆分，但是数据量有300万条 语言使用PHP</p>
+<p> // 1、PV<br>        $ops_pv = [<br>            [‘$match’ =&gt; [‘dccv’ =&gt; [‘$exists’ =&gt; true]]],<br>            [‘$group’ =&gt; [‘_id’    =&gt; [‘dcac’ =&gt; ‘$dcac’, ‘dccv’ =&gt; ‘$dccv’], ‘value’    =&gt; [‘$sum’ =&gt; 1]]],<br>        ];<br>        $mongo-&gt;collection($collection_name)-&gt;aggregate($ops_pv, [‘allowDiskUse’ =&gt; true]);</p>
+<p>已经设置了将数据写到临时文件，但是出现报错信息：</p>
+<p>aggregation result exceeds maximum document size (16MB)</p>
+<p>超出了文档最大限制，顾先把数据临时输出到一个集合，只包含所需字段，</p>
+<p> // 1、PV<br>        $ops_pv = [<br>            [‘$match’ =&gt; [‘dccv’ =&gt; [‘$exists’ =&gt; true]]],<br>            [‘$group’ =&gt; [‘_id’    =&gt; [‘dcac’ =&gt; ‘$dcac’, ‘dccv’ =&gt; ‘$dccv’], ‘value’    =&gt; [‘$sum’ =&gt; 1]]],<br>            [‘$out’=&gt;$tmp_name_pv],<br>        ];<br>        $mongo-&gt;collection($collection_name)-&gt;aggregate($ops_pv, [‘allowDiskUse’ =&gt; true]);<br>        $cur = $mongo-&gt;collection($tmp_name_pv)-&gt;find();<br>        while ($cur-&gt;hasNext()) {<br>            $v = $cur-&gt;getNext();<br>            //page全部数据<br>            $data_pv[implode(‘||’, $v[‘_id’])] = $v[‘value’];</p>
+<pre><code>    &#125;</code></pre>
+<p>  再从输出集合中逐条读取数据，减少内存消耗，程序正常运行。 基本思路就是化大为小，取整为零，数据是不变的</p>
+]]></content>
+      <categories>
+        <category>MongoDB</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MongoDB</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Apache 配置虚拟主机</title>
     <url>/2017/02/12/apache-%E9%85%8D%E7%BD%AE%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA/</url>
     <content><![CDATA[<p> </p>
@@ -226,30 +250,6 @@
       <tags>
         <tag>服务器</tag>
         <tag>Apache</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>aggregation result exceeds maximum document size (16MB)</title>
-    <url>/2017/03/10/aggregation-result-exceeds-maximum-document-size-16mb/</url>
-    <content><![CDATA[<p>mongdb操作数据，数据格式如下，大概三百多条：</p>
-<p>&gt; db.dcclog20170228.find().pretty().limit(1)<br>{<br>    “<em>id” : ObjectId(“58b7c5560717180be2ff0314”),<br>    “time” : 1488211200,<br>    “hour” : “00”,<br>    “ip” : “2947333517”,<br>    “cookieid” : “a74f75dac519271585c2e9bcf16f31ab”,<br>    “page” : “2bdb399e28604845ca1a2db96e066809”,<br>    “dcac” : 163,<br>    “dcv_0” : 9,<br>    “dcv_1” : 5,<br>    “dcv” : “9.5”,<br>    “dcvt” : [<br>        “1479222012”,<br>        “1488211162”,<br>        “1488211162”,<br>        “1488211162”,<br>        “1488211203”,<br>        “110”<br>    ],<br>    “dctp” : 1,<br>    “dcrf” : “m.baidu.com/from=844b/bd_page_type=1/ssid=0/uid=0/pu=sz%401320_2001%2Cta%40iphone_1_8.0_3_600%2Cusm%401/baiduid=262B871AB239F6D1108F0EC5971B6678/w=0_10</em>/t=iphone/l=1/tc?ref=www_iphone&amp;lid=14455673909231382786&amp;order=1&amp;fm=alop&amp;waplogo=1&amp;tj=www_normal_1_0_10_title&amp;vit=osres&amp;waput=1&amp;cltj=normal_title&amp;asres=1&amp;nt=wnor&amp;title=%E5%9B%BE%E4%BA%8C%E6%89%8B%E9%A9%AC%E8%87%AA%E8%BE%BE3%E4%B8%A4%E5%8E%A2_%E9%A9%AC%E8%87%AA%E8%BE%BE3%E4%B8%A4%E5%8E%A2%E4%BA%8C%E6%89%8B…_%E6%98%93%E8%BD%A6%E4%BA%8C%E6%89%8B%E8%BD%A6&amp;dict=-1&amp;w_qd=IlPT2AEptyoA_yk66ewbwge6BkdPlWgayEjCsPWUdxVw&amp;sec=19191&amp;di=1f88a683a4ebe1f1&amp;bdenc=1&amp;tch=124.1467.319.468.1.1132&amp;nsrc=IlPT2AEptyoA_yixCFOxXnANedT62v3IFw3UKydF0XSz96m7h44nJRhdXTqqAp73Gkf9xXiHhM9CbC8qQT2ek1EZebdmpK&amp;eqid=c89cded4bc9e70001000000358b44cce&amp;wd=&amp;clk_info=%7B%22srcid%22%3A%221599%22%2C%22tplname%22%3A%22www_normal%22%2C%22t%22%3A1488211160518%2C%22xpath%22%3A%22div-a-h3%22%7D”,<br>    “recomand_domain” : “5487”,<br>    “recomand_url” : 107835484,<br>    “dccv” : “null|1:page:mlist|1:prov:0|1:serial:2752|1:mbrand:18”,<br>    “provinceid” : 210000,<br>    “domain_id” : “2102”,<br>    “url_id” : 107977259<br>}</p>
-<blockquote>
-</blockquote>
-<p>  需求时根据字段dccv拆分，但是数据量有300万条 语言使用PHP</p>
-<p> // 1、PV<br>        $ops_pv = [<br>            [‘$match’ =&gt; [‘dccv’ =&gt; [‘$exists’ =&gt; true]]],<br>            [‘$group’ =&gt; [‘_id’    =&gt; [‘dcac’ =&gt; ‘$dcac’, ‘dccv’ =&gt; ‘$dccv’], ‘value’    =&gt; [‘$sum’ =&gt; 1]]],<br>        ];<br>        $mongo-&gt;collection($collection_name)-&gt;aggregate($ops_pv, [‘allowDiskUse’ =&gt; true]);</p>
-<p>已经设置了将数据写到临时文件，但是出现报错信息：</p>
-<p>aggregation result exceeds maximum document size (16MB)</p>
-<p>超出了文档最大限制，顾先把数据临时输出到一个集合，只包含所需字段，</p>
-<p> // 1、PV<br>        $ops_pv = [<br>            [‘$match’ =&gt; [‘dccv’ =&gt; [‘$exists’ =&gt; true]]],<br>            [‘$group’ =&gt; [‘_id’    =&gt; [‘dcac’ =&gt; ‘$dcac’, ‘dccv’ =&gt; ‘$dccv’], ‘value’    =&gt; [‘$sum’ =&gt; 1]]],<br>            [‘$out’=&gt;$tmp_name_pv],<br>        ];<br>        $mongo-&gt;collection($collection_name)-&gt;aggregate($ops_pv, [‘allowDiskUse’ =&gt; true]);<br>        $cur = $mongo-&gt;collection($tmp_name_pv)-&gt;find();<br>        while ($cur-&gt;hasNext()) {<br>            $v = $cur-&gt;getNext();<br>            //page全部数据<br>            $data_pv[implode(‘||’, $v[‘_id’])] = $v[‘value’];</p>
-<pre><code>    &#125;</code></pre>
-<p>  再从输出集合中逐条读取数据，减少内存消耗，程序正常运行。 基本思路就是化大为小，取整为零，数据是不变的</p>
-]]></content>
-      <categories>
-        <category>MongoDB</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MongoDB</tag>
       </tags>
   </entry>
   <entry>
@@ -406,6 +406,23 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
+    <title>equals和==区别</title>
+    <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
+<p> </p>
+<p>1.<strong>如果比较对象是值变量</strong>：只用==，equals()是不存在的。 为毛？通俗点讲呢，equals()是个函数啊亲，因为基本类型int float不是对象，根本就没有函数啊摔。再通俗点，int. equals(),这个写法你感受一下。。<br>2.<strong>如果比较对象是引用型变量</strong>：就是我上面说的那个情况了。我觉得题主就是问这个的。 ==：比较两个引用是不是指向同一个对象实例。 啥，你问我上面那句话啥意思，这说来话长了诶，来坐坐坐，咱从堆栈开始讲起~（自行百度吧亲，实在写不动了，改天补充吧。） equals： 那啥，所有的对象都是继承自Object这个大家都知道吧。然后equals()就是这里面的一个函数，然后那啥， <strong>Object里的**</strong>equals的实现就是直接调用了==操作<strong>。 所以如果这个时候你自定义了一个类，仅仅继承自Object且没有重写equals方法，那么其equals操作也是与Object类一样，仅仅是直接调用==操作。 这个时候他俩没啥区别。当然这是废话，尼玛equals里面这时候本来就用的==，能不一样么摔。 这么说吧，这时候比较自定义类用equals和==是一样一样的，因为这个时候尼玛都是比较句柄地址， 自定义的类是继承于object，而object中的equals就是用==来实现的。参见上面那条。 **如果一个类重写过equals方法（或者继承自一个重写过equals方法的类</strong>，那么效果与==操作就不一样了。其实我觉得这才是楼主真正要问的地方。这里参见最开始的回答。 另外，那啥，再加一句，instanceof 也是个好东西哇。你可以用他检查引用型变量是否属于某一个Class：那啥，返回的也是true 或者false，跟c#里的is差不多的说。</p>
+<p><a href="https://www.zhihu.com/question/26872848">知乎摘过来的！</a></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git pull 错误解决</title>
     <url>/2017/02/13/git-pull-%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3/</url>
     <content><![CDATA[<p>症状：pull的时候 $ <a href="http://lib.csdn.net/base/git" title="Git知识库">Git</a> pull</p>
@@ -427,30 +444,13 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
-    <title>equals和==区别</title>
-    <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
-<p> </p>
-<p>1.<strong>如果比较对象是值变量</strong>：只用==，equals()是不存在的。 为毛？通俗点讲呢，equals()是个函数啊亲，因为基本类型int float不是对象，根本就没有函数啊摔。再通俗点，int. equals(),这个写法你感受一下。。<br>2.<strong>如果比较对象是引用型变量</strong>：就是我上面说的那个情况了。我觉得题主就是问这个的。 ==：比较两个引用是不是指向同一个对象实例。 啥，你问我上面那句话啥意思，这说来话长了诶，来坐坐坐，咱从堆栈开始讲起~（自行百度吧亲，实在写不动了，改天补充吧。） equals： 那啥，所有的对象都是继承自Object这个大家都知道吧。然后equals()就是这里面的一个函数，然后那啥， <strong>Object里的**</strong>equals的实现就是直接调用了==操作<strong>。 所以如果这个时候你自定义了一个类，仅仅继承自Object且没有重写equals方法，那么其equals操作也是与Object类一样，仅仅是直接调用==操作。 这个时候他俩没啥区别。当然这是废话，尼玛equals里面这时候本来就用的==，能不一样么摔。 这么说吧，这时候比较自定义类用equals和==是一样一样的，因为这个时候尼玛都是比较句柄地址， 自定义的类是继承于object，而object中的equals就是用==来实现的。参见上面那条。 **如果一个类重写过equals方法（或者继承自一个重写过equals方法的类</strong>，那么效果与==操作就不一样了。其实我觉得这才是楼主真正要问的地方。这里参见最开始的回答。 另外，那啥，再加一句，instanceof 也是个好东西哇。你可以用他检查引用型变量是否属于某一个Class：那啥，返回的也是true 或者false，跟c#里的is差不多的说。</p>
-<p><a href="https://www.zhihu.com/question/26872848">知乎摘过来的！</a></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git常用命令一</title>
     <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80/</url>
     <content><![CDATA[<h4 id="1-安装-Github"><a href="#1-安装-Github" class="headerlink" title="1.  安装 Github"></a>1.  安装 Github</h4><hr>
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#109;&#x61;&#x69;&#108;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;">&#101;&#109;&#x61;&#x69;&#108;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;">&#x65;&#x6d;&#97;&#105;&#x6c;&#x40;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -573,7 +573,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;">&#x67;&#105;&#x74;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#x2e;&#99;&#111;&#109;</a>](mailto:<a href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#111;&#109;">&#x67;&#105;&#116;&#64;&#x67;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#109;">&#x67;&#105;&#116;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#x2e;&#99;&#x6f;&#109;</a>](mailto:<a href="mailto:&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;">&#103;&#x69;&#x74;&#64;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -1590,7 +1590,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#64;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#x2e;&#53;&#53;&#46;&#50;&#x34;&#x32;">&#x72;&#x6f;&#111;&#x74;&#64;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#x2e;&#53;&#53;&#46;&#50;&#x34;&#x32;</a></p>
+<p>ssh <a href="mailto:&#x72;&#x6f;&#x6f;&#116;&#x40;&#49;&#57;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#53;&#53;&#46;&#x32;&#52;&#50;">&#x72;&#x6f;&#x6f;&#116;&#x40;&#49;&#57;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#53;&#53;&#46;&#x32;&#52;&#50;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1610,11 +1610,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#x69;&#108;&#108;&#x40;&#x31;&#x32;&#x38;&#46;&#49;&#x39;&#x39;&#46;&#x32;&#48;&#x39;&#46;&#x32;&#52;&#x32;">&#x62;&#x69;&#108;&#108;&#x40;&#x31;&#x32;&#x38;&#46;&#49;&#x39;&#x39;&#46;&#x32;&#48;&#x39;&#46;&#x32;&#52;&#x32;</a></p>
+<p>exit<br>ssh <a href="mailto:&#x62;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#50;">&#x62;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#x38;&#46;&#x31;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#105;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#57;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#52;&#x32;">&#98;&#105;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#57;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#52;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#x32;&#52;&#50;">&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#50;&#x38;&#x2e;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#x32;&#52;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -1918,55 +1918,6 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>MySQL 重设密码以及允许远程访问</title>
-    <url>/2017/02/08/mysql-%E9%87%8D%E8%AE%BE%E5%AF%86%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE/</url>
-    <content><![CDATA[<p>mysql 重设密码 修改MySQL的配置文件（默认为/etc/my.cnf）,在[mysqld]下添加一行skip-grant-tables 保存配置文件后，重启MySQL服务 service mysqld restart 再次进入MySQL命令行 mysql -uroot -p,输入密码时直接回车，就会进入MySQL数据库了，这个时候按照常规流程修改root密码即可。 UPDATE user SET Password=password(“test123”) WHERE user=’root’; mysql允许远程访问 1. vim /etc/mysql/my.cnf 注释掉bind_address 127.0.0.1 mysql -uroot -p mysql&gt;update user set host = ‘%’ where user = ‘root’; mysql&gt;GRANT ALL PRIVILEGES ON <em>.</em> TO ‘myuser’@’%’ IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION; 2. 首先以 root 帐户登陆 MySQL</p>
-<blockquote>
-<p>MySQL -uroot -p (123456 为 root 用户的密码。)</p>
-</blockquote>
-<p>创建远程登陆用户并授权</p>
-<blockquote>
-<p>grant all PRIVILEGES on test_db.* to root@’192.168.1.101’ identified by ‘123456’;</p>
-</blockquote>
-<p>上面的语句表示将 test_db 数据库的所有权限授权给 root 这个用户，允许 root 用户在 192.168.1.101 这个 IP 进行远程登陆，并设置 root 用户的密码为 123456 。 下面逐一分析所有的参数： all PRIVILEGES 表示赋予所有的权限给指定用户，这里也可以替换为赋予某一具体的权限，例如select,insert,update,delete,create,drop 等，具体权限间用“,”半角逗号分隔。 test_db.* 表示上面的权限是针对于哪个表的，test_db指的是数据库，后面的 * 表示对于所有的表，由此可以推理出：对于全部数据库的全部表授权为“_._”，对于某一数据库的全部表授权为“数据库名.*”，对于某一数据库的某一表授权为“数据库名.表名”。 root 表示你要给哪个用户授权，这个用户可以是存在的用户，也可以是不存在的用户。 192.168.1.101 表示允许远程连接的 IP 地址，如果想不限制链接的 IP 则设置为“%”即可。 123456 为用户的密码。 执行了上面的语句后，再执行下面的语句，方可立即生效。</p>
-<blockquote>
-<p>flush privileges;</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL中的共享锁与排它锁</title>
-    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
-    <content><![CDATA[<blockquote>
-<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
-</blockquote>
-<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
-<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
-<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
-<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
-<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
-<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
-<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
-<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
-<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL 死锁问题及解决</title>
     <url>/2017/04/20/mysql-%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3/</url>
     <content><![CDATA[<p><strong>死锁（Deadlock）</strong><br>所谓死锁：是指两个或两个以上的进程在执行过程中，因争夺资源而造成的一种互相等待的现象，若无外力作用，它们都将无法推进下去。此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为死锁进程。由于资源占用是互斥的，当某个进程提出申请资源后，使得有关进程在无外力协助下，永远分配不到必需的资源而无法继续运行，这就产生了一种特殊现象死锁。 一种情形，此时执行程序中两个或多个线程发生永久堵塞（等待），每个线程都在等待被其他线程占用并堵塞了的资源。例如，如果线程A锁住了记录1并等待记录2，而线程B锁住了记录2并等待记录1，这样两个线程就发生了死锁现象。计算机系统中,如果系统的资源分配策略不当，更常见的可能是程序员写的程序有错误等，则会导致进程因竞争资源不当而产生死锁的现象。锁有多种实现方式，比如意向锁，共享－排他锁，锁表，树形协议，时间戳协议等等。锁还有多种粒度，比如可以在表上加锁，也可以在记录上加锁。<br><strong>产生死锁的原因主要是：</strong><br>（1）系统资源不足。<br>（2） 进程运行推进的顺序不合适。<br>（3）资源分配不当等。 如果系统资源充足，进程的资源请求都能够得到满足，死锁出现的可能性就很低，否则就会因争夺有限的资源而陷入死锁。其次，进程运行推进顺序与速度不同，也可能产生死锁。</p>
@@ -2030,6 +1981,55 @@ function validId15(_id){
 ]]></content>
       <categories>
         <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL 重设密码以及允许远程访问</title>
+    <url>/2017/02/08/mysql-%E9%87%8D%E8%AE%BE%E5%AF%86%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE/</url>
+    <content><![CDATA[<p>mysql 重设密码 修改MySQL的配置文件（默认为/etc/my.cnf）,在[mysqld]下添加一行skip-grant-tables 保存配置文件后，重启MySQL服务 service mysqld restart 再次进入MySQL命令行 mysql -uroot -p,输入密码时直接回车，就会进入MySQL数据库了，这个时候按照常规流程修改root密码即可。 UPDATE user SET Password=password(“test123”) WHERE user=’root’; mysql允许远程访问 1. vim /etc/mysql/my.cnf 注释掉bind_address 127.0.0.1 mysql -uroot -p mysql&gt;update user set host = ‘%’ where user = ‘root’; mysql&gt;GRANT ALL PRIVILEGES ON <em>.</em> TO ‘myuser’@’%’ IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION; 2. 首先以 root 帐户登陆 MySQL</p>
+<blockquote>
+<p>MySQL -uroot -p (123456 为 root 用户的密码。)</p>
+</blockquote>
+<p>创建远程登陆用户并授权</p>
+<blockquote>
+<p>grant all PRIVILEGES on test_db.* to root@’192.168.1.101’ identified by ‘123456’;</p>
+</blockquote>
+<p>上面的语句表示将 test_db 数据库的所有权限授权给 root 这个用户，允许 root 用户在 192.168.1.101 这个 IP 进行远程登陆，并设置 root 用户的密码为 123456 。 下面逐一分析所有的参数： all PRIVILEGES 表示赋予所有的权限给指定用户，这里也可以替换为赋予某一具体的权限，例如select,insert,update,delete,create,drop 等，具体权限间用“,”半角逗号分隔。 test_db.* 表示上面的权限是针对于哪个表的，test_db指的是数据库，后面的 * 表示对于所有的表，由此可以推理出：对于全部数据库的全部表授权为“_._”，对于某一数据库的全部表授权为“数据库名.*”，对于某一数据库的某一表授权为“数据库名.表名”。 root 表示你要给哪个用户授权，这个用户可以是存在的用户，也可以是不存在的用户。 192.168.1.101 表示允许远程连接的 IP 地址，如果想不限制链接的 IP 则设置为“%”即可。 123456 为用户的密码。 执行了上面的语句后，再执行下面的语句，方可立即生效。</p>
+<blockquote>
+<p>flush privileges;</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL中的共享锁与排它锁</title>
+    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
+    <content><![CDATA[<blockquote>
+<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
+</blockquote>
+<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
+<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
+<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
+<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
+<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
+<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
+<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+        <category>数据库</category>
       </categories>
       <tags>
         <tag>MySQL</tag>
@@ -2939,6 +2939,30 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
+    <title>Redis之HyperLogLog</title>
+    <url>/2017/01/24/redis%E4%B9%8Bhyperloglog/</url>
+    <content><![CDATA[<blockquote>
+<p>HyperLogLog，数据统计去重处理的神器之一，应用内存管理，实时计算，快速统计网站独立ip，uv等等。</p>
+</blockquote>
+<p>redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。 在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基 数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。 但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。</p>
+<h2 id="什么是基数"><a href="#什么是基数" class="headerlink" title="什么是基数?"></a>什么是基数?</h2><p>比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。  </p>
+<p>接下来举个栗子。。。</p>
+<p>我们把每日IP记录下来，假设每天有一亿个IP访问，如果使用集合的话，一天的内存使用就是1.5G，假设我们存储一个月的记录，就需要45G容量。但是使用HyperLogLog的话，一天12K，一个月360K。如果我们不需要知道IP具体信息的话，完全可以把这些记录留在内存一年、或者不删都行。如果需要，我们也会把所有的IP访问记录通过其他途径存储起来。把每天的信息存储起来，我们可以计算每月IP总数（MERGE），一年的IP总数等（去重）。  </p>
+<h3 id="最后具体操作方法"><a href="#最后具体操作方法" class="headerlink" title="最后具体操作方法"></a>最后具体操作方法</h3><p><strong>1)将元素添加至 HyperLogLog</strong><br>PFADD key element [element …] 将任意数量的元素添加到指定的 HyperLogLog 里面。 这个命令可能会对 HyperLogLog 进行修改，以便反映新的基数估算值，如果 HyperLogLog 的基数估算 值在命令执行之后出现了变化， 那么命令返回 1 ， 否则返回 0 。 命令的复杂度为 O(N) ，N 为被添加元素的数量。 返回给定 HyperLogLog 的基数估算值 PFCOUNT key [key …] 当只给定一个 HyperLogLog 时，命令返回给定 HyperLogLog 的基数估算值。 当给定多个 HyperLogLog 时，命令会先对给定的 HyperLogLog 进行并集计算，得出一个合并后的 HyperLogLog ，然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果（合并得出的 HyperLogLog 不会被储存，使用之后就会被删掉）。 当命令作用于单个 HyperLogLog 时， 复杂度为 O(1) ， 并且具有非常低的平均常数时间。 当命令作用于多个 HyperLogLog 时， 复杂度为 O(N) ，并且常数时间也比处理单个 HyperLogLog 时要 大得多。  </p>
+<p><strong>2)PFADD 和 PFCOUNT 的使用示例</strong><br><code>redis&gt; PFADD unique::ip::counter &#39;192.168.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;127.0.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;255.255.255.255&#39;</code><br><code>(integer) 1</code> <code>redis&gt; PFCOUNT unique::ip::counter</code><br><code>(integer) 3</code></p>
+<p><strong>3)合并多个 HyperLogLog</strong><br> PFMERGE destkey sourcekey [sourcekey …] 将多个 HyperLogLog 合并为一个 HyperLogLog ，合并后的 HyperLogLog 的基数估算值是通过对所有 给定 HyperLogLog 进行并集计算得出的。 命令的复杂度为 O(N) ， 其中 N 为被合并的 HyperLogLog 数量， 不过这个命令的常数复杂度比较高。 PFMERGE 的使用示例<br> <code>redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str1</code> <code>(integer) 3</code><br>  <code>redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str2</code> <code>(integer) 4</code> <code>redis&gt; PFMERGE str1&amp;2 str1 str2</code><br>  <code>OK</code><br>  <code>redis&gt; PFCOUNT str1&amp;2</code> <code>(integer) 5</code></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>综合</category>
+        <category>Redis</category>
+      </categories>
+      <tags>
+        <tag>大数据</tag>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis持久化存储</title>
     <url>/2018/05/11/redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/</url>
     <content><![CDATA[<blockquote>
@@ -2996,30 +3020,6 @@ auto-aof-rewrite-min-size 64mb</code></pre>
         <category>Redis</category>
       </categories>
       <tags>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis之HyperLogLog</title>
-    <url>/2017/01/24/redis%E4%B9%8Bhyperloglog/</url>
-    <content><![CDATA[<blockquote>
-<p>HyperLogLog，数据统计去重处理的神器之一，应用内存管理，实时计算，快速统计网站独立ip，uv等等。</p>
-</blockquote>
-<p>redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。 在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基 数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。 但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。</p>
-<h2 id="什么是基数"><a href="#什么是基数" class="headerlink" title="什么是基数?"></a>什么是基数?</h2><p>比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。  </p>
-<p>接下来举个栗子。。。</p>
-<p>我们把每日IP记录下来，假设每天有一亿个IP访问，如果使用集合的话，一天的内存使用就是1.5G，假设我们存储一个月的记录，就需要45G容量。但是使用HyperLogLog的话，一天12K，一个月360K。如果我们不需要知道IP具体信息的话，完全可以把这些记录留在内存一年、或者不删都行。如果需要，我们也会把所有的IP访问记录通过其他途径存储起来。把每天的信息存储起来，我们可以计算每月IP总数（MERGE），一年的IP总数等（去重）。  </p>
-<h3 id="最后具体操作方法"><a href="#最后具体操作方法" class="headerlink" title="最后具体操作方法"></a>最后具体操作方法</h3><p><strong>1)将元素添加至 HyperLogLog</strong><br>PFADD key element [element …] 将任意数量的元素添加到指定的 HyperLogLog 里面。 这个命令可能会对 HyperLogLog 进行修改，以便反映新的基数估算值，如果 HyperLogLog 的基数估算 值在命令执行之后出现了变化， 那么命令返回 1 ， 否则返回 0 。 命令的复杂度为 O(N) ，N 为被添加元素的数量。 返回给定 HyperLogLog 的基数估算值 PFCOUNT key [key …] 当只给定一个 HyperLogLog 时，命令返回给定 HyperLogLog 的基数估算值。 当给定多个 HyperLogLog 时，命令会先对给定的 HyperLogLog 进行并集计算，得出一个合并后的 HyperLogLog ，然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果（合并得出的 HyperLogLog 不会被储存，使用之后就会被删掉）。 当命令作用于单个 HyperLogLog 时， 复杂度为 O(1) ， 并且具有非常低的平均常数时间。 当命令作用于多个 HyperLogLog 时， 复杂度为 O(N) ，并且常数时间也比处理单个 HyperLogLog 时要 大得多。  </p>
-<p><strong>2)PFADD 和 PFCOUNT 的使用示例</strong><br><code>redis&gt; PFADD unique::ip::counter &#39;192.168.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;127.0.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;255.255.255.255&#39;</code><br><code>(integer) 1</code> <code>redis&gt; PFCOUNT unique::ip::counter</code><br><code>(integer) 3</code></p>
-<p><strong>3)合并多个 HyperLogLog</strong><br> PFMERGE destkey sourcekey [sourcekey …] 将多个 HyperLogLog 合并为一个 HyperLogLog ，合并后的 HyperLogLog 的基数估算值是通过对所有 给定 HyperLogLog 进行并集计算得出的。 命令的复杂度为 O(N) ， 其中 N 为被合并的 HyperLogLog 数量， 不过这个命令的常数复杂度比较高。 PFMERGE 的使用示例<br> <code>redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str1</code> <code>(integer) 3</code><br>  <code>redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str2</code> <code>(integer) 4</code> <code>redis&gt; PFMERGE str1&amp;2 str1 str2</code><br>  <code>OK</code><br>  <code>redis&gt; PFCOUNT str1&amp;2</code> <code>(integer) 5</code></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>综合</category>
-        <category>Redis</category>
-      </categories>
-      <tags>
-        <tag>大数据</tag>
         <tag>Redis</tag>
       </tags>
   </entry>

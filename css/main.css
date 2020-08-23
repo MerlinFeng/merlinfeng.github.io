@@ -1265,7 +1265,7 @@ img:hover {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #145c0d;
+  background: #0e99ac;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1583,9 +1583,6 @@ img:hover {
   background: transparent;
   margin: 8px -10px -20px;
   opacity: 0;
-}
-.back-to-top span {
-  display: none;
 }
 .back-to-top.back-to-top-on {
   cursor: pointer;
