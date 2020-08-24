@@ -153,33 +153,6 @@
       </tags>
   </entry>
   <entry>
-    <title>TCP协议中的三次握手和四次挥手(图解)</title>
-    <url>/2017/08/15/TCP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B(%E5%9B%BE%E8%A7%A3)/</url>
-    <content><![CDATA[<p> </p>
-<h3 id="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"><a href="#建立TCP需要三次握手才能建立，而断开连接则需要四次握手。" class="headerlink" title="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"></a>建立TCP需要三次握手才能建立，而断开连接则需要四次握手。</h3><p> 整个过程如下图所示：</p>
-<p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_131271823564Rx.gif.png"></p>
-<h3 id="先来看看如何建立连接的。"><a href="#先来看看如何建立连接的。" class="headerlink" title="先来看看如何建立连接的。"></a>先来看看如何建立连接的。</h3><p><img src="http://qiniu.fengmumiao.com/img-blog.csdn.net%252F20170104214009596%253Fwatermark%252F2%252Ftext%252FaHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2h1c2xlaQ%253D%253D%252Ffont%252F5a6L5L2T%252Ffontsize%252F400%252Ffill%252FI0JBQkFCMA%253D%253D%252Fdissolve%252F70%252Fgravity%252FCenter.png"></p>
-<p>首先Client端发送连接请求报文，Server段接受连接后回复ACK报文，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。</p>
-<h3 id="那如何断开连接呢？简单的过程如下："><a href="#那如何断开连接呢？简单的过程如下：" class="headerlink" title="那如何断开连接呢？简单的过程如下："></a>那如何断开连接呢？简单的过程如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312718564tZXD.gif.png"></p>
-<p><strong>【注意】中断连接端可以是Client端，也可以是Server端。</strong></p>
-<p> 假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说”我Client端没有数据要发给你了”，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，”告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，”告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，”就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，”就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
-<h3 id="整个过程Client端所经历的状态如下："><a href="#整个过程Client端所经历的状态如下：" class="headerlink" title="整个过程Client端所经历的状态如下："></a>整个过程Client端所经历的状态如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312719804oSkK.gif.png"></p>
-<p>而Server端所经历的过程如下：</p>
-<p><img src="http://hi.csdn.net/attachment/201108/7/0_1312719833030b.gif"></p>
-<p><strong>【注意】</strong> 在TIME_WAIT状态中，如果TCP client端最后一次发送的ACK丢失了，它将重新发送。TIME_WAIT状态中所需要的时间是依赖于实现方法的。典型的值为30秒、1分钟和2分钟。等待之后连接正式关闭，并且所有的资源(包括端口号)都被释放。</p>
-<p><strong>【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？</strong><br>答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，”你发的FIN报文我收到了”。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。</p>
-<p><strong>【问题2】为什么TIME_WAIT状态需要经过2MSL(最大报文段生存时间)才能返回到CLOSE状态？</strong></p>
-<p>答：虽然按道理，四个报文都发送完毕，我们可以直接进入CLOSE状态了，但是我们必须假象网络是不可靠的，有可以最后一个ACK丢失。所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。</p>
-<p>！</p>
-]]></content>
-      <categories>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>TCP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>aggregation result exceeds maximum document size (16MB)</title>
     <url>/2017/03/10/aggregation-result-exceeds-maximum-document-size-16mb/</url>
     <content><![CDATA[<p>mongdb操作数据，数据格式如下，大概三百多条：</p>
@@ -204,50 +177,30 @@
       </tags>
   </entry>
   <entry>
-    <title>bootstrap modal 弹窗 数据清除</title>
-    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
-    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
-<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
-<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
-<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
-<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
-<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
-<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+    <title>TCP协议中的三次握手和四次挥手(图解)</title>
+    <url>/2017/08/15/TCP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B(%E5%9B%BE%E8%A7%A3)/</url>
+    <content><![CDATA[<p> </p>
+<h3 id="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"><a href="#建立TCP需要三次握手才能建立，而断开连接则需要四次握手。" class="headerlink" title="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"></a>建立TCP需要三次握手才能建立，而断开连接则需要四次握手。</h3><p> 整个过程如下图所示：</p>
+<p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_131271823564Rx.gif.png"></p>
+<h3 id="先来看看如何建立连接的。"><a href="#先来看看如何建立连接的。" class="headerlink" title="先来看看如何建立连接的。"></a>先来看看如何建立连接的。</h3><p><img src="http://qiniu.fengmumiao.com/img-blog.csdn.net%252F20170104214009596%253Fwatermark%252F2%252Ftext%252FaHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2h1c2xlaQ%253D%253D%252Ffont%252F5a6L5L2T%252Ffontsize%252F400%252Ffill%252FI0JBQkFCMA%253D%253D%252Fdissolve%252F70%252Fgravity%252FCenter.png"></p>
+<p>首先Client端发送连接请求报文，Server段接受连接后回复ACK报文，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。</p>
+<h3 id="那如何断开连接呢？简单的过程如下："><a href="#那如何断开连接呢？简单的过程如下：" class="headerlink" title="那如何断开连接呢？简单的过程如下："></a>那如何断开连接呢？简单的过程如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312718564tZXD.gif.png"></p>
+<p><strong>【注意】中断连接端可以是Client端，也可以是Server端。</strong></p>
+<p> 假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说”我Client端没有数据要发给你了”，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，”告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，”告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，”就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，”就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
+<h3 id="整个过程Client端所经历的状态如下："><a href="#整个过程Client端所经历的状态如下：" class="headerlink" title="整个过程Client端所经历的状态如下："></a>整个过程Client端所经历的状态如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312719804oSkK.gif.png"></p>
+<p>而Server端所经历的过程如下：</p>
+<p><img src="http://hi.csdn.net/attachment/201108/7/0_1312719833030b.gif"></p>
+<p><strong>【注意】</strong> 在TIME_WAIT状态中，如果TCP client端最后一次发送的ACK丢失了，它将重新发送。TIME_WAIT状态中所需要的时间是依赖于实现方法的。典型的值为30秒、1分钟和2分钟。等待之后连接正式关闭，并且所有的资源(包括端口号)都被释放。</p>
+<p><strong>【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？</strong><br>答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，”你发的FIN报文我收到了”。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。</p>
+<p><strong>【问题2】为什么TIME_WAIT状态需要经过2MSL(最大报文段生存时间)才能返回到CLOSE状态？</strong></p>
+<p>答：虽然按道理，四个报文都发送完毕，我们可以直接进入CLOSE状态了，但是我们必须假象网络是不可靠的，有可以最后一个ACK丢失。所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。</p>
+<p>！</p>
 ]]></content>
       <categories>
-        <category>JAVAScript</category>
-        <category>编程</category>
+        <category>网络编程</category>
       </categories>
       <tags>
-        <tag>JS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CAS 与 AtomicInteger（乐观锁）</title>
-    <url>/2017/06/04/cas-%E4%B8%8E-atomicinteger%EF%BC%88%E4%B9%90%E8%A7%82%E9%94%81%EF%BC%89/</url>
-    <content><![CDATA[<h1 id="悲观锁与乐观锁"><a href="#悲观锁与乐观锁" class="headerlink" title="悲观锁与乐观锁"></a>悲观锁与乐观锁</h1><p>我们都知道，cpu是时分复用的，也就是把cpu的时间片，分配给不同的thread/process轮流执行，时间片与时间片之间，需要进行cpu切换，也就是会发生进程的切换。切换涉及到清空寄存器，缓存数据。然后重新加载新的thread所需数据。当一个线程被挂起时，加入到阻塞队列，在一定的时间或条件下，在通过notify()，notifyAll()唤醒回来。 </p>
-<p><strong>在某个资源不可用的时候，就将cpu让出，把当前等待线程切换为阻塞状态。等到资源(比如一个共享数据）可用了，那么就将线程唤醒，让他进入runnable状态等待cpu调度。这就是典型的悲观锁的实现。</strong> </p>
-<p>独占锁是一种悲观锁，synchronized就是一种独占锁，它假设最坏的情况，并且只有在确保其它线程不会造成干扰的情况下执行，会导致其它所有需要锁的线程挂起，等待持有锁的线程释放锁。 <strong>但是，由于在进程挂起和恢复执行过程中存在着很大的开销。</strong> 当一个线程正在等待锁时，它不能做任何事，所以悲观锁有很大的缺点。举个例子，如果一个线程需要某个资源，但是这个资源的占用时间很短，当线程第一次抢占这个资源时，可能这个资源被占用，如果此时挂起这个线程，可能立刻就发现资源可用，然后又需要花费很长的时间重新抢占锁，时间代价就会非常的高。 所以就有了乐观锁的概念，他的核心思路就是，每次不加锁而是假设没有冲突而去完成某项操作，<strong>如果因为冲突失败就重试，直到成功为止。</strong> 在上面的例子中，某个线程可以不让出cpu,而是一直while循环，如果失败就重试，直到成功为止。<strong>所以，当数据争用不严重时，乐观锁效果更好。</strong> 比如CAS就是一种乐观锁思想的应用。</p>
-<h1 id="Java中CAS的实现"><a href="#Java中CAS的实现" class="headerlink" title="Java中CAS的实现"></a>Java中CAS的实现</h1><p>CAS就是Compare and Swap的意思，比较并操作。很多的cpu直接支持CAS指令。CAS是项乐观锁技术，当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败， <strong>失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。</strong> <strong>CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。当且仅当预期值A和内存值V相同时，将内存值V修改为B，否则什么都不做。</strong> JDK1.5中引入了底层的支持，在int、long和对象的引用等类型上都公开了CAS的操作，并且JVM把它们编译为底层硬件提供的最有效的方法，在运行CAS的平台上，运行时把它们编译为相应的机器指令。在java.util.concurrent.atomic包下面的所有的原子变量类型中，比如AtomicInteger，都使用了这些底层的JVM支持为数字类型的引用类型提供一种高效的CAS操作。</p>
-<h1 id="ABA-问题"><a href="#ABA-问题" class="headerlink" title="ABA 问题"></a>ABA 问题</h1><p>在CAS操作中，会出现ABA问题。 <strong>就是如果V的值先由A变成B，再由B变成A，那么仍然认为是发生了变化，并需要重新执行算法中的步骤。</strong> <strong>有简单的解决方案：不是更新某个引用的值，而是更新两个值，包括一个引用和一个版本号，即使这个值由A变为B，然后为变为A，版本号也是不同的。</strong> AtomicStampedReference和AtomicMarkableReference支持在两个变量上执行原子的条件更新。AtomicStampedReference更新一个“对象-引用”二元组，通过在引用上加上“版本号”，从而避免ABA问题，AtomicMarkableReference将更新一个“对象引用-布尔值”的二元组。</p>
-<h1 id="AtomicInteger的实现"><a href="#AtomicInteger的实现" class="headerlink" title="AtomicInteger的实现"></a>AtomicInteger的实现</h1><p><strong>AtomicInteger 是一个支持原子操作的 Integer 类</strong> ，就是保证对AtomicInteger类型变量的增加和减少操作是原子性的，不会出现多个线程下的数据不一致问题。如果不使用 AtomicInteger，要实现一个按顺序获取的 ID，就必须在每次获取时进行加锁操作，以避免出现并发时获取到同样的 ID 的现象。 接下来通过源代码来看AtomicInteger具体是如何实现的原子操作。首先看incrementAndGet() 方法，下面是具体的代码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public final int incrementAndGet() &#123;  </span><br><span class="line">        for (;;) &#123;  </span><br><span class="line">            int current &#x3D; get();  </span><br><span class="line">            int next &#x3D; current + 1;  </span><br><span class="line">            if (compareAndSet(current, next))  </span><br><span class="line">                return next;  </span><br><span class="line">        &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  通过源码，可以知道，这个方法的做法为先获取到当前的 value 属性值，然后将 value 加 1，赋值给一个局部的 next 变量，然而，这两步都是非线程安全的，但是内部有一个死循环，不断去做compareAndSet操作，直到成功为止，也就是修改的根本在compareAndSet方法里面，compareAndSet()方法的代码如下：</p>
-<pre><code>    public final boolean compareAndSet(int expect, int update) &#123;  
-            return unsafe.compareAndSwapInt(this, valueOffset, expect, update);  
-    &#125;  </code></pre>
-<p>compareAndSet()方法调用的compareAndSwapInt()方法的声明如下，是一个native方法: <code>publicfinal native boolean compareAndSwapInt(Object var1, long var2, int var4, intvar5);</code> compareAndSet 传入的为执行方法时获取到的 value 属性值，next 为加 1 后的值， compareAndSet所做的为调用 Sun 的 UnSafe 的 compareAndSwapInt 方法来完成，此方法为 native 方法，<strong>compareAndSwapInt 基于的是CPU 的 CAS指令来实现的。</strong> 所以基于 CAS 的操作可认为是无阻塞的，一个线程的失败或挂起不会引起其它线程也失败或挂起。并且由于 CAS 操作是 CPU 原语，所以性能比较好。 类似的，还有decrementAndGet()方法。它和incrementAndGet()的区别是将 value 减 1，赋值给next 变量。 AtomicInteger中还有getAndIncrement() 和getAndDecrement() 方法，他们的实现原理和上面的两个方法完全相同，区别是返回值不同，前两个方法返回的是改变之后的值，即next。而这两个方法返回的是改变之前的值，即current。还有很多的其他方法，就不列举了。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA并发</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>并发</tag>
+        <tag>TCP</tag>
       </tags>
   </entry>
   <entry>
@@ -300,6 +253,53 @@
       </tags>
   </entry>
   <entry>
+    <title>CAS 与 AtomicInteger（乐观锁）</title>
+    <url>/2017/06/04/cas-%E4%B8%8E-atomicinteger%EF%BC%88%E4%B9%90%E8%A7%82%E9%94%81%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="悲观锁与乐观锁"><a href="#悲观锁与乐观锁" class="headerlink" title="悲观锁与乐观锁"></a>悲观锁与乐观锁</h1><p>我们都知道，cpu是时分复用的，也就是把cpu的时间片，分配给不同的thread/process轮流执行，时间片与时间片之间，需要进行cpu切换，也就是会发生进程的切换。切换涉及到清空寄存器，缓存数据。然后重新加载新的thread所需数据。当一个线程被挂起时，加入到阻塞队列，在一定的时间或条件下，在通过notify()，notifyAll()唤醒回来。 </p>
+<p><strong>在某个资源不可用的时候，就将cpu让出，把当前等待线程切换为阻塞状态。等到资源(比如一个共享数据）可用了，那么就将线程唤醒，让他进入runnable状态等待cpu调度。这就是典型的悲观锁的实现。</strong> </p>
+<p>独占锁是一种悲观锁，synchronized就是一种独占锁，它假设最坏的情况，并且只有在确保其它线程不会造成干扰的情况下执行，会导致其它所有需要锁的线程挂起，等待持有锁的线程释放锁。 <strong>但是，由于在进程挂起和恢复执行过程中存在着很大的开销。</strong> 当一个线程正在等待锁时，它不能做任何事，所以悲观锁有很大的缺点。举个例子，如果一个线程需要某个资源，但是这个资源的占用时间很短，当线程第一次抢占这个资源时，可能这个资源被占用，如果此时挂起这个线程，可能立刻就发现资源可用，然后又需要花费很长的时间重新抢占锁，时间代价就会非常的高。 所以就有了乐观锁的概念，他的核心思路就是，每次不加锁而是假设没有冲突而去完成某项操作，<strong>如果因为冲突失败就重试，直到成功为止。</strong> 在上面的例子中，某个线程可以不让出cpu,而是一直while循环，如果失败就重试，直到成功为止。<strong>所以，当数据争用不严重时，乐观锁效果更好。</strong> 比如CAS就是一种乐观锁思想的应用。</p>
+<h1 id="Java中CAS的实现"><a href="#Java中CAS的实现" class="headerlink" title="Java中CAS的实现"></a>Java中CAS的实现</h1><p>CAS就是Compare and Swap的意思，比较并操作。很多的cpu直接支持CAS指令。CAS是项乐观锁技术，当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败， <strong>失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。</strong> <strong>CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。当且仅当预期值A和内存值V相同时，将内存值V修改为B，否则什么都不做。</strong> JDK1.5中引入了底层的支持，在int、long和对象的引用等类型上都公开了CAS的操作，并且JVM把它们编译为底层硬件提供的最有效的方法，在运行CAS的平台上，运行时把它们编译为相应的机器指令。在java.util.concurrent.atomic包下面的所有的原子变量类型中，比如AtomicInteger，都使用了这些底层的JVM支持为数字类型的引用类型提供一种高效的CAS操作。</p>
+<h1 id="ABA-问题"><a href="#ABA-问题" class="headerlink" title="ABA 问题"></a>ABA 问题</h1><p>在CAS操作中，会出现ABA问题。 <strong>就是如果V的值先由A变成B，再由B变成A，那么仍然认为是发生了变化，并需要重新执行算法中的步骤。</strong> <strong>有简单的解决方案：不是更新某个引用的值，而是更新两个值，包括一个引用和一个版本号，即使这个值由A变为B，然后为变为A，版本号也是不同的。</strong> AtomicStampedReference和AtomicMarkableReference支持在两个变量上执行原子的条件更新。AtomicStampedReference更新一个“对象-引用”二元组，通过在引用上加上“版本号”，从而避免ABA问题，AtomicMarkableReference将更新一个“对象引用-布尔值”的二元组。</p>
+<h1 id="AtomicInteger的实现"><a href="#AtomicInteger的实现" class="headerlink" title="AtomicInteger的实现"></a>AtomicInteger的实现</h1><p><strong>AtomicInteger 是一个支持原子操作的 Integer 类</strong> ，就是保证对AtomicInteger类型变量的增加和减少操作是原子性的，不会出现多个线程下的数据不一致问题。如果不使用 AtomicInteger，要实现一个按顺序获取的 ID，就必须在每次获取时进行加锁操作，以避免出现并发时获取到同样的 ID 的现象。 接下来通过源代码来看AtomicInteger具体是如何实现的原子操作。首先看incrementAndGet() 方法，下面是具体的代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public final int incrementAndGet() &#123;  </span><br><span class="line">        for (;;) &#123;  </span><br><span class="line">            int current &#x3D; get();  </span><br><span class="line">            int next &#x3D; current + 1;  </span><br><span class="line">            if (compareAndSet(current, next))  </span><br><span class="line">                return next;  </span><br><span class="line">        &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  通过源码，可以知道，这个方法的做法为先获取到当前的 value 属性值，然后将 value 加 1，赋值给一个局部的 next 变量，然而，这两步都是非线程安全的，但是内部有一个死循环，不断去做compareAndSet操作，直到成功为止，也就是修改的根本在compareAndSet方法里面，compareAndSet()方法的代码如下：</p>
+<pre><code>    public final boolean compareAndSet(int expect, int update) &#123;  
+            return unsafe.compareAndSwapInt(this, valueOffset, expect, update);  
+    &#125;  </code></pre>
+<p>compareAndSet()方法调用的compareAndSwapInt()方法的声明如下，是一个native方法: <code>publicfinal native boolean compareAndSwapInt(Object var1, long var2, int var4, intvar5);</code> compareAndSet 传入的为执行方法时获取到的 value 属性值，next 为加 1 后的值， compareAndSet所做的为调用 Sun 的 UnSafe 的 compareAndSwapInt 方法来完成，此方法为 native 方法，<strong>compareAndSwapInt 基于的是CPU 的 CAS指令来实现的。</strong> 所以基于 CAS 的操作可认为是无阻塞的，一个线程的失败或挂起不会引起其它线程也失败或挂起。并且由于 CAS 操作是 CPU 原语，所以性能比较好。 类似的，还有decrementAndGet()方法。它和incrementAndGet()的区别是将 value 减 1，赋值给next 变量。 AtomicInteger中还有getAndIncrement() 和getAndDecrement() 方法，他们的实现原理和上面的两个方法完全相同，区别是返回值不同，前两个方法返回的是改变之后的值，即next。而这两个方法返回的是改变之前的值，即current。还有很多的其他方法，就不列举了。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA并发</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bootstrap modal 弹窗 数据清除</title>
+    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
+    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
+<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
+<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
+<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
+<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
+<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
+<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+]]></content>
+      <categories>
+        <category>JAVAScript</category>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Centos系统git1.7升级</title>
     <url>/2015/02/15/centos%E7%B3%BB%E7%BB%9Fgit1-7%E5%8D%87%E7%BA%A7/</url>
     <content><![CDATA[<p>应用centos系统时，总有git报错，版本过低不能操作巴拉巴拉。。。</p>
@@ -325,6 +325,33 @@
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang类型空结构体的通道</title>
+    <url>/2020/08/24/channel_struct/</url>
+    <content><![CDATA[<h1 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h1><p>空结构体的宽度是0，占用了0字节的内存空间。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> s <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) <span class="comment">// prints 0</span></span><br></pre></td></tr></table></figure>
+
+<p>由于空结构体占用0字节，那么空结构体也不需要填充字节。所以空结构体组成的组合数据类型也不会占用内存空间。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type S struct &#123;</span><br><span class="line"></span><br><span class="line">    A struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">    B struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var s S</span><br><span class="line"></span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) &#x2F;&#x2F; prints 0</span><br></pre></td></tr></table></figure>
+
+<h1 id="chan-struct"><a href="#chan-struct" class="headerlink" title="chan struct{}"></a>chan struct{}</h1><p>通过消息来共享数据是golang的一种设计哲学，channel则是这种哲理的体现。</p>
+<p>golang中的空结构体 channel := make(chan struct{})<br>它不能被写入任何数据，只有通过close()函数进行关闭操作，才能进行输出操作。<br>struct{}类型的channel不占用任何内存！<br>用空 struct 是对内存更友好的开发方式，在 go 源代码中针对 空struct 类数据内存申请部分，<br>返回地址都是一个固定的地址。那么就避免了可能的内存滥用。</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>省内存，尤其在事件通信的时候。</li>
+<li>struct零值就是本身，读取close的channel返回零值</li>
+</ul>
+<h2 id="常用用法"><a href="#常用用法" class="headerlink" title="常用用法"></a>常用用法</h2><p>通常struct{}类型channel的用法是使用同步，<strong>一般不需要往channel里面写数据，只有读等待，<br>而读等待会在channel被关闭的时候返回。</strong></p>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> ch <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestChanStruct</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;main() 111&quot;</span>)</span><br><span class="line">    <span class="keyword">go</span> foo()</span><br><span class="line">    log.Println(<span class="string">&quot;main() 222&quot;</span>)</span><br><span class="line">    &lt;-ch</span><br><span class="line">    log.Println(<span class="string">&quot;main() 333&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;foo() 111&quot;</span>)</span><br><span class="line">    time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 222&quot;</span>)</span><br><span class="line">    <span class="built_in">close</span>(ch)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 333&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">=== RUN   TestChanStruct</span><br><span class="line">2020/08/24 19:33:28 main() 111</span><br><span class="line">2020/08/24 19:33:28 main() 222</span><br><span class="line">2020/08/24 19:33:28 foo() 111</span><br><span class="line">2020/08/24 19:33:29 foo() 222</span><br><span class="line">2020/08/24 19:33:29 foo() 333</span><br><span class="line">2020/08/24 19:33:29 main() 333</span><br><span class="line">--- PASS: TestChanStruct (1.00s)</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>channel,golang</tag>
       </tags>
   </entry>
   <entry>
@@ -540,7 +567,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#105;&#116;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#x6d;">&#103;&#105;&#116;&#64;&#x67;&#105;&#116;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;">&#x67;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#x62;&#x2e;&#x63;&#x6f;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#109;">&#103;&#x69;&#x74;&#x40;&#103;&#105;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#x6f;&#109;</a>](mailto:<a href="mailto:&#x67;&#x69;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;">&#x67;&#x69;&#116;&#64;&#103;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -552,68 +579,13 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
-    <title>golang中的interface</title>
-    <url>/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/</url>
-    <content><![CDATA[<h2 id="interface-是一种类型"><a href="#interface-是一种类型" class="headerlink" title="interface 是一种类型"></a>interface 是一种类型</h2><hr>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">   Get() int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>首先 <strong>interface 是一种类型</strong>，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种<strong>具有一组方法的类型</strong>，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 <strong>empty interface</strong>。 <strong>如果一个类型实现了一个 interface 中所有方法，我们说类型实现了该 interface</strong>，所以所有类型都实现了 empty interface，因为任何一种类型至少实现了 0 个方法。go 没有显式的关键字用来实现 interface，只需要实现 interface 包含的方法即可。</p>
-<h2 id="interface-变量存储的是实现者的值"><a href="#interface-变量存储的是实现者的值" class="headerlink" title="interface 变量存储的是实现者的值"></a>interface 变量存储的是实现者的值</h2><hr>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;1</span><br><span class="line">type I interface &#123;    </span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;2</span><br><span class="line">type S struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func(s S) Get()int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func(s *S) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;3</span><br><span class="line">func f(i I)&#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    s :&#x3D; S&#123;&#125;</span><br><span class="line">    f(&amp;s)  &#x2F;&#x2F;4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>这段代码在 <code>#1</code> 定义了 interface I，在 <code>#2</code> 用 struct S 实现了 I 定义的两个方法，接着在 <code>#3</code> 定义了一个函数 f 参数类型是 I，S 实现了 I 的两个方法就说 S 是 I 的实现者，执行 <code>f(&amp;s)</code> 就完了一次 interface 类型的使用。 interface 的重要用途就体现在<strong>函数 f 的参数中</strong>，如果有多种类型实现了某个 interface，<strong>这些类型的值都可以直接使用 interface 的变量存储</strong>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">s :&#x3D; S&#123;&#125;</span><br><span class="line">var i I &#x2F;&#x2F;声明 i</span><br><span class="line">i &#x3D; &amp;s &#x2F;&#x2F;赋值 s 到 i</span><br><span class="line">fmt.Println(i.Get())</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>不难看出 interface 的变量中存储的是实现了 interface 的类型的对象值，这种能力是 <a href="http://en.wikipedia.org/wiki/Duck_typing">duck typing</a>。在使用 interface 时不需要显式在 struct 上声明要实现哪个 interface ，只需要实现对应 interface 中的方法即可，go 会自动进行 interface 的检查，并在运行时执行从其他类型到 interface 的自动转换，即使实现了多个 interface，go 也会在使用对应 interface 时实现自动转换，这就是 interface 的魔力所在。</p>
-<h2 id="如何判断-interface-变量存储的是哪种类型"><a href="#如何判断-interface-变量存储的是哪种类型" class="headerlink" title="如何判断 interface 变量存储的是哪种类型"></a>如何判断 interface 变量存储的是哪种类型</h2><hr>
-<p>一个 interface 被多种类型实现时，有时候我们需要区分 interface 的变量究竟存储哪种类型的值，go 可以使用 <code>comma, ok</code> 的形式做区分 <code>value, ok := em.(T)</code>：<strong>em 是 interface 类型的变量，T代表要断言的类型，value 是 interface 变量存储的值，ok 是 bool 类型表示是否为该断言的类型 T</strong>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if t, ok :&#x3D; i.(*S); ok &#123;</span><br><span class="line">    fmt.Println(&quot;s implements I&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>ok 是 true 表明 i 存储的是 <code>*S</code> 类型的值，false 则不是，这种区分能力叫 <a href="https://tour.golang.org/methods/15">Type assertions</a> (类型断言)。 如果需要区分多种类型，可以使用 switch 断言，更简单直接，这种断言方式只能在 switch 语句中使用。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">switch t :&#x3D; i.(type) &#123;</span><br><span class="line">case *S:</span><br><span class="line">    fmt.Println(&quot;i store *S&quot;, t)</span><br><span class="line">case *R:</span><br><span class="line">    fmt.Println(&quot;i store *R&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<h2 id="空的-interface"><a href="#空的-interface" class="headerlink" title="空的 interface"></a>空的 interface</h2><hr>
-<p><code>interface&#123;&#125;</code> 是一个空的 interface 类型，根据前文的定义：一个类型如果实现了一个 interface 的所有方法就说该类型实现了这个 interface，空的 interface 没有方法，所以可以认为所有的类型都实现了 <code>interface&#123;&#125;</code>。如果定义一个函数参数是 <code>interface&#123;&#125;</code> 类型，这个函数应该可以接受任何类型作为它的参数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func doSomething(v interface&#123;&#125;)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果函数的参数 v 可以接受任何类型，那么函数被调用时在函数内部 v 是不是表示的是任何类型？并不是，虽然函数的参数可以接受任何类型，并不表示 v 就是任何类型，在函数 doSomething 内部 v 仅仅是一个 interface 类型，之所以函数可以接受任何类型是在 go 执行时传递到函数的任何类型都被自动转换成 <code>interface&#123;&#125;</code>。go 是如何进行转换的，以及 v 存储的值究竟是怎么做到可以接受任何类型的，感兴趣的可以看看 <a href="https://research.swtch.com/interfaces">Russ Cox 关于 interface 的实现</a> 。 既然空的 interface 可以接受任何类型的参数，那么一个 <code>interface&#123;&#125;</code>类型的 slice 是不是就可以接受任何类型的 slice ?</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func printAll(vals []interface&#123;&#125;) &#123; &#x2F;&#x2F;1</span><br><span class="line">    for _, val :&#x3D; range vals &#123;</span><br><span class="line">        fmt.Println(val)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">    names :&#x3D; \[\]string&#123;&quot;stanley&quot;, &quot;david&quot;, &quot;oscar&quot;&#125;</span><br><span class="line">    printAll(names)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>上面的代码是按照我们的假设修改的，执行之后竟然会报 <code>cannot use names (type []string) as type []interface &#123;&#125; in argument to printAll</code> 错误，why？ 这个错误说明 go 没有帮助我们自动把 slice 转换成 <code>interface&#123;&#125;</code> 类型的 slice，所以出错了。<strong>go 不会对 类型是<code>interface&#123;&#125;</code> 的 slice 进行转换</strong> 。为什么 go 不帮我们自动转换，一开始我也很好奇，最后终于在 go 的 wiki 中找到了答案 <a href="https://github.com/golang/go/wiki/InterfaceSlice">https://github.com/golang/go/wiki/InterfaceSlice</a> 大意是 <code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的 methods 数据，一个是指向其存储值的指针，也就是 interface 变量存储的值，因而 slice []interface{} 其长度是固定的<code>N*2</code>，但是 []T 的长度是<code>N*sizeof(T)</code>，两种 slice 实际存储值的大小是有区别的(文中只介绍两种 slice 的不同，至于为什么不能转换猜测可能是 runtime 转换代价比较大)。 但是我们可以手动进行转换来达到我们的目的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var dataSlice []int &#x3D; foo()</span><br><span class="line">var interfaceSlice []interface&#123;&#125; &#x3D; make([]interface&#123;&#125;, len(dataSlice))</span><br><span class="line">for i, d :&#x3D; range dataSlice &#123;</span><br><span class="line">    interfaceSlice[i] &#x3D; d</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<h2 id="interface-的实现者的-receiver-如何选择"><a href="#interface-的实现者的-receiver-如何选择" class="headerlink" title="interface 的实现者的 receiver 如何选择"></a>interface 的实现者的 receiver 如何选择</h2><hr>
-<p>在我们上文的例子中调用 f 是 <code>f(&amp;s)</code> 也就是 S 的指针类型，为什么不能是 <code>f(s)</code> 呢，如果是 s 会有什么问题？改成 f(s) 然后执行代码。</p>
-<p>cannot use s (type S) as type I in argument to f:<br>    S does not implement I (Set method has pointer receiver)</p>
-<p> </p>
-<p>这个错误的意思是 S 没有实现 I，哪里出了问题？*<em>关键点是 S 中 set 方法的 receiver 是个 pointer <em>S</em></em> 。 interface 定义时并没有严格规定实现者的方法 receiver 是个 value receiver 还是 pointer receiver，上面代码中的 S 的 Set receiver 是 pointer，也就是实现 I 的两个方法的 receiver 一个是 value 一个是 pointer，使用 <code>f(s)</code>的形势调用，传递给 f 的是个 s 的一份拷贝，在进行 s 的拷贝到 I 的转换时，s 的拷贝不满足 Set 方法的 receiver 是个 pointer，也就没有实现 I。<strong>go 中函数都是按值传递即 passed by value</strong>。 那反过来会怎样，如果 receiver 是 value，函数用 pointer 的形式调用？</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">type SS struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Get() int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">func f(i I) &#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">      ss :&#x3D; SS&#123;&#125;</span><br><span class="line">    f(&amp;ss) &#x2F;&#x2F;ponter</span><br><span class="line">    f(ss)  &#x2F;&#x2F;value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>I 的实现者 SS 的方法 receiver 都是 value receiver，执行代码可以看到无论是 pointer 还是 value 都可以正确执行。 导致这一现象的原因是什么？ 如果是按 pointer 调用，go 会自动进行转换，因为有了指针总是能得到指针指向的值是什么，如果是 value 调用，go 将无从得知 value 的原始值是什么，因为 value 是份拷贝。<strong>go 会把指针进行隐式转换得到 value，但反过来则不行</strong>。 对于 receiver 是 value 的 method，任何在 method 内部对 value 做出的改变都不影响调用者看到的 value，这就是按值传递。 另一个说明上述现象的例子是这样的来自 <a href="https://play.golang.org/p/TvR758rfre">https://play.golang.org/p/TvR758rfre</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line">type Animal interface &#123;</span><br><span class="line">    Speak() string</span><br><span class="line">&#125;</span><br><span class="line">type Dog struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (d Dog) Speak() string &#123;</span><br><span class="line">    return &quot;Woof!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Cat struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;1</span><br><span class="line">func (c *Cat) Speak() string &#123;</span><br><span class="line">    return &quot;Meow!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Llama struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (l Llama) Speak() string &#123;</span><br><span class="line">    return &quot;?????&quot;</span><br><span class="line">&#125;</span><br><span class="line">type JavaProgrammer struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (j JavaProgrammer) Speak() string &#123;</span><br><span class="line">    return &quot;Design patterns!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    animals :&#x3D; \[\]Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, Llama&#123;&#125;, JavaProgrammer&#123;&#125;&#125;</span><br><span class="line">    for _, animal :&#x3D; range animals &#123;</span><br><span class="line">        fmt.Println(animal.Speak())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p><code>#1</code> Cat 的 speak receiver 是 pointer，interface Animal 的 slice，Cat 的值是一个 value，同样会因为 receiver 不一致而导致无法执行。</p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git常用命令一</title>
     <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80/</url>
     <content><![CDATA[<h4 id="1-安装-Github"><a href="#1-安装-Github" class="headerlink" title="1.  安装 Github"></a>1.  安装 Github</h4><hr>
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#x61;&#105;&#x6c;&#x40;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#x65;&#x6d;&#x61;&#105;&#x6c;&#x40;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#x63;&#x6f;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#x6d;&#x61;&#x69;&#x6c;&#64;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;">&#101;&#x6d;&#x61;&#x69;&#x6c;&#64;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -699,6 +671,188 @@ setcookie("sso", $_GET["sso"]);
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的一些基本问题</title>
+    <url>/2018/01/08/golang%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<h3 id="import中下划线的作用"><a href="#import中下划线的作用" class="headerlink" title="import中下划线的作用"></a>import中下划线的作用</h3><blockquote>
+<p>import 下划线（如：import _ hello/imp）的作用：当导入一个包时，该包下的文件里所有init()函数都会被执行，然而，有些时候我们并不需要把整个包都导入进来，仅仅是是希望它执行init()函数而已。这个时候就可以使用 import _ 引用该包。即使用【import _ 包路径】只是引用该包，仅仅是为了调用init()函数，所以无法通过包名来调用包中的其他函数。</p>
+</blockquote>
+<h3 id="变量赋值"><a href="#变量赋值" class="headerlink" title="变量赋值"></a>变量赋值</h3><p>f, err = os.Open(“foo.txt”) // function call returns two values</p>
+<p>  通常，这类函数会用额外的返回值来表达某种错误类型，例如os.Open是用额外的返回值返回一个error类型的错误，还有一些是用来返回布尔值，通常被称为ok。</p>
+<p>_, err = io.Copy(dst, src) // 丢弃字节数<br>_, ok = x.(T) // 只检测类型，忽略具体值</p>
+<p>  和变量声明一样，我们可以用下划线空白标识符_来丢弃不需要的值。</p>
+<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><p>func name(parameter-list) (result-list) {<br>    body<br>}</p>
+<p>func hypot(x, y float64) float64 {<br>    return math.Sqrt(x*x + y*y)<br>}<br>fmt.Println(hypot(3,4)) // “5”</p>
+<p>#多返回值<br>// findLinks performs an HTTP GET request for url, parses the<br>// response as HTML, and extracts and returns the links.<br>func findLinks(url string) ([]string, error) {<br>    resp, err := http.Get(url)<br>    if err != nil {<br>        return nil, err<br>    }<br>    if resp.StatusCode != http.StatusOK {<br>        resp.Body.Close()<br>        return nil, fmt.Errorf(“getting %s: %s”, url, resp.Status)<br>    }<br>    doc, err := html.Parse(resp.Body)<br>    resp.Body.Close()<br>    if err != nil {<br>        return nil, fmt.Errorf(“parsing %s as HTML: %v”, url, err)<br>    }<br>    return visit(nil, doc), nil<br>}</p>
+<p> </p>
+<h3 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h3><p>在声明可变参数函数时，需要在参数列表的最后一个参数类型之前加上省略符号“…”，这表示该函数会接收任意数量的该类型参数。</p>
+<p>func sum(vals…int) int {<br>    total := 0<br>    for _, val := range vals {<br>        total += val<br>    }<br>    return total<br>}</p>
+<p>  sum函数返回任意个int型参数的和。在函数体中,vals被看作是类型为[] int的切片。sum可以接收任意数量的int型参数：</p>
+<p>fmt.Println(sum())           // “0”<br>fmt.Println(sum(3))          // “3”<br>fmt.Println(sum(1, 2, 3, 4)) // “10”</p>
+<p>  可变参数函数经常被用于格式化字符串。下面的errorf函数构造了一个以行号开头的，经过格式化的错误信息。函数名的后缀f是一种通用的命名规范，代表该可变参数函数可以接收Printf风格的格式化字符串。</p>
+<p>func errorf(linenum int, format string, args …interface{}) {<br>    fmt.Fprintf(os.Stderr, “Line %d: “, linenum)<br>    fmt.Fprintf(os.Stderr, format, args…)<br>    fmt.Fprintln(os.Stderr)<br>}<br>linenum, name := 12, “count”<br>errorf(linenum, “undefined: %s”, name) // “Line 12: undefined: count”</p>
+<p>  interface{}表示函数的最后一个参数可以接收任意类型</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的interface</title>
+    <url>/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/</url>
+    <content><![CDATA[<h2 id="interface-是一种类型"><a href="#interface-是一种类型" class="headerlink" title="interface 是一种类型"></a>interface 是一种类型</h2><hr>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">   Get() int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>首先 <strong>interface 是一种类型</strong>，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种<strong>具有一组方法的类型</strong>，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 <strong>empty interface</strong>。 <strong>如果一个类型实现了一个 interface 中所有方法，我们说类型实现了该 interface</strong>，所以所有类型都实现了 empty interface，因为任何一种类型至少实现了 0 个方法。go 没有显式的关键字用来实现 interface，只需要实现 interface 包含的方法即可。</p>
+<h2 id="interface-变量存储的是实现者的值"><a href="#interface-变量存储的是实现者的值" class="headerlink" title="interface 变量存储的是实现者的值"></a>interface 变量存储的是实现者的值</h2><hr>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;1</span><br><span class="line">type I interface &#123;    </span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;2</span><br><span class="line">type S struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func(s S) Get()int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func(s *S) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;3</span><br><span class="line">func f(i I)&#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    s :&#x3D; S&#123;&#125;</span><br><span class="line">    f(&amp;s)  &#x2F;&#x2F;4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>这段代码在 <code>#1</code> 定义了 interface I，在 <code>#2</code> 用 struct S 实现了 I 定义的两个方法，接着在 <code>#3</code> 定义了一个函数 f 参数类型是 I，S 实现了 I 的两个方法就说 S 是 I 的实现者，执行 <code>f(&amp;s)</code> 就完了一次 interface 类型的使用。 interface 的重要用途就体现在<strong>函数 f 的参数中</strong>，如果有多种类型实现了某个 interface，<strong>这些类型的值都可以直接使用 interface 的变量存储</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">s :&#x3D; S&#123;&#125;</span><br><span class="line">var i I &#x2F;&#x2F;声明 i</span><br><span class="line">i &#x3D; &amp;s &#x2F;&#x2F;赋值 s 到 i</span><br><span class="line">fmt.Println(i.Get())</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>不难看出 interface 的变量中存储的是实现了 interface 的类型的对象值，这种能力是 <a href="http://en.wikipedia.org/wiki/Duck_typing">duck typing</a>。在使用 interface 时不需要显式在 struct 上声明要实现哪个 interface ，只需要实现对应 interface 中的方法即可，go 会自动进行 interface 的检查，并在运行时执行从其他类型到 interface 的自动转换，即使实现了多个 interface，go 也会在使用对应 interface 时实现自动转换，这就是 interface 的魔力所在。</p>
+<h2 id="如何判断-interface-变量存储的是哪种类型"><a href="#如何判断-interface-变量存储的是哪种类型" class="headerlink" title="如何判断 interface 变量存储的是哪种类型"></a>如何判断 interface 变量存储的是哪种类型</h2><hr>
+<p>一个 interface 被多种类型实现时，有时候我们需要区分 interface 的变量究竟存储哪种类型的值，go 可以使用 <code>comma, ok</code> 的形式做区分 <code>value, ok := em.(T)</code>：<strong>em 是 interface 类型的变量，T代表要断言的类型，value 是 interface 变量存储的值，ok 是 bool 类型表示是否为该断言的类型 T</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if t, ok :&#x3D; i.(*S); ok &#123;</span><br><span class="line">    fmt.Println(&quot;s implements I&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>ok 是 true 表明 i 存储的是 <code>*S</code> 类型的值，false 则不是，这种区分能力叫 <a href="https://tour.golang.org/methods/15">Type assertions</a> (类型断言)。 如果需要区分多种类型，可以使用 switch 断言，更简单直接，这种断言方式只能在 switch 语句中使用。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">switch t :&#x3D; i.(type) &#123;</span><br><span class="line">case *S:</span><br><span class="line">    fmt.Println(&quot;i store *S&quot;, t)</span><br><span class="line">case *R:</span><br><span class="line">    fmt.Println(&quot;i store *R&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="空的-interface"><a href="#空的-interface" class="headerlink" title="空的 interface"></a>空的 interface</h2><hr>
+<p><code>interface&#123;&#125;</code> 是一个空的 interface 类型，根据前文的定义：一个类型如果实现了一个 interface 的所有方法就说该类型实现了这个 interface，空的 interface 没有方法，所以可以认为所有的类型都实现了 <code>interface&#123;&#125;</code>。如果定义一个函数参数是 <code>interface&#123;&#125;</code> 类型，这个函数应该可以接受任何类型作为它的参数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func doSomething(v interface&#123;&#125;)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果函数的参数 v 可以接受任何类型，那么函数被调用时在函数内部 v 是不是表示的是任何类型？并不是，虽然函数的参数可以接受任何类型，并不表示 v 就是任何类型，在函数 doSomething 内部 v 仅仅是一个 interface 类型，之所以函数可以接受任何类型是在 go 执行时传递到函数的任何类型都被自动转换成 <code>interface&#123;&#125;</code>。go 是如何进行转换的，以及 v 存储的值究竟是怎么做到可以接受任何类型的，感兴趣的可以看看 <a href="https://research.swtch.com/interfaces">Russ Cox 关于 interface 的实现</a> 。 既然空的 interface 可以接受任何类型的参数，那么一个 <code>interface&#123;&#125;</code>类型的 slice 是不是就可以接受任何类型的 slice ?</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func printAll(vals []interface&#123;&#125;) &#123; &#x2F;&#x2F;1</span><br><span class="line">    for _, val :&#x3D; range vals &#123;</span><br><span class="line">        fmt.Println(val)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">    names :&#x3D; \[\]string&#123;&quot;stanley&quot;, &quot;david&quot;, &quot;oscar&quot;&#125;</span><br><span class="line">    printAll(names)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>上面的代码是按照我们的假设修改的，执行之后竟然会报 <code>cannot use names (type []string) as type []interface &#123;&#125; in argument to printAll</code> 错误，why？ 这个错误说明 go 没有帮助我们自动把 slice 转换成 <code>interface&#123;&#125;</code> 类型的 slice，所以出错了。<strong>go 不会对 类型是<code>interface&#123;&#125;</code> 的 slice 进行转换</strong> 。为什么 go 不帮我们自动转换，一开始我也很好奇，最后终于在 go 的 wiki 中找到了答案 <a href="https://github.com/golang/go/wiki/InterfaceSlice">https://github.com/golang/go/wiki/InterfaceSlice</a> 大意是 <code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的 methods 数据，一个是指向其存储值的指针，也就是 interface 变量存储的值，因而 slice []interface{} 其长度是固定的<code>N*2</code>，但是 []T 的长度是<code>N*sizeof(T)</code>，两种 slice 实际存储值的大小是有区别的(文中只介绍两种 slice 的不同，至于为什么不能转换猜测可能是 runtime 转换代价比较大)。 但是我们可以手动进行转换来达到我们的目的。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var dataSlice []int &#x3D; foo()</span><br><span class="line">var interfaceSlice []interface&#123;&#125; &#x3D; make([]interface&#123;&#125;, len(dataSlice))</span><br><span class="line">for i, d :&#x3D; range dataSlice &#123;</span><br><span class="line">    interfaceSlice[i] &#x3D; d</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="interface-的实现者的-receiver-如何选择"><a href="#interface-的实现者的-receiver-如何选择" class="headerlink" title="interface 的实现者的 receiver 如何选择"></a>interface 的实现者的 receiver 如何选择</h2><hr>
+<p>在我们上文的例子中调用 f 是 <code>f(&amp;s)</code> 也就是 S 的指针类型，为什么不能是 <code>f(s)</code> 呢，如果是 s 会有什么问题？改成 f(s) 然后执行代码。</p>
+<p>cannot use s (type S) as type I in argument to f:<br>    S does not implement I (Set method has pointer receiver)</p>
+<p> </p>
+<p>这个错误的意思是 S 没有实现 I，哪里出了问题？*<em>关键点是 S 中 set 方法的 receiver 是个 pointer <em>S</em></em> 。 interface 定义时并没有严格规定实现者的方法 receiver 是个 value receiver 还是 pointer receiver，上面代码中的 S 的 Set receiver 是 pointer，也就是实现 I 的两个方法的 receiver 一个是 value 一个是 pointer，使用 <code>f(s)</code>的形势调用，传递给 f 的是个 s 的一份拷贝，在进行 s 的拷贝到 I 的转换时，s 的拷贝不满足 Set 方法的 receiver 是个 pointer，也就没有实现 I。<strong>go 中函数都是按值传递即 passed by value</strong>。 那反过来会怎样，如果 receiver 是 value，函数用 pointer 的形式调用？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">type SS struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Get() int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">func f(i I) &#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">      ss :&#x3D; SS&#123;&#125;</span><br><span class="line">    f(&amp;ss) &#x2F;&#x2F;ponter</span><br><span class="line">    f(ss)  &#x2F;&#x2F;value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>I 的实现者 SS 的方法 receiver 都是 value receiver，执行代码可以看到无论是 pointer 还是 value 都可以正确执行。 导致这一现象的原因是什么？ 如果是按 pointer 调用，go 会自动进行转换，因为有了指针总是能得到指针指向的值是什么，如果是 value 调用，go 将无从得知 value 的原始值是什么，因为 value 是份拷贝。<strong>go 会把指针进行隐式转换得到 value，但反过来则不行</strong>。 对于 receiver 是 value 的 method，任何在 method 内部对 value 做出的改变都不影响调用者看到的 value，这就是按值传递。 另一个说明上述现象的例子是这样的来自 <a href="https://play.golang.org/p/TvR758rfre">https://play.golang.org/p/TvR758rfre</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line">type Animal interface &#123;</span><br><span class="line">    Speak() string</span><br><span class="line">&#125;</span><br><span class="line">type Dog struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (d Dog) Speak() string &#123;</span><br><span class="line">    return &quot;Woof!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Cat struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;1</span><br><span class="line">func (c *Cat) Speak() string &#123;</span><br><span class="line">    return &quot;Meow!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Llama struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (l Llama) Speak() string &#123;</span><br><span class="line">    return &quot;?????&quot;</span><br><span class="line">&#125;</span><br><span class="line">type JavaProgrammer struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (j JavaProgrammer) Speak() string &#123;</span><br><span class="line">    return &quot;Design patterns!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    animals :&#x3D; \[\]Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, Llama&#123;&#125;, JavaProgrammer&#123;&#125;&#125;</span><br><span class="line">    for _, animal :&#x3D; range animals &#123;</span><br><span class="line">        fmt.Println(animal.Speak())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p><code>#1</code> Cat 的 speak receiver 是 pointer，interface Animal 的 slice，Cat 的值是一个 value，同样会因为 receiver 不一致而导致无法执行。</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HashMap与HashTable的区别</title>
+    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
+<blockquote>
+<p>概览：</p>
+<p>hashmap</p>
+<p>线程不安全</p>
+<p>允许有null的键和值</p>
+<p>效率高一点、</p>
+<p>方法不是Synchronize的要提供外同步</p>
+<p>有containsvalue和containsKey方法</p>
+<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
+<p>HashMap是Hashtable的轻量级实现</p>
+<p>hashtable</p>
+<p>线程安全</p>
+<p>不允许有null的键和值</p>
+<p>效率稍低、</p>
+<p>方法是是Synchronize的</p>
+<p>有contains方法方法</p>
+<p>Hashtable 继承于Dictionary 类</p>
+<p>Hashtable 比HashMap 要旧</p>
+</blockquote>
+<p> </p>
+<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
+<ol>
+<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
+<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
+<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
+<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
+<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
+</ol>
+<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
+<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
+</ol>
+<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
+<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HashMap的工作原理</title>
+    <url>/2017/06/18/hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>“你用过HashMap吗？” “什么是HashMap？你为什么用到它？”</strong></p>
+</blockquote>
+<p>几乎每个人都会回答“是的”，然后回答HashMap的一些特性，譬如HashMap可以接受null键值和值，而Hashtable则不能；HashMap是非synchronized;HashMap很快；以及HashMap储存的是键值对等等。这显示出你已经用过HashMap，而且对它相当的熟悉。但是面试官来个急转直下，从此刻开始问出一些刁钻的问题，关于HashMap的更多基础的细节。面试官可能会问出下面的问题：</p>
+<blockquote>
+<p><strong>“你知道HashMap的工作原理吗？” “你知道HashMap的get()方法的工作原理吗？”</strong></p>
+</blockquote>
+<p>你也许会回答“我没有详查标准的Java API，你可以看看Java源代码或者Open JDK。”“我可以用Google找到答案。” 但一些面试者可能可以给出答案，“HashMap是基于hashing的原理，我们使用put(key, value)存储对象到HashMap中，使用get(key)从HashMap中获取对象。当我们给put()方法传递键和值时，我们先对键调用hashCode()方法，返回的hashCode用于找到bucket位置来储存Entry对象。”这里关键点在于指出，HashMap是在bucket中储存键对象和值对象，作为Map.Entry。这一点有助于理解获取对象的逻辑。如果你没有意识到这一点，或者错误的认为仅仅只在bucket中存储值的话，你将不会回答如何从HashMap中获取对象的逻辑。这个答案相当的正确，也显示出面试者确实知道hashing以及HashMap的工作原理。但是这仅仅是故事的开始，当面试官加入一些Java程序员每天要碰到的实际场景的时候，错误的答案频现。下个问题可能是关于HashMap中的碰撞探测(collision detection)以及碰撞的解决方法：</p>
+<blockquote>
+<p><strong>“当两个对象的hashcode相同会发生什么？”</strong></p>
+</blockquote>
+<p>从这里开始，真正的困惑开始了，一些面试者会回答因为hashcode相同，所以两个对象是相等的，HashMap将会抛出异常，或者不会存储它们。然后面试官可能会提醒他们有equals()和hashCode()两个方法，并告诉他们两个对象就算hashcode相同，但是它们可能并不相等。一些面试者可能就此放弃，而另外一些还能继续挺进，他们回答“因为hashcode相同，所以它们的bucket位置相同，‘碰撞’会发生。因为HashMap使用链表存储对象，这个Entry(包含有键值对的Map.Entry对象)会存储在链表中。”这个答案非常的合理，虽然有很多种处理碰撞的方法，这种方法是最简单的，也正是HashMap的处理方法。但故事还没有完结，面试官会继续问：</p>
+<blockquote>
+<p><strong>“如果两个键的hashcode相同，你如何获取值对象？”</strong></p>
+</blockquote>
+<p>面试者会回答：当我们调用get()方法，HashMap会使用键对象的hashcode找到bucket位置，然后获取值对象。面试官提醒他如果有两个值对象储存在同一个bucket，他给出答案:将会遍历链表直到找到值对象。面试官会问因为你并没有值对象去比较，你是如何确定确定找到值对象的？除非面试者直到HashMap在链表中存储的是键值对，否则他们不可能回答出这一题。 其中一些记得这个重要知识点的面试者会说，找到bucket位置之后，会调用keys.equals()方法去找到链表中正确的节点，最终找到要找的值对象。完美的答案！ 许多情况下，面试者会在这个环节中出错，因为他们混淆了hashCode()和equals()方法。因为在此之前hashCode()屡屡出现，而equals()方法仅仅在获取值对象的时候才出现。一些优秀的开发者会指出使用不可变的、声明作final的对象，并且采用合适的equals()和hashCode()方法的话，将会减少碰撞的发生，提高效率。不可变性使得能够缓存不同键的hashcode，这将提高整个获取对象的速度，使用String，Interger这样的wrapper类作为键是非常好的选择。 如果你认为到这里已经完结了，那么听到下面这个问题的时候，你会大吃一惊。</p>
+<blockquote>
+<p><strong>“如果HashMap的大小超过了负载因子(load factor)定义的容量，怎么办？”</strong></p>
+</blockquote>
+<p>除非你真正知道HashMap的工作原理，否则你将回答不出这道题。默认的负载因子大小为0.75，也就是说，当一个map填满了75%的bucket时候，和其它集合类(如ArrayList等)一样，将会创建原来HashMap大小的两倍的bucket数组，来重新调整map的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehashing，因为它调用hash方法找到新的bucket位置。 如果你能够回答这道问题，下面的问题来了：</p>
+<blockquote>
+<p><strong>“你了解重新调整HashMap大小存在什么问题吗？”</strong></p>
+</blockquote>
+<p>你可能回答不上来，这时面试官会提醒你当多线程的情况下，可能产生条件竞争(race condition)。 当重新调整HashMap大小的时候，确实存在条件竞争，因为如果两个线程都发现HashMap需要重新调整大小了，它们会同时试着调整大小。在调整大小的过程中，存储在链表中的元素的次序会反过来，因为移动到新的bucket位置的时候，HashMap并不会将元素放在链表的尾部，而是放在头部，这是为了避免尾部遍历(tail traversing)。如果条件竞争发生了，那么就死循环了。这个时候，你可以质问面试官，为什么这么奇怪，要在多线程的环境下使用HashMap呢？：） 热心的读者贡献了更多的关于HashMap的问题：</p>
+<ol>
+<li><strong>为什么String, Interger这样的wrapper类适合作为键？</strong> </li>
+</ol>
+<p>String, Interger这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，也是final的，而且已经重写了equals()和hashCode()方法了。其他的wrapper类也有这个特点。不可变性是必要的，因为为了要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，那么就不能从HashMap中找到你想要的对象。不可变性还有其他的优点如线程安全。如果你可以仅仅通过将某个field声明成final就能保证hashCode是不变的，那么请这么做吧。因为获取对象的时候要用到equals()和hashCode()方法，那么键对象正确的重写这两个方法是非常重要的。如果两个不相等的对象返回不同的hashcode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。<br>2.  <strong>我们可以使用自定义的对象作为键吗？</strong> 这是前一个问题的延伸。当然你可能使用任何对象作为键，只要它遵守了equals()和hashCode()方法的定义规则，并且当对象插入到Map中之后将不会再改变了。如果这个自定义对象时不可变的，那么它已经满足了作为键的条件，因为当它创建之后就已经不能改变了。<br>3.  <strong>我们可以使用CocurrentHashMap来代替Hashtable吗？</strong></p>
+<p>这是另外一个很热门的面试题，因为ConcurrentHashMap越来越多人用了。我们知道Hashtable是synchronized的，但是ConcurrentHashMap同步性能更好，因为它仅仅根据同步级别对map的一部分进行上锁。ConcurrentHashMap当然可以代替HashTable，但是HashTable提供更强的线程安全性。</p>
+<p>我个人很喜欢这个问题，因为这个问题的深度和广度，也不直接的涉及到不同的概念。让我们再来看看这些问题设计哪些知识点：</p>
+<ul>
+<li>hashing的概念</li>
+<li>HashMap中解决碰撞的方法</li>
+<li>equals()和hashCode()的应用，以及它们在HashMap中的重要性</li>
+<li>不可变对象的好处</li>
+<li>HashMap多线程的条件竞争</li>
+<li>重新调整HashMap的大小</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a href="https://github.com/stephanietang/ImportNew/blob/master/Java/How%20HashMap%20works%20in%20Java.md#%E6%80%BB%E7%BB%93"></a>总结</h3><h4 id="HashMap的工作原理"><a href="#HashMap的工作原理" class="headerlink" title="HashMap的工作原理"></a><a href="https://github.com/stephanietang/ImportNew/blob/master/Java/How%20HashMap%20works%20in%20Java.md#hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86-1"></a>HashMap的工作原理</h4><p>HashMap基于hashing原理，我们通过put()和get()方法储存和获取对象。当我们将键值对传递给put()方法时，它调用键对象的hashCode()方法来计算hashcode，让后找到bucket位置来储存值对象。当获取对象时，通过键对象的equals()方法找到正确的键值对，然后返回值对象。HashMap使用链表来解决碰撞问题，当发生碰撞了，对象将会储存在链表的下一个节点中。 HashMap在每个链表节点中储存键值对对象。 当两个不同的键对象的hashcode相同时会发生什么？ 它们会储存在同一个bucket位置的链表中。键对象的equals()方法用来找到键值对</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
       </tags>
   </entry>
   <entry>
@@ -1014,133 +1168,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>HashMap与HashTable的区别</title>
-    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
-<blockquote>
-<p>概览：</p>
-<p>hashmap</p>
-<p>线程不安全</p>
-<p>允许有null的键和值</p>
-<p>效率高一点、</p>
-<p>方法不是Synchronize的要提供外同步</p>
-<p>有containsvalue和containsKey方法</p>
-<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
-<p>HashMap是Hashtable的轻量级实现</p>
-<p>hashtable</p>
-<p>线程安全</p>
-<p>不允许有null的键和值</p>
-<p>效率稍低、</p>
-<p>方法是是Synchronize的</p>
-<p>有contains方法方法</p>
-<p>Hashtable 继承于Dictionary 类</p>
-<p>Hashtable 比HashMap 要旧</p>
-</blockquote>
-<p> </p>
-<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
-<ol>
-<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
-<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
-<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
-<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
-<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
-</ol>
-<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
-<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
-</ol>
-<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
-<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang中的一些基本问题</title>
-    <url>/2018/01/08/golang%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<h3 id="import中下划线的作用"><a href="#import中下划线的作用" class="headerlink" title="import中下划线的作用"></a>import中下划线的作用</h3><blockquote>
-<p>import 下划线（如：import _ hello/imp）的作用：当导入一个包时，该包下的文件里所有init()函数都会被执行，然而，有些时候我们并不需要把整个包都导入进来，仅仅是是希望它执行init()函数而已。这个时候就可以使用 import _ 引用该包。即使用【import _ 包路径】只是引用该包，仅仅是为了调用init()函数，所以无法通过包名来调用包中的其他函数。</p>
-</blockquote>
-<h3 id="变量赋值"><a href="#变量赋值" class="headerlink" title="变量赋值"></a>变量赋值</h3><p>f, err = os.Open(“foo.txt”) // function call returns two values</p>
-<p>  通常，这类函数会用额外的返回值来表达某种错误类型，例如os.Open是用额外的返回值返回一个error类型的错误，还有一些是用来返回布尔值，通常被称为ok。</p>
-<p>_, err = io.Copy(dst, src) // 丢弃字节数<br>_, ok = x.(T) // 只检测类型，忽略具体值</p>
-<p>  和变量声明一样，我们可以用下划线空白标识符_来丢弃不需要的值。</p>
-<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><p>func name(parameter-list) (result-list) {<br>    body<br>}</p>
-<p>func hypot(x, y float64) float64 {<br>    return math.Sqrt(x*x + y*y)<br>}<br>fmt.Println(hypot(3,4)) // “5”</p>
-<p>#多返回值<br>// findLinks performs an HTTP GET request for url, parses the<br>// response as HTML, and extracts and returns the links.<br>func findLinks(url string) ([]string, error) {<br>    resp, err := http.Get(url)<br>    if err != nil {<br>        return nil, err<br>    }<br>    if resp.StatusCode != http.StatusOK {<br>        resp.Body.Close()<br>        return nil, fmt.Errorf(“getting %s: %s”, url, resp.Status)<br>    }<br>    doc, err := html.Parse(resp.Body)<br>    resp.Body.Close()<br>    if err != nil {<br>        return nil, fmt.Errorf(“parsing %s as HTML: %v”, url, err)<br>    }<br>    return visit(nil, doc), nil<br>}</p>
-<p> </p>
-<h3 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h3><p>在声明可变参数函数时，需要在参数列表的最后一个参数类型之前加上省略符号“…”，这表示该函数会接收任意数量的该类型参数。</p>
-<p>func sum(vals…int) int {<br>    total := 0<br>    for _, val := range vals {<br>        total += val<br>    }<br>    return total<br>}</p>
-<p>  sum函数返回任意个int型参数的和。在函数体中,vals被看作是类型为[] int的切片。sum可以接收任意数量的int型参数：</p>
-<p>fmt.Println(sum())           // “0”<br>fmt.Println(sum(3))          // “3”<br>fmt.Println(sum(1, 2, 3, 4)) // “10”</p>
-<p>  可变参数函数经常被用于格式化字符串。下面的errorf函数构造了一个以行号开头的，经过格式化的错误信息。函数名的后缀f是一种通用的命名规范，代表该可变参数函数可以接收Printf风格的格式化字符串。</p>
-<p>func errorf(linenum int, format string, args …interface{}) {<br>    fmt.Fprintf(os.Stderr, “Line %d: “, linenum)<br>    fmt.Fprintf(os.Stderr, format, args…)<br>    fmt.Fprintln(os.Stderr)<br>}<br>linenum, name := 12, “count”<br>errorf(linenum, “undefined: %s”, name) // “Line 12: undefined: count”</p>
-<p>  interface{}表示函数的最后一个参数可以接收任意类型</p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HashMap的工作原理</title>
-    <url>/2017/06/18/hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
-    <content><![CDATA[<blockquote>
-<p><strong>“你用过HashMap吗？” “什么是HashMap？你为什么用到它？”</strong></p>
-</blockquote>
-<p>几乎每个人都会回答“是的”，然后回答HashMap的一些特性，譬如HashMap可以接受null键值和值，而Hashtable则不能；HashMap是非synchronized;HashMap很快；以及HashMap储存的是键值对等等。这显示出你已经用过HashMap，而且对它相当的熟悉。但是面试官来个急转直下，从此刻开始问出一些刁钻的问题，关于HashMap的更多基础的细节。面试官可能会问出下面的问题：</p>
-<blockquote>
-<p><strong>“你知道HashMap的工作原理吗？” “你知道HashMap的get()方法的工作原理吗？”</strong></p>
-</blockquote>
-<p>你也许会回答“我没有详查标准的Java API，你可以看看Java源代码或者Open JDK。”“我可以用Google找到答案。” 但一些面试者可能可以给出答案，“HashMap是基于hashing的原理，我们使用put(key, value)存储对象到HashMap中，使用get(key)从HashMap中获取对象。当我们给put()方法传递键和值时，我们先对键调用hashCode()方法，返回的hashCode用于找到bucket位置来储存Entry对象。”这里关键点在于指出，HashMap是在bucket中储存键对象和值对象，作为Map.Entry。这一点有助于理解获取对象的逻辑。如果你没有意识到这一点，或者错误的认为仅仅只在bucket中存储值的话，你将不会回答如何从HashMap中获取对象的逻辑。这个答案相当的正确，也显示出面试者确实知道hashing以及HashMap的工作原理。但是这仅仅是故事的开始，当面试官加入一些Java程序员每天要碰到的实际场景的时候，错误的答案频现。下个问题可能是关于HashMap中的碰撞探测(collision detection)以及碰撞的解决方法：</p>
-<blockquote>
-<p><strong>“当两个对象的hashcode相同会发生什么？”</strong></p>
-</blockquote>
-<p>从这里开始，真正的困惑开始了，一些面试者会回答因为hashcode相同，所以两个对象是相等的，HashMap将会抛出异常，或者不会存储它们。然后面试官可能会提醒他们有equals()和hashCode()两个方法，并告诉他们两个对象就算hashcode相同，但是它们可能并不相等。一些面试者可能就此放弃，而另外一些还能继续挺进，他们回答“因为hashcode相同，所以它们的bucket位置相同，‘碰撞’会发生。因为HashMap使用链表存储对象，这个Entry(包含有键值对的Map.Entry对象)会存储在链表中。”这个答案非常的合理，虽然有很多种处理碰撞的方法，这种方法是最简单的，也正是HashMap的处理方法。但故事还没有完结，面试官会继续问：</p>
-<blockquote>
-<p><strong>“如果两个键的hashcode相同，你如何获取值对象？”</strong></p>
-</blockquote>
-<p>面试者会回答：当我们调用get()方法，HashMap会使用键对象的hashcode找到bucket位置，然后获取值对象。面试官提醒他如果有两个值对象储存在同一个bucket，他给出答案:将会遍历链表直到找到值对象。面试官会问因为你并没有值对象去比较，你是如何确定确定找到值对象的？除非面试者直到HashMap在链表中存储的是键值对，否则他们不可能回答出这一题。 其中一些记得这个重要知识点的面试者会说，找到bucket位置之后，会调用keys.equals()方法去找到链表中正确的节点，最终找到要找的值对象。完美的答案！ 许多情况下，面试者会在这个环节中出错，因为他们混淆了hashCode()和equals()方法。因为在此之前hashCode()屡屡出现，而equals()方法仅仅在获取值对象的时候才出现。一些优秀的开发者会指出使用不可变的、声明作final的对象，并且采用合适的equals()和hashCode()方法的话，将会减少碰撞的发生，提高效率。不可变性使得能够缓存不同键的hashcode，这将提高整个获取对象的速度，使用String，Interger这样的wrapper类作为键是非常好的选择。 如果你认为到这里已经完结了，那么听到下面这个问题的时候，你会大吃一惊。</p>
-<blockquote>
-<p><strong>“如果HashMap的大小超过了负载因子(load factor)定义的容量，怎么办？”</strong></p>
-</blockquote>
-<p>除非你真正知道HashMap的工作原理，否则你将回答不出这道题。默认的负载因子大小为0.75，也就是说，当一个map填满了75%的bucket时候，和其它集合类(如ArrayList等)一样，将会创建原来HashMap大小的两倍的bucket数组，来重新调整map的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehashing，因为它调用hash方法找到新的bucket位置。 如果你能够回答这道问题，下面的问题来了：</p>
-<blockquote>
-<p><strong>“你了解重新调整HashMap大小存在什么问题吗？”</strong></p>
-</blockquote>
-<p>你可能回答不上来，这时面试官会提醒你当多线程的情况下，可能产生条件竞争(race condition)。 当重新调整HashMap大小的时候，确实存在条件竞争，因为如果两个线程都发现HashMap需要重新调整大小了，它们会同时试着调整大小。在调整大小的过程中，存储在链表中的元素的次序会反过来，因为移动到新的bucket位置的时候，HashMap并不会将元素放在链表的尾部，而是放在头部，这是为了避免尾部遍历(tail traversing)。如果条件竞争发生了，那么就死循环了。这个时候，你可以质问面试官，为什么这么奇怪，要在多线程的环境下使用HashMap呢？：） 热心的读者贡献了更多的关于HashMap的问题：</p>
-<ol>
-<li><strong>为什么String, Interger这样的wrapper类适合作为键？</strong> </li>
-</ol>
-<p>String, Interger这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，也是final的，而且已经重写了equals()和hashCode()方法了。其他的wrapper类也有这个特点。不可变性是必要的，因为为了要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，那么就不能从HashMap中找到你想要的对象。不可变性还有其他的优点如线程安全。如果你可以仅仅通过将某个field声明成final就能保证hashCode是不变的，那么请这么做吧。因为获取对象的时候要用到equals()和hashCode()方法，那么键对象正确的重写这两个方法是非常重要的。如果两个不相等的对象返回不同的hashcode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。<br>2.  <strong>我们可以使用自定义的对象作为键吗？</strong> 这是前一个问题的延伸。当然你可能使用任何对象作为键，只要它遵守了equals()和hashCode()方法的定义规则，并且当对象插入到Map中之后将不会再改变了。如果这个自定义对象时不可变的，那么它已经满足了作为键的条件，因为当它创建之后就已经不能改变了。<br>3.  <strong>我们可以使用CocurrentHashMap来代替Hashtable吗？</strong></p>
-<p>这是另外一个很热门的面试题，因为ConcurrentHashMap越来越多人用了。我们知道Hashtable是synchronized的，但是ConcurrentHashMap同步性能更好，因为它仅仅根据同步级别对map的一部分进行上锁。ConcurrentHashMap当然可以代替HashTable，但是HashTable提供更强的线程安全性。</p>
-<p>我个人很喜欢这个问题，因为这个问题的深度和广度，也不直接的涉及到不同的概念。让我们再来看看这些问题设计哪些知识点：</p>
-<ul>
-<li>hashing的概念</li>
-<li>HashMap中解决碰撞的方法</li>
-<li>equals()和hashCode()的应用，以及它们在HashMap中的重要性</li>
-<li>不可变对象的好处</li>
-<li>HashMap多线程的条件竞争</li>
-<li>重新调整HashMap的大小</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a href="https://github.com/stephanietang/ImportNew/blob/master/Java/How%20HashMap%20works%20in%20Java.md#%E6%80%BB%E7%BB%93"></a>总结</h3><h4 id="HashMap的工作原理"><a href="#HashMap的工作原理" class="headerlink" title="HashMap的工作原理"></a><a href="https://github.com/stephanietang/ImportNew/blob/master/Java/How%20HashMap%20works%20in%20Java.md#hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86-1"></a>HashMap的工作原理</h4><p>HashMap基于hashing原理，我们通过put()和get()方法储存和获取对象。当我们将键值对传递给put()方法时，它调用键对象的hashCode()方法来计算hashcode，让后找到bucket位置来储存值对象。当获取对象时，通过键对象的equals()方法找到正确的键值对，然后返回值对象。HashMap使用链表来解决碰撞问题，当发生碰撞了，对象将会储存在链表的下一个节点中。 HashMap在每个链表节点中储存键值对对象。 当两个不同的键对象的hashcode相同时会发生什么？ 它们会储存在同一个bucket位置的链表中。键对象的equals()方法用来找到键值对</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java中this和super的用法总结</title>
     <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p><strong>this</strong> </p>
@@ -1183,6 +1210,31 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>JAVA原子变量操作</title>
+    <url>/2017/06/04/java%E5%8E%9F%E5%AD%90%E5%8F%98%E9%87%8F%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>Java从JDK1.5开始提供了java.util.concurrent.atomic包，定义了一些常见类型的原子变量。这些原子变量为我们提供了一种操作单一变量无锁(<em>lock-free</em>)的线程安全(<em>thread-safe</em>)方式。实际上该包下面的类为我们提供了类似<code>volatile</code>变量的特性，同时还提供了诸如<code>boolean compareAndSet(expectedValue, updateValue)</code>的功能。不使用锁实现线程安全听起来似乎很不可思议，这其实是通过CPU的compare and swap指令实现的，由于硬件指令支持当然不需要加锁了。</p>
+<h3 id="主要用途：可用于多线程高并发的计数器"><a href="#主要用途：可用于多线程高并发的计数器" class="headerlink" title="主要用途：可用于多线程高并发的计数器"></a>主要用途：可用于多线程高并发的计数器</h3><p>  先不去讨论这些细节，我们来看一下原子变量的用法。一个典型的用法是可以使用原子变量轻松实现全局自增id，就像下面这样：</p>
+<p>// 线程安全的序列id生成器<br>class Sequencer {<br>    private final AtomicLong sequenceNumber = new AtomicLong(0);<br>    public long next() {<br>        return sequenceNumber.getAndIncrement();<br>    }<br>}</p>
+<p>上述代码利用AtomicLong创建了一个Sequencer类，不断调用该类的next()方法就可以得到线程安全的自增id，用起来非常简单直观。下面我们给出每种原子变量类型的用法说明。</p>
+<h2 id="AtomicInteger-and-AtomicLong"><a href="#AtomicInteger-and-AtomicLong" class="headerlink" title="AtomicInteger and AtomicLong"></a>AtomicInteger and AtomicLong</h2><p><em>AtomicInteger_和_AtomicLong_分别代表原子类型的整型和长整型，这两个类提供十分相似的功能，仅仅是位宽不同。如上例所示，原子整型可用于多线程下全局自增id，除此之外还提供了原子_比较-赋值_等操作，诸如<code>compareAndSet(expect, update)</code>， <code>decrementAndGet()</code>，<code>getAndDecrement()</code>，<code>getAndSet(newValue)</code>等等，更全面的接口描述可参考JDK文档。需要提醒的是这些函数都是通过原子CPU指令实现，执行效率较高。 原子整型看似跟普通整型(_Integer, Long</em>)类型相似，但不能使用原子整型替代普通整型，因为原子整型是可变的，而普通整型不可变。由于这个原因，使用原子整型作为Map的key并不是个好主意。 你可能会想当然的以为应该有_AtomicFloat_和_AtomicDouble_，遗憾的是类库里并没有这两个类型，_AtomicByte_和_AtomicShort_也没有。如果需要替代方案是使用_AtomicInteger_和_AtomicLong_。可通过<code>Float.floatToRawIntBits(float)</code>和<code>Float.intBitsToFloat(int)</code>将Float存储到_AtomicInteger_中，类似的Double类型也可以存储到_AtomicLong_中。</p>
+<h2 id="AtomicReference"><a href="#AtomicReference" class="headerlink" title="AtomicReference"></a>AtomicReference</h2><p>_AtomicReference_用于存放一个可以原子更新的对象引用。该类包含<code>get()</code>, <code>set()</code>, <code>compareAndSet()</code>, <code>getAndSet()</code>等原子方法来获取和更新其代表的对象引用。</p>
+<h2 id="AtomicXXXArray"><a href="#AtomicXXXArray" class="headerlink" title="AtomicXXXArray"></a>AtomicXXXArray</h2><p>atomic包下面有三种原子数组：<code>AtomicIntegerArray</code>, <code>AtomicLongArra</code>, <code>AtomicReferenceArray</code>，分别代表整型、长整型和引用类型的原子数组。原子数组使得我们可以线程安全的方式去修改和访问数组里的单个元素。简单示例如下：</p>
+<p>// 原子数组示例<br>AtomicLongArray longArray = new AtomicLongArray(10);// 创建长度为10的原子数组<br>longArray.set(1, 100);<br>long v = longArray.getAndIncrement(1);</p>
+<p>AtomicReferenceArray<String> referenceArray = new AtomicReferenceArray&lt;&gt;(16);<br>referenceArray.set(3, “love”);<br>referenceArray.compareAndSet(3, “love”, “you”);</p>
+<p> </p>
+<p>简单来说原子数组就是一种支持线程安全的数组，仍然具有数组“定长”的性质，如果访问元素超过了数组的长度，将会抛出<code>IndexOutOfBoundsException</code>。你可能已经想到了，可以使用线程安全的容器来避免容量不足，我们会在后续章节介绍。</p>
+<h2 id="什么是线程安全？"><a href="#什么是线程安全？" class="headerlink" title="什么是线程安全？"></a>什么是线程安全？</h2><p>线程安全是指多线程访问是时，无论线程的调度策略是什么，程序能够正确的执行。导致线程不安全的一个原因是状态不一致，如果线程A修改了某个共享变量（比如给id++），而线程B没有及时知道，就会导致B在错误的状态上执行，结果的正确性也就无法保证。原子变量为我们提供了一种保证单个状态一致的简单方式，一个线程修改了原子变量，另外的线程立即就能看到，这比通过锁实现的方式效率要高；如果要同时保证多个变量状态一致，就只能使用锁了。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA并发</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java中常见的误解</title>
     <url>/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/</url>
     <content><![CDATA[<h5 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h5><p>Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。</p>
@@ -1219,28 +1271,60 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>JAVA原子变量操作</title>
-    <url>/2017/06/04/java%E5%8E%9F%E5%AD%90%E5%8F%98%E9%87%8F%E6%93%8D%E4%BD%9C/</url>
-    <content><![CDATA[<p>Java从JDK1.5开始提供了java.util.concurrent.atomic包，定义了一些常见类型的原子变量。这些原子变量为我们提供了一种操作单一变量无锁(<em>lock-free</em>)的线程安全(<em>thread-safe</em>)方式。实际上该包下面的类为我们提供了类似<code>volatile</code>变量的特性，同时还提供了诸如<code>boolean compareAndSet(expectedValue, updateValue)</code>的功能。不使用锁实现线程安全听起来似乎很不可思议，这其实是通过CPU的compare and swap指令实现的，由于硬件指令支持当然不需要加锁了。</p>
-<h3 id="主要用途：可用于多线程高并发的计数器"><a href="#主要用途：可用于多线程高并发的计数器" class="headerlink" title="主要用途：可用于多线程高并发的计数器"></a>主要用途：可用于多线程高并发的计数器</h3><p>  先不去讨论这些细节，我们来看一下原子变量的用法。一个典型的用法是可以使用原子变量轻松实现全局自增id，就像下面这样：</p>
-<p>// 线程安全的序列id生成器<br>class Sequencer {<br>    private final AtomicLong sequenceNumber = new AtomicLong(0);<br>    public long next() {<br>        return sequenceNumber.getAndIncrement();<br>    }<br>}</p>
-<p>上述代码利用AtomicLong创建了一个Sequencer类，不断调用该类的next()方法就可以得到线程安全的自增id，用起来非常简单直观。下面我们给出每种原子变量类型的用法说明。</p>
-<h2 id="AtomicInteger-and-AtomicLong"><a href="#AtomicInteger-and-AtomicLong" class="headerlink" title="AtomicInteger and AtomicLong"></a>AtomicInteger and AtomicLong</h2><p><em>AtomicInteger_和_AtomicLong_分别代表原子类型的整型和长整型，这两个类提供十分相似的功能，仅仅是位宽不同。如上例所示，原子整型可用于多线程下全局自增id，除此之外还提供了原子_比较-赋值_等操作，诸如<code>compareAndSet(expect, update)</code>， <code>decrementAndGet()</code>，<code>getAndDecrement()</code>，<code>getAndSet(newValue)</code>等等，更全面的接口描述可参考JDK文档。需要提醒的是这些函数都是通过原子CPU指令实现，执行效率较高。 原子整型看似跟普通整型(_Integer, Long</em>)类型相似，但不能使用原子整型替代普通整型，因为原子整型是可变的，而普通整型不可变。由于这个原因，使用原子整型作为Map的key并不是个好主意。 你可能会想当然的以为应该有_AtomicFloat_和_AtomicDouble_，遗憾的是类库里并没有这两个类型，_AtomicByte_和_AtomicShort_也没有。如果需要替代方案是使用_AtomicInteger_和_AtomicLong_。可通过<code>Float.floatToRawIntBits(float)</code>和<code>Float.intBitsToFloat(int)</code>将Float存储到_AtomicInteger_中，类似的Double类型也可以存储到_AtomicLong_中。</p>
-<h2 id="AtomicReference"><a href="#AtomicReference" class="headerlink" title="AtomicReference"></a>AtomicReference</h2><p>_AtomicReference_用于存放一个可以原子更新的对象引用。该类包含<code>get()</code>, <code>set()</code>, <code>compareAndSet()</code>, <code>getAndSet()</code>等原子方法来获取和更新其代表的对象引用。</p>
-<h2 id="AtomicXXXArray"><a href="#AtomicXXXArray" class="headerlink" title="AtomicXXXArray"></a>AtomicXXXArray</h2><p>atomic包下面有三种原子数组：<code>AtomicIntegerArray</code>, <code>AtomicLongArra</code>, <code>AtomicReferenceArray</code>，分别代表整型、长整型和引用类型的原子数组。原子数组使得我们可以线程安全的方式去修改和访问数组里的单个元素。简单示例如下：</p>
-<p>// 原子数组示例<br>AtomicLongArray longArray = new AtomicLongArray(10);// 创建长度为10的原子数组<br>longArray.set(1, 100);<br>long v = longArray.getAndIncrement(1);</p>
-<p>AtomicReferenceArray<String> referenceArray = new AtomicReferenceArray&lt;&gt;(16);<br>referenceArray.set(3, “love”);<br>referenceArray.compareAndSet(3, “love”, “you”);</p>
+    <title>Java实现定时任务的三种方法</title>
+    <url>/2017/06/12/java%E5%AE%9E%E7%8E%B0%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>在应用里经常都有用到在后台跑定时任务的需求。举个例子，比如需要在服务后台跑一个定时任务来进行垃圾回收（译者注：个人觉得用定时任务来跑垃圾回收不是很好的例子，从译者接触到的项目来看，比较常见的是用定时任务来进行非实时计算，清除临时数据、文件等）。 在本文里，3种不同的实现方法：</p>
+<ul>
+<li>普通thread实现</li>
+<li>TimerTask实现</li>
+<li>ScheduledExecutorService实现</li>
+</ul>
+<p>   </p>
+<h2 id="普通thread"><a href="#普通thread" class="headerlink" title="普通thread"></a>普通thread</h2><p>这是最常见的，创建一个thread，然后让它在while循环里一直运行着，通过sleep方法来达到定时任务的效果。这样可以快速简单的实现，代码如下：</p>
+<p>public class Task1 {<br>public static void main(String[] args) {<br>  // run in a second<br>  final long timeInterval = 1000;<br>  Runnable runnable = new Runnable() {<br>  public void run() {<br>    while (true) {<br>      // ------- code for task to run<br>      System.out.println(“Hello !!”);<br>      // ------- ends here<br>      try {<br>       Thread.sleep(timeInterval);<br>      } catch (InterruptedException e) {<br>        e.printStackTrace();<br>      }<br>      }<br>    }<br>  };<br>  Thread thread = new Thread(runnable);<br>  thread.start();<br>  }<br>}</p>
 <p> </p>
-<p>简单来说原子数组就是一种支持线程安全的数组，仍然具有数组“定长”的性质，如果访问元素超过了数组的长度，将会抛出<code>IndexOutOfBoundsException</code>。你可能已经想到了，可以使用线程安全的容器来避免容量不足，我们会在后续章节介绍。</p>
-<h2 id="什么是线程安全？"><a href="#什么是线程安全？" class="headerlink" title="什么是线程安全？"></a>什么是线程安全？</h2><p>线程安全是指多线程访问是时，无论线程的调度策略是什么，程序能够正确的执行。导致线程不安全的一个原因是状态不一致，如果线程A修改了某个共享变量（比如给id++），而线程B没有及时知道，就会导致B在错误的状态上执行，结果的正确性也就无法保证。原子变量为我们提供了一种保证单个状态一致的简单方式，一个线程修改了原子变量，另外的线程立即就能看到，这比通过锁实现的方式效率要高；如果要同时保证多个变量状态一致，就只能使用锁了。</p>
+<h2 id="用Timer和TimerTask"><a href="#用Timer和TimerTask" class="headerlink" title="　用Timer和TimerTask"></a>　用Timer和TimerTask</h2><p>上面的实现是非常快速简便的，但它也缺少一些功能。 用Timer和TimerTask的话与上述方法相比有如下好处：</p>
+<ul>
+<li>当启动和去取消任务时可以控制</li>
+<li>第一次执行任务时可以指定你想要的delay时间</li>
+</ul>
+<p>在实现时，Timer类可以调度任务，TimerTask则是通过在run()方法里实现具体任务。 Timer实例可以调度多任务，它是线程安全的。 当Timer的构造器被调用时，它创建了一个线程，这个线程可以用来调度任务。 下面是代码：</p>
+<p>import java.util.Timer;<br>import java.util.TimerTask;<br>public class Task2 {<br>  public static void main(String[] args) {<br>    TimerTask task = new TimerTask() {<br>      @Override<br>      public void run() {<br>        // task to run goes here<br>        System.out.println(“Hello !!!”);<br>      }<br>    };<br>    Timer timer = new Timer();<br>    long delay = 0;<br>    long intevalPeriod = 1 * 1000;<br>    // schedules the task to be run in an interval<br>    timer.scheduleAtFixedRate(task, delay,<br>                                intevalPeriod);<br>  } // end of main<br>}</p>
+<p> </p>
+<p> </p>
+<h2 id="ScheduledExecutorService"><a href="#ScheduledExecutorService" class="headerlink" title="　ScheduledExecutorService"></a>　ScheduledExecutorService</h2><p>ScheduledExecutorService是从Java SE 5的java.util.concurrent里，做为并发工具类被引进的，这是最理想的定时任务实现方式。 相比于上两个方法，它有以下好处：</p>
+<ul>
+<li>相比于Timer的单线程，它是通过线程池的方式来执行任务的</li>
+<li>可以很灵活的去设定第一次执行任务delay时间</li>
+<li>提供了良好的约定，以便设定执行的时间间隔</li>
+</ul>
+<p>下面是实现代码，我们通过ScheduledExecutorService#scheduleAtFixedRate展示这个例子，通过代码里参数的控制，首次执行加了delay时间。</p>
+<p>import java.util.concurrent.Executors;<br>import java.util.concurrent.ScheduledExecutorService;<br>import java.util.concurrent.TimeUnit;<br>// 第三种方法：设定指定任务task在指定延迟delay后进行固定频率peroid的执行。  <br>public class Task3 {<br>  public static void main(String[] args) {<br>    Runnable runnable = new Runnable() {<br>      public void run() {<br>        // task to run goes here<br>        System.out.println(“Hello !!”);<br>      }<br>    };<br>    ScheduledExecutorService service = Executors<br>                    .newSingleThreadScheduledExecutor();<br>    service.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);<br>  }<br>}</p>
 ]]></content>
       <categories>
         <category>JAVA</category>
         <category>JAVA并发</category>
+        <category>JAVA提高</category>
       </categories>
       <tags>
         <tag>JAVA</tag>
         <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JAVA的异常处理</title>
+    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
+<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
+<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1284,63 +1368,6 @@ public void testCallableCache() throws Exception&#123;
       </categories>
       <tags>
         <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java实现定时任务的三种方法</title>
-    <url>/2017/06/12/java%E5%AE%9E%E7%8E%B0%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>在应用里经常都有用到在后台跑定时任务的需求。举个例子，比如需要在服务后台跑一个定时任务来进行垃圾回收（译者注：个人觉得用定时任务来跑垃圾回收不是很好的例子，从译者接触到的项目来看，比较常见的是用定时任务来进行非实时计算，清除临时数据、文件等）。 在本文里，3种不同的实现方法：</p>
-<ul>
-<li>普通thread实现</li>
-<li>TimerTask实现</li>
-<li>ScheduledExecutorService实现</li>
-</ul>
-<p>   </p>
-<h2 id="普通thread"><a href="#普通thread" class="headerlink" title="普通thread"></a>普通thread</h2><p>这是最常见的，创建一个thread，然后让它在while循环里一直运行着，通过sleep方法来达到定时任务的效果。这样可以快速简单的实现，代码如下：</p>
-<p>public class Task1 {<br>public static void main(String[] args) {<br>  // run in a second<br>  final long timeInterval = 1000;<br>  Runnable runnable = new Runnable() {<br>  public void run() {<br>    while (true) {<br>      // ------- code for task to run<br>      System.out.println(“Hello !!”);<br>      // ------- ends here<br>      try {<br>       Thread.sleep(timeInterval);<br>      } catch (InterruptedException e) {<br>        e.printStackTrace();<br>      }<br>      }<br>    }<br>  };<br>  Thread thread = new Thread(runnable);<br>  thread.start();<br>  }<br>}</p>
-<p> </p>
-<h2 id="用Timer和TimerTask"><a href="#用Timer和TimerTask" class="headerlink" title="　用Timer和TimerTask"></a>　用Timer和TimerTask</h2><p>上面的实现是非常快速简便的，但它也缺少一些功能。 用Timer和TimerTask的话与上述方法相比有如下好处：</p>
-<ul>
-<li>当启动和去取消任务时可以控制</li>
-<li>第一次执行任务时可以指定你想要的delay时间</li>
-</ul>
-<p>在实现时，Timer类可以调度任务，TimerTask则是通过在run()方法里实现具体任务。 Timer实例可以调度多任务，它是线程安全的。 当Timer的构造器被调用时，它创建了一个线程，这个线程可以用来调度任务。 下面是代码：</p>
-<p>import java.util.Timer;<br>import java.util.TimerTask;<br>public class Task2 {<br>  public static void main(String[] args) {<br>    TimerTask task = new TimerTask() {<br>      @Override<br>      public void run() {<br>        // task to run goes here<br>        System.out.println(“Hello !!!”);<br>      }<br>    };<br>    Timer timer = new Timer();<br>    long delay = 0;<br>    long intevalPeriod = 1 * 1000;<br>    // schedules the task to be run in an interval<br>    timer.scheduleAtFixedRate(task, delay,<br>                                intevalPeriod);<br>  } // end of main<br>}</p>
-<p> </p>
-<p> </p>
-<h2 id="ScheduledExecutorService"><a href="#ScheduledExecutorService" class="headerlink" title="　ScheduledExecutorService"></a>　ScheduledExecutorService</h2><p>ScheduledExecutorService是从Java SE 5的java.util.concurrent里，做为并发工具类被引进的，这是最理想的定时任务实现方式。 相比于上两个方法，它有以下好处：</p>
-<ul>
-<li>相比于Timer的单线程，它是通过线程池的方式来执行任务的</li>
-<li>可以很灵活的去设定第一次执行任务delay时间</li>
-<li>提供了良好的约定，以便设定执行的时间间隔</li>
-</ul>
-<p>下面是实现代码，我们通过ScheduledExecutorService#scheduleAtFixedRate展示这个例子，通过代码里参数的控制，首次执行加了delay时间。</p>
-<p>import java.util.concurrent.Executors;<br>import java.util.concurrent.ScheduledExecutorService;<br>import java.util.concurrent.TimeUnit;<br>// 第三种方法：设定指定任务task在指定延迟delay后进行固定频率peroid的执行。  <br>public class Task3 {<br>  public static void main(String[] args) {<br>    Runnable runnable = new Runnable() {<br>      public void run() {<br>        // task to run goes here<br>        System.out.println(“Hello !!”);<br>      }<br>    };<br>    ScheduledExecutorService service = Executors<br>                    .newSingleThreadScheduledExecutor();<br>    service.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS);<br>  }<br>}</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA提高</category>
-        <category>JAVA并发</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>并发</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JAVA的异常处理</title>
-    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
-<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
-<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1652,7 +1679,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#x72;&#x6f;&#111;&#116;&#x40;&#x31;&#x39;&#x32;&#x2e;&#x31;&#x36;&#56;&#x2e;&#x35;&#53;&#46;&#50;&#52;&#x32;">&#x72;&#x6f;&#111;&#116;&#x40;&#x31;&#x39;&#x32;&#x2e;&#x31;&#x36;&#56;&#x2e;&#x35;&#53;&#46;&#50;&#52;&#x32;</a></p>
+<p>ssh <a href="mailto:&#114;&#111;&#x6f;&#116;&#x40;&#49;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#x35;&#53;&#x2e;&#50;&#52;&#x32;">&#114;&#111;&#x6f;&#116;&#x40;&#49;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#x35;&#53;&#x2e;&#50;&#52;&#x32;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1672,11 +1699,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#105;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#x39;&#x2e;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;">&#x62;&#105;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#x39;&#x2e;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;</a></p>
+<p>exit<br>ssh <a href="mailto:&#98;&#105;&#108;&#108;&#x40;&#x31;&#50;&#x38;&#46;&#x31;&#57;&#57;&#46;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;">&#98;&#105;&#108;&#108;&#x40;&#x31;&#50;&#x38;&#46;&#x31;&#57;&#57;&#46;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#56;&#x2e;&#49;&#x39;&#57;&#x2e;&#50;&#x30;&#x39;&#x2e;&#x32;&#52;&#x32;">&#98;&#x69;&#x6c;&#x6c;&#64;&#49;&#50;&#56;&#x2e;&#49;&#x39;&#57;&#x2e;&#50;&#x30;&#x39;&#x2e;&#x32;&#52;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#x34;&#50;">&#98;&#x69;&#108;&#108;&#x40;&#49;&#x32;&#x38;&#46;&#49;&#57;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#x34;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -1716,21 +1743,6 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>List与ArrayList区别</title>
-    <url>/2017/05/30/list%E4%B8%8Earraylist%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>List是一个接口，而ArrayList是一个类。 ArrayList继承并实现了List。 所以List不能被构造，但可以向上面那样为List创建一个引用，而ArrayList就可以被构造。 List list;     //正确   list=null; List list=new List();    //   是错误的用法   List list = new ArrayList();这句创建了一个ArrayList的对象后把上溯到了List。此时它是一个List对象了，有些ArrayList有但是List没有的属性和方法，它就不能再用了。 而ArrayList list=new ArrayList();创建一对象则保留了ArrayList的所有属性。 这是一个例子：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">import java.util.*;</span><br><span class="line"></span><br><span class="line">public class TestList&#123; </span><br><span class="line">    public static void main(String\[\] args)&#123; </span><br><span class="line">        List list &#x3D; new ArrayList(); </span><br><span class="line">        ArrayList arrayList &#x3D; new ArrayList();</span><br><span class="line"></span><br><span class="line">        list.trimToSize(); &#x2F;&#x2F;错误，没有该方法。</span><br><span class="line">        arrayList.trimToSize();&amp;nbsp;&amp;nbsp; &#x2F;&#x2F;ArrayList里有该方法。</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  编译一下就知道结果了。 如果这个样子： List a=new ArrayList(); 则a拥有List与ArrayList的所有属性和方法，不会减少 如果List与ArrayList中有相同的属性（如int i),有相同的方法（如void f()), 则a.i是调用了List中的i a.f()是调用了ArrayList中的f(); ————————————————————— 问题的关键: 为什么要用 List list = new ArrayList() ,而不用 ArrayList alist = new ArrayList()呢？ 问题就在于List有多个实现类，现在你用的是ArrayList，也许哪一天你需要换成其它的实现类，如 LinkedList或者Vector等等，这时你只要改变这一行就行了： List list = new LinkedList(); 其它使用了list地方的代码根本不需要改动。 假设你开始用 ArrayList alist = new ArrayList(), 这下你有的改了，特别是如果你使用了 ArrayList特有的方法和属性。 地区用 List arr = new ArrayList();定义;行业用 ArrayListarr = new ArrayList();定义;则说明,行业里用到了ArrayList的特殊的方法. 另外的例子就是,在类的方法中,如下声明: private void doMyAction(List list){} 这样这个方法能处理所有实现了List接口的类,一定程度上实现了泛型函数. 如果开发的时候觉得ArrayList,HashMap的性能不能满足你的需要,可以通过实现List,Map(或者Collection)来定制你的自定义类.</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>linux释放内存</title>
     <url>/2016/09/16/linux%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98/</url>
     <content><![CDATA[<blockquote>
@@ -1759,6 +1771,21 @@ function validId15(_id){
       <tags>
         <tag>服务器</tag>
         <tag>程序设计</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>List与ArrayList区别</title>
+    <url>/2017/05/30/list%E4%B8%8Earraylist%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>List是一个接口，而ArrayList是一个类。 ArrayList继承并实现了List。 所以List不能被构造，但可以向上面那样为List创建一个引用，而ArrayList就可以被构造。 List list;     //正确   list=null; List list=new List();    //   是错误的用法   List list = new ArrayList();这句创建了一个ArrayList的对象后把上溯到了List。此时它是一个List对象了，有些ArrayList有但是List没有的属性和方法，它就不能再用了。 而ArrayList list=new ArrayList();创建一对象则保留了ArrayList的所有属性。 这是一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">import java.util.*;</span><br><span class="line"></span><br><span class="line">public class TestList&#123; </span><br><span class="line">    public static void main(String\[\] args)&#123; </span><br><span class="line">        List list &#x3D; new ArrayList(); </span><br><span class="line">        ArrayList arrayList &#x3D; new ArrayList();</span><br><span class="line"></span><br><span class="line">        list.trimToSize(); &#x2F;&#x2F;错误，没有该方法。</span><br><span class="line">        arrayList.trimToSize();&amp;nbsp;&amp;nbsp; &#x2F;&#x2F;ArrayList里有该方法。</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  编译一下就知道结果了。 如果这个样子： List a=new ArrayList(); 则a拥有List与ArrayList的所有属性和方法，不会减少 如果List与ArrayList中有相同的属性（如int i),有相同的方法（如void f()), 则a.i是调用了List中的i a.f()是调用了ArrayList中的f(); ————————————————————— 问题的关键: 为什么要用 List list = new ArrayList() ,而不用 ArrayList alist = new ArrayList()呢？ 问题就在于List有多个实现类，现在你用的是ArrayList，也许哪一天你需要换成其它的实现类，如 LinkedList或者Vector等等，这时你只要改变这一行就行了： List list = new LinkedList(); 其它使用了list地方的代码根本不需要改动。 假设你开始用 ArrayList alist = new ArrayList(), 这下你有的改了，特别是如果你使用了 ArrayList特有的方法和属性。 地区用 List arr = new ArrayList();定义;行业用 ArrayListarr = new ArrayList();定义;则说明,行业里用到了ArrayList的特殊的方法. 另外的例子就是,在类的方法中,如下声明: private void doMyAction(List list){} 这样这个方法能处理所有实现了List接口的类,一定程度上实现了泛型函数. 如果开发的时候觉得ArrayList,HashMap的性能不能满足你的需要,可以通过实现List,Map(或者Collection)来定制你的自定义类.</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -2073,31 +2100,6 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>MySQL中的共享锁与排它锁</title>
-    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
-    <content><![CDATA[<blockquote>
-<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
-</blockquote>
-<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
-<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
-<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
-<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
-<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
-<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
-<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
-<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
-<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>mysql导入导出详解</title>
     <url>/2017/02/24/mysql%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<p>有时数据由于业务和历史数据原因，可能做优化调整，例如分表分库，百万级别的数据mysql还是可以应付的，但是有些业务可能是按天增长的，比如网站报告等等，每天的数据总量都会按一定的规律增长，数据量可能会达到千万级别甚至过亿，这时如果拆分使用<strong>insert select操作会导致当前表处于锁状态</strong>，会影响业务。 <strong>一、mysql导出有俩种方式：</strong></p>
@@ -2335,6 +2337,59 @@ LINES TERMINATED BY &#39;\\n&#39;;
       </tags>
   </entry>
   <entry>
+    <title>ＭySQL隔离级别</title>
+    <url>/2017/02/08/mysql%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</url>
+    <content><![CDATA[<blockquote>
+<p>SQL标准定义了4类隔离级别，包括了一些具体规则，用来限定事务内外的哪些改变是可见的，哪些是不可见的。低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
+</blockquote>
+<p><strong>1.Read Uncommitted（读取未提交内容）</strong> 在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为脏读（Dirty Read）。 <strong>2.Read Committed（读取提交内容）</strong> 这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这种隔离级别 也支持所谓的不可重复读（Nonrepeatable Read），因为同一事务的其他实例在该实例处理其间可能会有新的commit，所以同一select可能返回不同结果。 <strong>3.Repeatable Read（可重读）</strong> 这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）。简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影” 行。InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题。 <strong>4.Serializable（可串行化）</strong> 这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争。 这四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。例如： 脏读(Drity Read)：某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的。 不可重复读(Non-repeatable read):在一个事务的两次查询之中数据不一致，这可能是两次查询过程中间插入了一个事务更新的原有的数据。 幻读(Phantom Read):在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几列(Row)数据，而另一个事务却在此时插入了新的几列数据，先前的事务在接下来的查询中，就会发现有几列数据是它先前所没有的。 在MySQL中，实现了这四种隔离级别，分别有可能产生问题如下所示：</p>
+<blockquote>
+<p>下面，将利用MySQL的客户端程序，分别测试几种隔离级别。测试数据库为test，表为tx；表结构： id int num int 两个命令行客户端分别为A，B；不断改变A的隔离级别，在B端修改数据。</p>
+</blockquote>
+<p>（一）、将A的隔离级别设置为read uncommitted(未提交读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72618/1ca8ec0d-3b6c-3ae1-babc-5dd541c4d1a4.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72620/b37214c3-7726-3306-95ee-1b2fae5ccd6c.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72622/200d9c94-197a-3fe5-8925-3411cd88555e.jpg" alt="这里写图片描述"></p>
+<pre><code>    经过上面的实验可以得出结论，事务B更新了一条记录，但是没有提交，此时事务A可以查询出未提交记录。造成脏读现象。未提交读是最低的隔离级别。</code></pre>
+<p>（二）、将客户端A的事务隔离级别设置为read committed(已提交读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72626/ae414e52-c216-3bbb-b005-0d972f593456.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72628/12051f3d-c01e-34b3-a6b6-8b71e1b1dcc8.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72630/cc80744e-eb9f-3104-bb24-2218e9986d78.jpg" alt="这里写图片描述"></p>
+<pre><code>   经过上面的实验可以得出结论，已提交读隔离级别解决了脏读的问题，但是出现了不可重复读的问题，即事务A在两次查询的数据不一致，因为在两次查询之间事务B更新了一条数据。已提交读只允许读取已提交的记录，但不要求可重复读。</code></pre>
+<p>(三)、将A的隔离级别设置为repeatable read(可重复读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72632/0bf52be3-e873-3f3f-8d56-d703a8f678ab.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72634/e58d1814-bdca-3313-bcf5-339e3678536a.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72636/83bfe583-2d57-345a-917e-4ee163235b62.jpg" alt="这里写图片描述"> B插入数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72636/83bfe583-2d57-345a-917e-4ee163235b62.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72640/4398c5b1-434c-3380-ba19-060154cf2070.jpg" alt="这里写图片描述"></p>
+<pre><code>   由以上的实验可以得出结论，可重复读隔离级别只允许读取已提交记录，而且在一个事务两次读取一个记录期间，其他事务部的更新该记录。但该事务不要求与其他事务可串行化。例如，当一个事务可以找到由一个已提交事务更新的记录，但是可能产生幻读问题(注意是可能，因为数据库对隔离级别的实现有所差别)。像以上的实验，就没有出现数据幻读的问题。</code></pre>
+<p>(四)、将A的隔离级别设置为 可串行化 (Serializable) A端打开事务，B端插入一条记录 事务A端：<img src="http://dl.iteye.com/upload/picture/pic/72642/c604c5ce-311d-3923-8dcd-36b0188f4f31.jpg" alt="这里写图片描述"> 事务B端：<img src="http://dl.iteye.com/upload/picture/pic/72644/c488f9d9-7da2-3e6d-9a82-2b92d1051afd.jpg" alt="这里写图片描述"> 因为此时事务A的隔离级别设置为serializable，开始事务后，并没有提交，所以事务B只能等待。 事务A提交事务： 事务A端 <img src="http://dl.iteye.com/upload/picture/pic/72644/c488f9d9-7da2-3e6d-9a82-2b92d1051afd.jpg" alt="这里写图片描述"> 事务B端 <img src="http://dl.iteye.com/upload/picture/pic/72648/8e60e19b-09af-31a7-b8d3-8e638bbf177c.jpg" alt="这里写图片描述"></p>
+<pre><code>     serializable完全锁定字段，若一个事务来查询同一份数据就必须等待，直到前一个事务完成并解除锁定为止 。是完整的隔离级别，会锁定对应的数据表格，因而会有效率的问题。</code></pre>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>隔离机制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL中的共享锁与排它锁</title>
+    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
+    <content><![CDATA[<blockquote>
+<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
+</blockquote>
+<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
+<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
+<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
+<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
+<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
+<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
+<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PHP Ajax跨域请求</title>
     <url>/2017/02/14/php-ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82/</url>
     <content><![CDATA[<p>  在开发过程中，有时会碰到需要请求其它服务器接口的问题，这时候就要jsonp来解决这个问题 html前端</p>
@@ -2407,34 +2462,6 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
         <tag>JS</tag>
         <tag>JQuery</tag>
         <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ＭySQL隔离级别</title>
-    <url>/2017/02/08/mysql%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</url>
-    <content><![CDATA[<blockquote>
-<p>SQL标准定义了4类隔离级别，包括了一些具体规则，用来限定事务内外的哪些改变是可见的，哪些是不可见的。低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
-</blockquote>
-<p><strong>1.Read Uncommitted（读取未提交内容）</strong> 在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为脏读（Dirty Read）。 <strong>2.Read Committed（读取提交内容）</strong> 这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这种隔离级别 也支持所谓的不可重复读（Nonrepeatable Read），因为同一事务的其他实例在该实例处理其间可能会有新的commit，所以同一select可能返回不同结果。 <strong>3.Repeatable Read（可重读）</strong> 这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）。简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影” 行。InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题。 <strong>4.Serializable（可串行化）</strong> 这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争。 这四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。例如： 脏读(Drity Read)：某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的。 不可重复读(Non-repeatable read):在一个事务的两次查询之中数据不一致，这可能是两次查询过程中间插入了一个事务更新的原有的数据。 幻读(Phantom Read):在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几列(Row)数据，而另一个事务却在此时插入了新的几列数据，先前的事务在接下来的查询中，就会发现有几列数据是它先前所没有的。 在MySQL中，实现了这四种隔离级别，分别有可能产生问题如下所示：</p>
-<blockquote>
-<p>下面，将利用MySQL的客户端程序，分别测试几种隔离级别。测试数据库为test，表为tx；表结构： id int num int 两个命令行客户端分别为A，B；不断改变A的隔离级别，在B端修改数据。</p>
-</blockquote>
-<p>（一）、将A的隔离级别设置为read uncommitted(未提交读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72618/1ca8ec0d-3b6c-3ae1-babc-5dd541c4d1a4.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72620/b37214c3-7726-3306-95ee-1b2fae5ccd6c.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72622/200d9c94-197a-3fe5-8925-3411cd88555e.jpg" alt="这里写图片描述"></p>
-<pre><code>    经过上面的实验可以得出结论，事务B更新了一条记录，但是没有提交，此时事务A可以查询出未提交记录。造成脏读现象。未提交读是最低的隔离级别。</code></pre>
-<p>（二）、将客户端A的事务隔离级别设置为read committed(已提交读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72626/ae414e52-c216-3bbb-b005-0d972f593456.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72628/12051f3d-c01e-34b3-a6b6-8b71e1b1dcc8.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72630/cc80744e-eb9f-3104-bb24-2218e9986d78.jpg" alt="这里写图片描述"></p>
-<pre><code>   经过上面的实验可以得出结论，已提交读隔离级别解决了脏读的问题，但是出现了不可重复读的问题，即事务A在两次查询的数据不一致，因为在两次查询之间事务B更新了一条数据。已提交读只允许读取已提交的记录，但不要求可重复读。</code></pre>
-<p>(三)、将A的隔离级别设置为repeatable read(可重复读) 在B未更新数据之前： 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72632/0bf52be3-e873-3f3f-8d56-d703a8f678ab.jpg" alt="这里写图片描述"> B更新数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72634/e58d1814-bdca-3313-bcf5-339e3678536a.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72636/83bfe583-2d57-345a-917e-4ee163235b62.jpg" alt="这里写图片描述"> B插入数据： 客户端B：<img src="http://dl.iteye.com/upload/picture/pic/72636/83bfe583-2d57-345a-917e-4ee163235b62.jpg" alt="这里写图片描述"> 客户端A：<img src="http://dl.iteye.com/upload/picture/pic/72640/4398c5b1-434c-3380-ba19-060154cf2070.jpg" alt="这里写图片描述"></p>
-<pre><code>   由以上的实验可以得出结论，可重复读隔离级别只允许读取已提交记录，而且在一个事务两次读取一个记录期间，其他事务部的更新该记录。但该事务不要求与其他事务可串行化。例如，当一个事务可以找到由一个已提交事务更新的记录，但是可能产生幻读问题(注意是可能，因为数据库对隔离级别的实现有所差别)。像以上的实验，就没有出现数据幻读的问题。</code></pre>
-<p>(四)、将A的隔离级别设置为 可串行化 (Serializable) A端打开事务，B端插入一条记录 事务A端：<img src="http://dl.iteye.com/upload/picture/pic/72642/c604c5ce-311d-3923-8dcd-36b0188f4f31.jpg" alt="这里写图片描述"> 事务B端：<img src="http://dl.iteye.com/upload/picture/pic/72644/c488f9d9-7da2-3e6d-9a82-2b92d1051afd.jpg" alt="这里写图片描述"> 因为此时事务A的隔离级别设置为serializable，开始事务后，并没有提交，所以事务B只能等待。 事务A提交事务： 事务A端 <img src="http://dl.iteye.com/upload/picture/pic/72644/c488f9d9-7da2-3e6d-9a82-2b92d1051afd.jpg" alt="这里写图片描述"> 事务B端 <img src="http://dl.iteye.com/upload/picture/pic/72648/8e60e19b-09af-31a7-b8d3-8e638bbf177c.jpg" alt="这里写图片描述"></p>
-<pre><code>     serializable完全锁定字段，若一个事务来查询同一份数据就必须等待，直到前一个事务完成并解除锁定为止 。是完整的隔离级别，会锁定对应的数据表格，因而会有效率的问题。</code></pre>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>隔离机制</tag>
       </tags>
   </entry>
   <entry>
@@ -2529,6 +2556,57 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </categories>
       <tags>
         <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PHP7快在哪里</title>
+    <url>/2017/08/22/php7%E5%BF%AB%E5%9C%A8%E5%93%AA%E9%87%8C/</url>
+    <content><![CDATA[<p>PHP7 带来许多新的特性：</p>
+<ul>
+<li>抽象语法树，在编译opcode时能够做更多的优化</li>
+<li>INT64提升，支持大于2GB的字符串/文件上传</li>
+<li>标量类型声明，可以声明参数类型</li>
+<li>返回值声明，可以声明返回值类型</li>
+<li>新操作符，&lt;=&gt;操作符，大于返回1，等于返回0，小于返回-1</li>
+<li>统一变量语法；</li>
+<li>引擎异常改进，函数不存在的fata error转为异常可以捕获处理</li>
+</ul>
+<p>等等。 除了新特性外，PHP 7使用了新引擎<a href="https://wiki.php.net/phpng">PHP NG</a>，性能得到了巨大的提升（<a href="http://www.laruence.com/2014/12/18/2976.html">与HHVM对比</a>）。 这里的性能优化比较有意思， 非常值得借鉴学习。为什么要进行重构：</p>
+<ul>
+<li>PHP 5.4之后php引擎的性能提升已经不大，Zend VM已经高度优化</li>
+<li>PHP JIT(Just In Time Compiler)项目在benchmakr上性能提升巨大（8倍），但是在实际业务提升不大（离开实际业务谈benchmark都是耍流氓）</li>
+<li>分析wordpress项目发现瓶颈并不在Zend VM上面，21% CPU时间花在了内存管理，12%时间花在了hashTable操作，30% CPU时间花在了内部调用，25% CUP时间花在了VM</li>
+</ul>
+<p>首先应当分析实际业务的性能消耗占比，确定需要优化的地方。JIT仅仅优化了Zend VM，提升是有限的，需要对其他地方（内存操作，HashTable，函数调用）也进行优化，所以才进行的重构。 PHP NG在很多方面做了优化：</p>
+<ul>
+<li>标量类型不做引用计数，zval分配在堆上，增加Referance类型</li>
+<li>增加类型zend string，将字符串与值连续分配，避免CPU cache miss，避免二次读内存</li>
+<li>原本的HashTable变为zend array，数组值为zval，内存一次分配，提升data locality，避免CPU cache miss</li>
+<li>函数调用优化，减少重复入栈</li>
+<li>参数解析优化，将不确定转化为确定</li>
+<li>zend_qsort排序优化</li>
+<li>内存管理优化，减少CPU cache miss</li>
+<li>常用函数优化</li>
+<li>字符串拼接优化，减少内存访问次数</li>
+</ul>
+<p>通过这一系列的优化，改进了PHP的内存操作，改进了HashTable操作，改进了内部函数调用，降低了CPU 时间消耗，这时候再来做PHP JIT优化就有意义。PHP 7接下来仍然会继续优化，迁移常用扩展。 许多优化都是微小的，但是积累起来后却是巨大，特别是对于微博这样的网站，1%的性能提升都意义非凡。 优化是具有专向性的，对A场景的优化可能并不适合B场景，所以需要分析实际的业务中的瓶颈和调用频次，权衡优化的方向。 现在距离10月份发布已经不远了，大家也可以检查自己项目是否兼容PHP 7，性能提升多少。</p>
+<p>参考链接：<br> <a href="http://www.infoq.com/cn/presentations/php7-new-engine-for-good-old-train">PHP7 – New engine for good old train</a></p>
+<p> <a href="http://www.laruence.com/2014/12/18/2976.html">PHP7 VS HHVM (WordPress)</a></p>
+<p> <a href="https://wiki.php.net/phpng">PHPNG (next generation)</a></p>
+<p> <a href="http://www.sitepoint.com/php-fights-hhvm-zephir-phpng/">What to Expect When You’re Expecting: PHP 7, Part 1</a></p>
+<p> <a href="https://philsturgeon.uk/php/2015/03/15/php-7-feature-freeze/">PHP 7 Feature Freeze</a></p>
+<p> <a href="http://hhvm.com/">HHVM</a></p>
+<p> <a href="http://wuduoyi.com/note/hhvm/">HHVM 是如何提升 PHP 性能的？</a></p>
+<p> <a href="http://www.sitepoint.com/php-fights-hhvm-zephir-phpng/">PHP Fights HHVM and Zephir with PHPNG</a></p>
+<p><a href="https://github.com/rlerdorf/php7dev">rlerdorf/php7dev</a></p>
+<p><a href="http://akrabat.com/building-and-testing-php7/">Building and testing the upcoming PHP7</a></p>
+<p><a href="http://www.zimuel.it/install-php-7/">Install PHP 7 on Ubuntu 14.04</a></p>
+]]></content>
+      <categories>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP7</tag>
       </tags>
   </entry>
   <entry>
@@ -2649,57 +2727,6 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       <tags>
         <tag>PHP</tag>
         <tag>运行模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PHP7快在哪里</title>
-    <url>/2017/08/22/php7%E5%BF%AB%E5%9C%A8%E5%93%AA%E9%87%8C/</url>
-    <content><![CDATA[<p>PHP7 带来许多新的特性：</p>
-<ul>
-<li>抽象语法树，在编译opcode时能够做更多的优化</li>
-<li>INT64提升，支持大于2GB的字符串/文件上传</li>
-<li>标量类型声明，可以声明参数类型</li>
-<li>返回值声明，可以声明返回值类型</li>
-<li>新操作符，&lt;=&gt;操作符，大于返回1，等于返回0，小于返回-1</li>
-<li>统一变量语法；</li>
-<li>引擎异常改进，函数不存在的fata error转为异常可以捕获处理</li>
-</ul>
-<p>等等。 除了新特性外，PHP 7使用了新引擎<a href="https://wiki.php.net/phpng">PHP NG</a>，性能得到了巨大的提升（<a href="http://www.laruence.com/2014/12/18/2976.html">与HHVM对比</a>）。 这里的性能优化比较有意思， 非常值得借鉴学习。为什么要进行重构：</p>
-<ul>
-<li>PHP 5.4之后php引擎的性能提升已经不大，Zend VM已经高度优化</li>
-<li>PHP JIT(Just In Time Compiler)项目在benchmakr上性能提升巨大（8倍），但是在实际业务提升不大（离开实际业务谈benchmark都是耍流氓）</li>
-<li>分析wordpress项目发现瓶颈并不在Zend VM上面，21% CPU时间花在了内存管理，12%时间花在了hashTable操作，30% CPU时间花在了内部调用，25% CUP时间花在了VM</li>
-</ul>
-<p>首先应当分析实际业务的性能消耗占比，确定需要优化的地方。JIT仅仅优化了Zend VM，提升是有限的，需要对其他地方（内存操作，HashTable，函数调用）也进行优化，所以才进行的重构。 PHP NG在很多方面做了优化：</p>
-<ul>
-<li>标量类型不做引用计数，zval分配在堆上，增加Referance类型</li>
-<li>增加类型zend string，将字符串与值连续分配，避免CPU cache miss，避免二次读内存</li>
-<li>原本的HashTable变为zend array，数组值为zval，内存一次分配，提升data locality，避免CPU cache miss</li>
-<li>函数调用优化，减少重复入栈</li>
-<li>参数解析优化，将不确定转化为确定</li>
-<li>zend_qsort排序优化</li>
-<li>内存管理优化，减少CPU cache miss</li>
-<li>常用函数优化</li>
-<li>字符串拼接优化，减少内存访问次数</li>
-</ul>
-<p>通过这一系列的优化，改进了PHP的内存操作，改进了HashTable操作，改进了内部函数调用，降低了CPU 时间消耗，这时候再来做PHP JIT优化就有意义。PHP 7接下来仍然会继续优化，迁移常用扩展。 许多优化都是微小的，但是积累起来后却是巨大，特别是对于微博这样的网站，1%的性能提升都意义非凡。 优化是具有专向性的，对A场景的优化可能并不适合B场景，所以需要分析实际的业务中的瓶颈和调用频次，权衡优化的方向。 现在距离10月份发布已经不远了，大家也可以检查自己项目是否兼容PHP 7，性能提升多少。</p>
-<p>参考链接：<br> <a href="http://www.infoq.com/cn/presentations/php7-new-engine-for-good-old-train">PHP7 – New engine for good old train</a></p>
-<p> <a href="http://www.laruence.com/2014/12/18/2976.html">PHP7 VS HHVM (WordPress)</a></p>
-<p> <a href="https://wiki.php.net/phpng">PHPNG (next generation)</a></p>
-<p> <a href="http://www.sitepoint.com/php-fights-hhvm-zephir-phpng/">What to Expect When You’re Expecting: PHP 7, Part 1</a></p>
-<p> <a href="https://philsturgeon.uk/php/2015/03/15/php-7-feature-freeze/">PHP 7 Feature Freeze</a></p>
-<p> <a href="http://hhvm.com/">HHVM</a></p>
-<p> <a href="http://wuduoyi.com/note/hhvm/">HHVM 是如何提升 PHP 性能的？</a></p>
-<p> <a href="http://www.sitepoint.com/php-fights-hhvm-zephir-phpng/">PHP Fights HHVM and Zephir with PHPNG</a></p>
-<p><a href="https://github.com/rlerdorf/php7dev">rlerdorf/php7dev</a></p>
-<p><a href="http://akrabat.com/building-and-testing-php7/">Building and testing the upcoming PHP7</a></p>
-<p><a href="http://www.zimuel.it/install-php-7/">Install PHP 7 on Ubuntu 14.04</a></p>
-]]></content>
-      <categories>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>PHP7</tag>
       </tags>
   </entry>
   <entry>
@@ -2854,6 +2881,70 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
+    <title>PHP神器之Composer</title>
+    <url>/2016/12/27/php%E7%A5%9E%E5%99%A8%E4%B9%8Bcomposer/</url>
+    <content><![CDATA[<p>Composer是一个非常流行的PHP包依赖管理工具,已经取代PEAR包管理器,对于PHP开发者来说掌握Composer是必须的. 对于使用者来说Composer非常的简单,通过简单的一条命令将需要的代码包下载到vendor目录下,然后开发者就可以引入包并使用了. 其中的关键在于你项目定义的composer.json,可以定义项目需要依赖的包(可能有多个),而依赖的包可能又依赖其他的包(这就是组件的好处),这些都不用你烦心,Composer会自动下载你需要的一切,一切在于composer.json的定义. Composer对于使用者来说是很透明,但是其背后的理念还是需要了解一下的,其的诞生也不是偶然的,得益于Github的快速发展,PHP语言也越来越现代化,显得更高大上了. 为了理解Composer,先大概了解下其结构:</p>
+<p><strong>Composer的结构</strong></p>
+<ul>
+<li>Composer命令行工具:这个理解就比较简单了,通过使用者定义的Composer.json去下载你需要的代码,假如只是简单的使用Composer,那么掌握一些具体命令就完全可以了</li>
+<li>Autoloading代码加载器:通过Composer,开发者可以通过多种方式去使用,而其中的关键在于PHP的命名空间概念,以及PSR-4标准的发展,Composer只是根据这二者开发了一个代码自动加载器</li>
+<li>Github:有了Github,PHP开发人员可以将开源的代码托管在这上面,而Composer的发展源于Github,Composer本质上就是将Github上的代码下载到本地.</li>
+<li>Packagist:对于使用者来说使用的是Composer的命令行工具,那么命令行工具怎么知道有多少包可以被用户使用呢,这主要就是依赖于Packagist,Packagist是Composer主要的一个包信息存储库,包开发者将具体代码托管到Github上,将包信息提交到Packagist上,这样使用者就可以通过Composer去使用.</li>
+<li>Composer根据本地定义的composer.json信息去查询Packagist,Packagist根据Composer.json/Package.json信息解析,最终对应到github仓库,Composer最终下载代码的时候还要依赖于Github仓库上的Composer.json,这里涉及到三种类型的composer.json,含义是不一样的.</li>
+<li>Composer.json:这是Composer的核心,是Composer的规则,上面也提到了三种类型的Composer.json,在使用的时候一定要注意区分,我初学的时候就总是搞乱.</li>
+</ul>
+<p><strong>Composer命令行工具</strong></p>
+<p><strong>composer init</strong> 使用者可以在自己的项目下创建composer.json以便定义你项目的依赖包,也可以通过composer init交互式的创建composer.json.<br> <strong>composer install</strong> 应该是最常用的命令,composer会根据本地的composer.json安装包,将下载的包放入项目下的vendor目录下,同时将安装时候的包版本信息放入到composer.lock,以便锁定版本. 其实在install的时候,假如发现composer.lock版本和目前vendor目录下的代码版本是一致的,则Composer会什么也不做,composer.lock的目的就是让你安心在目前这个版本下工作,而不获取最新版本的包.</p>
+<p><strong>composer update</strong> 那么如何更新composer.lock以便获取到最新版本的包呢?通过这个命令即可更新最新版本的包 <strong>composer config</strong> 这个命令还是建议了解下,全局的配置保存在COMPOSER_HOME/config.json,非全局的配置信息则存储在本项目目录下.</p>
+<blockquote>
+<p>composer config –list -g composer config -g notify-on-install false composer global config bin-dir –absolute</p>
+</blockquote>
+<p><strong>composer create-project</strong> 这个命令不常用,但是个人觉得还是很重要的,使用普通的install命令是将项目所有的依赖包下载到本项目vendor目录下.而通过这个命令则是将所有的代码及其依赖的包放到一个目录下,相当于执行了一个git clone命令,一般是包的开发者可能为了修复bug会使用该命令.</p>
+<p><strong>composer global</strong> 这是一个全局的安装命令,它允许你在COMPOSER_HOME目录下执行Composer的命令,比如install,update.当然你的COMPOSER_HOME要在$PATH环境下. 比如执行composer global require fabpot/php-cs-fixer,现在php-cs-fixer命令行可以全局运行了,如果稍后想更新它,只需要运行composer global update</p>
+<p><strong>composer dump-autoload</strong> 当你修改项目下的composer.json的文件,并不一定要运行composer update命令进行更新,有的时候可以使用该命令来更新加载器,比如你要引用本地自定义的包(不是来自于packagist),后面会通过实践来说明该命令.</p>
+<p><strong>composer require</strong> 假如手动或者交互式创建composer.json文件,可以直接使用该命令来安装包</p>
+<blockquote>
+<p>composer require  cerdic/css-tidy:1.5.2 composer require “ywdblog/phpcomposer:dev-master”</p>
+</blockquote>
+<p><strong>–prefer-source和–prefer-dist参数</strong> –prefer-dist:对于稳定的包来说,一般Composer安装默认使用该参数,这也能加快安装,比如有可能直接从packagist安装了相应的包,而不用实际去Github上下载包. –prefer-source:假如使用该参数,则会直接从Github上安装,安装包后vendor目录下还含有.git信息</p>
+<blockquote>
+<p>composer require “ywdblog/phpcomposer:dev-master” –prefer-source #在vendor/ywdblog/phpcomposer目录下含有.git信息</p>
+</blockquote>
+<p><strong>如何给Composer添加代理</strong> 在国内使用Composer下载特别慢,可以通过二个方法进行加速</p>
+<ul>
+<li>composer config repo.packagist composer “<a href="https://packagist.phpcomposer.com“/">https://packagist.phpcomposer.com“</a></li>
+<li>编辑composer.json</li>
+</ul>
+<blockquote>
+<p>“repositories”: { “packagist”: { “type”: “composer”, “url”: “<a href="https://packagist.phpcomposer.com&quot;/">https://packagist.phpcomposer.com&quot;</a> } }</p>
+</blockquote>
+<p><strong>Autoloading代码加载器</strong> composer本身集成一个autoloader,支持PSR-4,PSR-0,classmap,files autoloading. 这里通过一个例子来说明通过Composer如何引用classmap,files,本地符合PSR-4标准的代码 编辑composer.json</p>
+<blockquote>
+<p>“autoload”: { “classmap”: [“othsrc/“,”classsrc.php”], “files”: [“othsrc/filesrc.php”], “psr-4”: {“Foo\Bar\“: “src”} }</p>
+</blockquote>
+<p>composer dump-autoload 通过上述的操作,对于PSR-4来说等同注册了一个PSR-4 autoloader(从FooBar命名空间) 假如不想使用Composer的autoloader,可以直接包含vendor/composer/autoload_*.php 文件,配置自己的加载器. 具体的例子托管在github上,可参考. <strong>Repositories</strong> 关于Repositories,了解其不是必须的,但是假如掌握则更能理解Composer,对于Repositories,其中文文档和英文文档解释的很好,这里也进行了一些摘抄. <strong>基本概念</strong> 包: Composer是一个依赖管理工具,它在本地安装一些资源包和包的描述(比如包名称和对应的版本),比较重要的元数据描述是dist和source,dist指向一个存档,该存档是对一个资源包的某个版本的数据进行的打包.source指向一个开发中的源,这通常是一个源代码仓库(比如git) 资源库: 一个资源库是一个包的来源.它是一个packages/versions的列表. Composer将查看所有你定义的repositories以找到项目需要的资源包(这句话很重要). 默认情况下已经将Packagist.org注册到Composer(或者理解为Packagist.org是Composer资源库默认的仓库类型) <strong>Composer资源库类型</strong> Composer资源库包括四种类型,默认的是composer类型,也就是packagist.org所使用的资源类型. 它使用一个单一的packages.json文件,包含了所有的资源包元数据.当你将包发布到pckagist.org上,则默认系统会创建一个packages.json,不过我没有找到我的包对应的文件. <strong>VCS资源库类型</strong> 假如你想构建一个私有的Composer私有资源库类型,可以使用该类型,这里举一个例子,比如你在自己项目的composer.json定义如下,则就可以使用对应的Github上的代码了.</p>
+<blockquote>
+<p>{ “repositories”: [ { “type”: “vcs”, “url”: “<a href="https://github.com/ywdblog/phpcomposer&quot;">https://github.com/ywdblog/phpcomposer&quot;</a> } ], “require”: { “ywdblog/phpcomposer”: “dev-master” } }</p>
+</blockquote>
+<p>当运行composer update的时候,Comoser实际上是从Github上下载包而不是从pckagist.org上下载. 另外假如需要使用Package资源库类型或者PEAR资源库类型,参考官方文档即可,一般在composer.json中定义name、version属性即可. <strong>Composer.json</strong> 在本文上面也多次提到了composer.json,比如你希望使用第三方包则需要在本地定义composer.json,Composer安装第三方包后,也会在第三方包目录下发现composer.json,那么这二者都叫composer.json,有什么区别呢?理解这非常的重要. 假如你在自己的项目下面定义一个composer.json,则这个包称之为ROOT包,这个composer.json定义你项目需要的条件(比如你的项目可能依赖一个第三方包). composer.json中有些属性只能被ROOT包使用,比如config属性只在ROOT包中生效. 一个资源包是不是ROOT包,取决于它的上下文,比如你git clone ywdblog/phpcomposer,则这时候本地phpcomposer目录就是ROOT包,假如你在本地phpcomposer目录下composer require ywdblog/phpcomposer,则这时候你的项目phpcomposer就是ROOT包. 了解composer-schema.json可参考该网址,Laravel作为一个成熟的框架,其定义的composer.json非常经典 <strong>关于包的版本</strong> 当使用者在本地配置composer.json的时候,可以指定需要包的特定版本,Composer支持从Github仓库中下载Tag或者分支下的包. 对于Github上的Tag来说,Packagist会创建对应包的版本,它符合X.Y.Z,vX.Y.Z,X.Y.Z-包类型,就是说Github上虽然只有一个特定版本的包,但Composer支持多种形式的引用方式,比如:</p>
+<blockquote>
+<p>composer require monolog/monolog1.0.0-RC1 composer require monolog/monolog  v1.0.0-RC1 composer require monolog/monolog1.0.* composer require monolog/monolog  ~1.10</p>
+</blockquote>
+<p>对于Github上的分支来说,Packagist会创建对应包的版本,假如分支名看起来像一个版本,将创建{分支名}-dev的包版本号,如果分支名看起来不像一个版本号,它将会创建dev-{分支名}形式的版本号</p>
+<blockquote>
+<p>composer require monolog/monolog  master-dev composer require monolog/monolog  master.x-dev</p>
+</blockquote>
+<p><strong>总结:</strong> 理解Composer,最重要的是实践,最后也能明白PSR-4和命名空间,也可以尝试将你的项目发布到pckagist.org上.</p>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>redis-cluster安装和配置</title>
     <url>/2017/02/09/redis-cluster%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/</url>
     <content><![CDATA[<h2 id="介绍安装环境与版本"><a href="#介绍安装环境与版本" class="headerlink" title="介绍安装环境与版本"></a>介绍安装环境与版本</h2><blockquote>
@@ -2937,67 +3028,27 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
-    <title>PHP神器之Composer</title>
-    <url>/2016/12/27/php%E7%A5%9E%E5%99%A8%E4%B9%8Bcomposer/</url>
-    <content><![CDATA[<p>Composer是一个非常流行的PHP包依赖管理工具,已经取代PEAR包管理器,对于PHP开发者来说掌握Composer是必须的. 对于使用者来说Composer非常的简单,通过简单的一条命令将需要的代码包下载到vendor目录下,然后开发者就可以引入包并使用了. 其中的关键在于你项目定义的composer.json,可以定义项目需要依赖的包(可能有多个),而依赖的包可能又依赖其他的包(这就是组件的好处),这些都不用你烦心,Composer会自动下载你需要的一切,一切在于composer.json的定义. Composer对于使用者来说是很透明,但是其背后的理念还是需要了解一下的,其的诞生也不是偶然的,得益于Github的快速发展,PHP语言也越来越现代化,显得更高大上了. 为了理解Composer,先大概了解下其结构:</p>
-<p><strong>Composer的结构</strong></p>
-<ul>
-<li>Composer命令行工具:这个理解就比较简单了,通过使用者定义的Composer.json去下载你需要的代码,假如只是简单的使用Composer,那么掌握一些具体命令就完全可以了</li>
-<li>Autoloading代码加载器:通过Composer,开发者可以通过多种方式去使用,而其中的关键在于PHP的命名空间概念,以及PSR-4标准的发展,Composer只是根据这二者开发了一个代码自动加载器</li>
-<li>Github:有了Github,PHP开发人员可以将开源的代码托管在这上面,而Composer的发展源于Github,Composer本质上就是将Github上的代码下载到本地.</li>
-<li>Packagist:对于使用者来说使用的是Composer的命令行工具,那么命令行工具怎么知道有多少包可以被用户使用呢,这主要就是依赖于Packagist,Packagist是Composer主要的一个包信息存储库,包开发者将具体代码托管到Github上,将包信息提交到Packagist上,这样使用者就可以通过Composer去使用.</li>
-<li>Composer根据本地定义的composer.json信息去查询Packagist,Packagist根据Composer.json/Package.json信息解析,最终对应到github仓库,Composer最终下载代码的时候还要依赖于Github仓库上的Composer.json,这里涉及到三种类型的composer.json,含义是不一样的.</li>
-<li>Composer.json:这是Composer的核心,是Composer的规则,上面也提到了三种类型的Composer.json,在使用的时候一定要注意区分,我初学的时候就总是搞乱.</li>
-</ul>
-<p><strong>Composer命令行工具</strong></p>
-<p><strong>composer init</strong> 使用者可以在自己的项目下创建composer.json以便定义你项目的依赖包,也可以通过composer init交互式的创建composer.json.<br> <strong>composer install</strong> 应该是最常用的命令,composer会根据本地的composer.json安装包,将下载的包放入项目下的vendor目录下,同时将安装时候的包版本信息放入到composer.lock,以便锁定版本. 其实在install的时候,假如发现composer.lock版本和目前vendor目录下的代码版本是一致的,则Composer会什么也不做,composer.lock的目的就是让你安心在目前这个版本下工作,而不获取最新版本的包.</p>
-<p><strong>composer update</strong> 那么如何更新composer.lock以便获取到最新版本的包呢?通过这个命令即可更新最新版本的包 <strong>composer config</strong> 这个命令还是建议了解下,全局的配置保存在COMPOSER_HOME/config.json,非全局的配置信息则存储在本项目目录下.</p>
-<blockquote>
-<p>composer config –list -g composer config -g notify-on-install false composer global config bin-dir –absolute</p>
+    <title>Redis之HyperLogLog</title>
+    <url>/2017/01/24/redis%E4%B9%8Bhyperloglog/</url>
+    <content><![CDATA[<blockquote>
+<p>HyperLogLog，数据统计去重处理的神器之一，应用内存管理，实时计算，快速统计网站独立ip，uv等等。</p>
 </blockquote>
-<p><strong>composer create-project</strong> 这个命令不常用,但是个人觉得还是很重要的,使用普通的install命令是将项目所有的依赖包下载到本项目vendor目录下.而通过这个命令则是将所有的代码及其依赖的包放到一个目录下,相当于执行了一个git clone命令,一般是包的开发者可能为了修复bug会使用该命令.</p>
-<p><strong>composer global</strong> 这是一个全局的安装命令,它允许你在COMPOSER_HOME目录下执行Composer的命令,比如install,update.当然你的COMPOSER_HOME要在$PATH环境下. 比如执行composer global require fabpot/php-cs-fixer,现在php-cs-fixer命令行可以全局运行了,如果稍后想更新它,只需要运行composer global update</p>
-<p><strong>composer dump-autoload</strong> 当你修改项目下的composer.json的文件,并不一定要运行composer update命令进行更新,有的时候可以使用该命令来更新加载器,比如你要引用本地自定义的包(不是来自于packagist),后面会通过实践来说明该命令.</p>
-<p><strong>composer require</strong> 假如手动或者交互式创建composer.json文件,可以直接使用该命令来安装包</p>
-<blockquote>
-<p>composer require  cerdic/css-tidy:1.5.2 composer require “ywdblog/phpcomposer:dev-master”</p>
-</blockquote>
-<p><strong>–prefer-source和–prefer-dist参数</strong> –prefer-dist:对于稳定的包来说,一般Composer安装默认使用该参数,这也能加快安装,比如有可能直接从packagist安装了相应的包,而不用实际去Github上下载包. –prefer-source:假如使用该参数,则会直接从Github上安装,安装包后vendor目录下还含有.git信息</p>
-<blockquote>
-<p>composer require “ywdblog/phpcomposer:dev-master” –prefer-source #在vendor/ywdblog/phpcomposer目录下含有.git信息</p>
-</blockquote>
-<p><strong>如何给Composer添加代理</strong> 在国内使用Composer下载特别慢,可以通过二个方法进行加速</p>
-<ul>
-<li>composer config repo.packagist composer “<a href="https://packagist.phpcomposer.com“/">https://packagist.phpcomposer.com“</a></li>
-<li>编辑composer.json</li>
-</ul>
-<blockquote>
-<p>“repositories”: { “packagist”: { “type”: “composer”, “url”: “<a href="https://packagist.phpcomposer.com&quot;/">https://packagist.phpcomposer.com&quot;</a> } }</p>
-</blockquote>
-<p><strong>Autoloading代码加载器</strong> composer本身集成一个autoloader,支持PSR-4,PSR-0,classmap,files autoloading. 这里通过一个例子来说明通过Composer如何引用classmap,files,本地符合PSR-4标准的代码 编辑composer.json</p>
-<blockquote>
-<p>“autoload”: { “classmap”: [“othsrc/“,”classsrc.php”], “files”: [“othsrc/filesrc.php”], “psr-4”: {“Foo\Bar\“: “src”} }</p>
-</blockquote>
-<p>composer dump-autoload 通过上述的操作,对于PSR-4来说等同注册了一个PSR-4 autoloader(从FooBar命名空间) 假如不想使用Composer的autoloader,可以直接包含vendor/composer/autoload_*.php 文件,配置自己的加载器. 具体的例子托管在github上,可参考. <strong>Repositories</strong> 关于Repositories,了解其不是必须的,但是假如掌握则更能理解Composer,对于Repositories,其中文文档和英文文档解释的很好,这里也进行了一些摘抄. <strong>基本概念</strong> 包: Composer是一个依赖管理工具,它在本地安装一些资源包和包的描述(比如包名称和对应的版本),比较重要的元数据描述是dist和source,dist指向一个存档,该存档是对一个资源包的某个版本的数据进行的打包.source指向一个开发中的源,这通常是一个源代码仓库(比如git) 资源库: 一个资源库是一个包的来源.它是一个packages/versions的列表. Composer将查看所有你定义的repositories以找到项目需要的资源包(这句话很重要). 默认情况下已经将Packagist.org注册到Composer(或者理解为Packagist.org是Composer资源库默认的仓库类型) <strong>Composer资源库类型</strong> Composer资源库包括四种类型,默认的是composer类型,也就是packagist.org所使用的资源类型. 它使用一个单一的packages.json文件,包含了所有的资源包元数据.当你将包发布到pckagist.org上,则默认系统会创建一个packages.json,不过我没有找到我的包对应的文件. <strong>VCS资源库类型</strong> 假如你想构建一个私有的Composer私有资源库类型,可以使用该类型,这里举一个例子,比如你在自己项目的composer.json定义如下,则就可以使用对应的Github上的代码了.</p>
-<blockquote>
-<p>{ “repositories”: [ { “type”: “vcs”, “url”: “<a href="https://github.com/ywdblog/phpcomposer&quot;">https://github.com/ywdblog/phpcomposer&quot;</a> } ], “require”: { “ywdblog/phpcomposer”: “dev-master” } }</p>
-</blockquote>
-<p>当运行composer update的时候,Comoser实际上是从Github上下载包而不是从pckagist.org上下载. 另外假如需要使用Package资源库类型或者PEAR资源库类型,参考官方文档即可,一般在composer.json中定义name、version属性即可. <strong>Composer.json</strong> 在本文上面也多次提到了composer.json,比如你希望使用第三方包则需要在本地定义composer.json,Composer安装第三方包后,也会在第三方包目录下发现composer.json,那么这二者都叫composer.json,有什么区别呢?理解这非常的重要. 假如你在自己的项目下面定义一个composer.json,则这个包称之为ROOT包,这个composer.json定义你项目需要的条件(比如你的项目可能依赖一个第三方包). composer.json中有些属性只能被ROOT包使用,比如config属性只在ROOT包中生效. 一个资源包是不是ROOT包,取决于它的上下文,比如你git clone ywdblog/phpcomposer,则这时候本地phpcomposer目录就是ROOT包,假如你在本地phpcomposer目录下composer require ywdblog/phpcomposer,则这时候你的项目phpcomposer就是ROOT包. 了解composer-schema.json可参考该网址,Laravel作为一个成熟的框架,其定义的composer.json非常经典 <strong>关于包的版本</strong> 当使用者在本地配置composer.json的时候,可以指定需要包的特定版本,Composer支持从Github仓库中下载Tag或者分支下的包. 对于Github上的Tag来说,Packagist会创建对应包的版本,它符合X.Y.Z,vX.Y.Z,X.Y.Z-包类型,就是说Github上虽然只有一个特定版本的包,但Composer支持多种形式的引用方式,比如:</p>
-<blockquote>
-<p>composer require monolog/monolog1.0.0-RC1 composer require monolog/monolog  v1.0.0-RC1 composer require monolog/monolog1.0.* composer require monolog/monolog  ~1.10</p>
-</blockquote>
-<p>对于Github上的分支来说,Packagist会创建对应包的版本,假如分支名看起来像一个版本,将创建{分支名}-dev的包版本号,如果分支名看起来不像一个版本号,它将会创建dev-{分支名}形式的版本号</p>
-<blockquote>
-<p>composer require monolog/monolog  master-dev composer require monolog/monolog  master.x-dev</p>
-</blockquote>
-<p><strong>总结:</strong> 理解Composer,最重要的是实践,最后也能明白PSR-4和命名空间,也可以尝试将你的项目发布到pckagist.org上.</p>
+<p>redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。 在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基 数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。 但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。</p>
+<h2 id="什么是基数"><a href="#什么是基数" class="headerlink" title="什么是基数?"></a>什么是基数?</h2><p>比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。  </p>
+<p>接下来举个栗子。。。</p>
+<p>我们把每日IP记录下来，假设每天有一亿个IP访问，如果使用集合的话，一天的内存使用就是1.5G，假设我们存储一个月的记录，就需要45G容量。但是使用HyperLogLog的话，一天12K，一个月360K。如果我们不需要知道IP具体信息的话，完全可以把这些记录留在内存一年、或者不删都行。如果需要，我们也会把所有的IP访问记录通过其他途径存储起来。把每天的信息存储起来，我们可以计算每月IP总数（MERGE），一年的IP总数等（去重）。  </p>
+<h3 id="最后具体操作方法"><a href="#最后具体操作方法" class="headerlink" title="最后具体操作方法"></a>最后具体操作方法</h3><p><strong>1)将元素添加至 HyperLogLog</strong><br>PFADD key element [element …] 将任意数量的元素添加到指定的 HyperLogLog 里面。 这个命令可能会对 HyperLogLog 进行修改，以便反映新的基数估算值，如果 HyperLogLog 的基数估算 值在命令执行之后出现了变化， 那么命令返回 1 ， 否则返回 0 。 命令的复杂度为 O(N) ，N 为被添加元素的数量。 返回给定 HyperLogLog 的基数估算值 PFCOUNT key [key …] 当只给定一个 HyperLogLog 时，命令返回给定 HyperLogLog 的基数估算值。 当给定多个 HyperLogLog 时，命令会先对给定的 HyperLogLog 进行并集计算，得出一个合并后的 HyperLogLog ，然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果（合并得出的 HyperLogLog 不会被储存，使用之后就会被删掉）。 当命令作用于单个 HyperLogLog 时， 复杂度为 O(1) ， 并且具有非常低的平均常数时间。 当命令作用于多个 HyperLogLog 时， 复杂度为 O(N) ，并且常数时间也比处理单个 HyperLogLog 时要 大得多。  </p>
+<p><strong>2)PFADD 和 PFCOUNT 的使用示例</strong><br><code>redis&gt; PFADD unique::ip::counter &#39;192.168.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;127.0.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;255.255.255.255&#39;</code><br><code>(integer) 1</code> <code>redis&gt; PFCOUNT unique::ip::counter</code><br><code>(integer) 3</code></p>
+<p><strong>3)合并多个 HyperLogLog</strong><br> PFMERGE destkey sourcekey [sourcekey …] 将多个 HyperLogLog 合并为一个 HyperLogLog ，合并后的 HyperLogLog 的基数估算值是通过对所有 给定 HyperLogLog 进行并集计算得出的。 命令的复杂度为 O(N) ， 其中 N 为被合并的 HyperLogLog 数量， 不过这个命令的常数复杂度比较高。 PFMERGE 的使用示例<br> <code>redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str1</code> <code>(integer) 3</code><br>  <code>redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str2</code> <code>(integer) 4</code> <code>redis&gt; PFMERGE str1&amp;2 str1 str2</code><br>  <code>OK</code><br>  <code>redis&gt; PFCOUNT str1&amp;2</code> <code>(integer) 5</code></p>
 ]]></content>
       <categories>
-        <category>编程</category>
-        <category>PHP</category>
+        <category>数据库</category>
+        <category>综合</category>
+        <category>Redis</category>
       </categories>
       <tags>
-        <tag>PHP</tag>
+        <tag>大数据</tag>
+        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -3062,38 +3113,14 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>Redis之HyperLogLog</title>
-    <url>/2017/01/24/redis%E4%B9%8Bhyperloglog/</url>
-    <content><![CDATA[<blockquote>
-<p>HyperLogLog，数据统计去重处理的神器之一，应用内存管理，实时计算，快速统计网站独立ip，uv等等。</p>
-</blockquote>
-<p>redis HyperLogLog 是用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。 在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基 数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。 但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以 HyperLogLog 不能像集合那样，返回输入的各个元素。</p>
-<h2 id="什么是基数"><a href="#什么是基数" class="headerlink" title="什么是基数?"></a>什么是基数?</h2><p>比如数据集 {1, 3, 5, 7, 5, 7, 8}， 那么这个数据集的基数集为 {1, 3, 5 ,7, 8}, 基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。  </p>
-<p>接下来举个栗子。。。</p>
-<p>我们把每日IP记录下来，假设每天有一亿个IP访问，如果使用集合的话，一天的内存使用就是1.5G，假设我们存储一个月的记录，就需要45G容量。但是使用HyperLogLog的话，一天12K，一个月360K。如果我们不需要知道IP具体信息的话，完全可以把这些记录留在内存一年、或者不删都行。如果需要，我们也会把所有的IP访问记录通过其他途径存储起来。把每天的信息存储起来，我们可以计算每月IP总数（MERGE），一年的IP总数等（去重）。  </p>
-<h3 id="最后具体操作方法"><a href="#最后具体操作方法" class="headerlink" title="最后具体操作方法"></a>最后具体操作方法</h3><p><strong>1)将元素添加至 HyperLogLog</strong><br>PFADD key element [element …] 将任意数量的元素添加到指定的 HyperLogLog 里面。 这个命令可能会对 HyperLogLog 进行修改，以便反映新的基数估算值，如果 HyperLogLog 的基数估算 值在命令执行之后出现了变化， 那么命令返回 1 ， 否则返回 0 。 命令的复杂度为 O(N) ，N 为被添加元素的数量。 返回给定 HyperLogLog 的基数估算值 PFCOUNT key [key …] 当只给定一个 HyperLogLog 时，命令返回给定 HyperLogLog 的基数估算值。 当给定多个 HyperLogLog 时，命令会先对给定的 HyperLogLog 进行并集计算，得出一个合并后的 HyperLogLog ，然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果（合并得出的 HyperLogLog 不会被储存，使用之后就会被删掉）。 当命令作用于单个 HyperLogLog 时， 复杂度为 O(1) ， 并且具有非常低的平均常数时间。 当命令作用于多个 HyperLogLog 时， 复杂度为 O(N) ，并且常数时间也比处理单个 HyperLogLog 时要 大得多。  </p>
-<p><strong>2)PFADD 和 PFCOUNT 的使用示例</strong><br><code>redis&gt; PFADD unique::ip::counter &#39;192.168.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;127.0.0.1&#39;</code><br><code>(integer) 1</code><br><code>redis&gt; PFADD unique::ip::counter &#39;255.255.255.255&#39;</code><br><code>(integer) 1</code> <code>redis&gt; PFCOUNT unique::ip::counter</code><br><code>(integer) 3</code></p>
-<p><strong>3)合并多个 HyperLogLog</strong><br> PFMERGE destkey sourcekey [sourcekey …] 将多个 HyperLogLog 合并为一个 HyperLogLog ，合并后的 HyperLogLog 的基数估算值是通过对所有 给定 HyperLogLog 进行并集计算得出的。 命令的复杂度为 O(N) ， 其中 N 为被合并的 HyperLogLog 数量， 不过这个命令的常数复杂度比较高。 PFMERGE 的使用示例<br> <code>redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str1</code> <code>(integer) 3</code><br>  <code>redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</code> <code>(integer) 1</code><br>  <code>redis&gt; PFCOUNT str2</code> <code>(integer) 4</code> <code>redis&gt; PFMERGE str1&amp;2 str1 str2</code><br>  <code>OK</code><br>  <code>redis&gt; PFCOUNT str1&amp;2</code> <code>(integer) 5</code></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>综合</category>
-        <category>Redis</category>
-      </categories>
-      <tags>
-        <tag>大数据</tag>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Runnable和Thread的区别</title>
     <url>/2017/05/05/runnable%E5%92%8Cthread%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p>在Java中可有两种方式实现多线程，一种是继承Thread类，一种是实现Runnable接口； Thread类是在java.lang包中定义的。 一个类只要继承了Thread类同时覆写了本类中的run()方法就可以实现多线程操作了，但是一个类只能继承一个父类，这是此方法的局限， 两种实现方式的区别和联系： 在程序开发中只要是多线程肯定永远以实现Runnable接口为主，因为实现Runnable接口相比 继承Thread类有如下好处： -&gt;避免点继承的局限，一个类可以继承多个接口。 -&gt;适合于资源的共享</p>
 ]]></content>
       <categories>
         <category>JAVA</category>
-        <category>编程</category>
         <category>JAVA并发</category>
+        <category>编程</category>
       </categories>
       <tags>
         <tag>JAVA基础</tag>
@@ -3764,8 +3791,8 @@ auto-aof-rewrite-min-size 64mb</code></pre>
 ]]></content>
       <categories>
         <category>JAVA</category>
-        <category>编程</category>
         <category>JAVA基础</category>
+        <category>编程</category>
       </categories>
       <tags>
         <tag>JAVA基础</tag>
