@@ -533,59 +533,13 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
-    <title>git常用命令二</title>
-    <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/</url>
-    <content><![CDATA[<p>Git鼓励大量使用分支： <strong>查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d</strong></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
-<p>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
-</blockquote>
-<p>用<strong>git log –graph</strong>命令可以看到<strong>分支合并图</strong>。 通常，合并分支时，如果可能，Git会用Fast forward模式，<strong>但这种模式下，删除分支后，会丢掉分支信息</strong>。</p>
-<blockquote>
-<p>如果要<strong>强制禁用Fast forward模式</strong>，Git就会在merge时<strong>生成一个新的commit，这样，从分支历史上就可以看出分支信息</strong>。准备合并dev分支，请注意**–no-ff参数，表示禁用Fast forward：**</p>
-<p>$ git merge –no-ff -m “merge with no-ff” dev<br>Merge made by the ‘recursive’ strategy.<br>readme.txt |    1 + 1 file changed, 1 insertion(+)</p>
-<p> </p>
-</blockquote>
-<p>因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。合并后，我们用git log看看分支历史：</p>
-<p>$ git log –graph –pretty=oneline –abbrev-commit<br>*   7825a50 merge with no-ff<br>|<br>| * 6224937 add merge<br>|/<br>*   59bc1cb conflict fixed …</p>
-<p>  <strong>分支策略</strong></p>
-<blockquote>
-<p>在实际开发中，我们应该按照几个基本原则进行分支管理： 首先，<strong>master分支应该是非常稳定的</strong>，也就是仅用来发布新版本，<strong>平时不能在上面干活；</strong>那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本</p>
-</blockquote>
-<p>你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。 所以，团队合作的分支看起来就像这样：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/220694-a54e1c1c80a4585d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
-<p>git-br-policy</p>
-<p><strong>小结</strong> Git分支十分强大，在团队开发中应该充分应用。 合并分支时，<strong>加上–no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并</strong> 命令<strong>git push origin 可以推送一个本地标签</strong>； 命令<strong>git push origin –tags可以推送全部未推送过的本地标签；</strong> 命令<strong>git tag -d 可以删除一个本地标签；</strong> 命令<strong>git push origin :refs/tags/可以删除一个远程标签</strong>。 <strong>忽略特殊文件</strong> 有些时候，你<strong>必须把某些文件放到Git工作目录中</strong>，<strong>但又不能提交它们</strong>，比如保存了数据库密码的配置文件啦等等，每次git status都会显示Untracked files …，有强迫症的童鞋心里肯定不爽。好在Git考虑到了大家的感受，这个问题解决起来也很简单，在<strong>Git工作区</strong>的<strong>根目录下</strong>创建一个特殊的**.gitignore文件<strong>，然后把</strong>要忽略的文件名填进去，Git就会自动忽略这些文件。**不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。</p>
-<blockquote>
-<p>所有配置文件可以直接在线浏览：**<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a>**</p>
-</blockquote>
-<p>忽略文件的原则是：忽略操作系统自动生成的文件，比如缩略图等； 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件； 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。 举个例子： 假设你在Windows下进行Python开发，Windows会自动在有图片的目录下生成隐藏的缩略图文件. 如果有自定义目录，目录下就会有<strong>Desktop.ini</strong>文件.因此你需要忽略Windows自动生成的垃圾文件：<code>Windows:Thumbs.db ehthumbs.db Desktop.ini</code> 然后，继续忽略Python编译产生的**.pyc、.pyo、dist<strong>等文件或目录：<code>Python: *.py[cod] *.so *.egg *.egg -info dist build</code>加上你自己定义的文件，最终得到一个完整的</strong>.gitignore**文件. 内容如下</p>
-<p># Windows:Thumbs.db ehthumbs.db  Desktop.ini<br># Python:*.py[cod] *.so *.egg *.egg-info dist build<br># My configurations:db.ini deploy_key_rsa</p>
-<p>  最后一步就是把**.gitignore**<strong>也提交到Git</strong>，就完成了！ 当然检验.gitignore的标准是git status命令是不是说working directory clean。 使用Windows的童鞋注意了，如果你在资源管理器里新建一个.gitignore文件，它会非常弱智地提示你必须输入文件名，但是在文本编辑器里“保存”或者“另存为”就可以把文件保存为.gitignore了。小结忽略某些文件时，需要编写.gitignore；.gitignore文件本身要放到版本库里，并且可以对.gitignore做版本管理！ <strong>配置别名</strong> 我们只需要敲一行命令，告诉Git，以后st就表示status：</p>
-<p>$ git config –global alias.st status<br>$ git config –global alias.co checkout<br>$ git config –global alias.ci commit<br>$ git config –global alias.br branch</p>
-<p>  以后提交就可以简写成：<code>$ git ci -m “bala bala bala…”</code> . <strong>–global</strong>参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。 在撤销修改一节中，我们知道，命令<code>git reset HEAD file</code>可以把暂存区的修改撤销掉（unstage），重新放回工作区。既然是一个unstage操作，就可以配置一个unstage别名： <code>$ git config –global alias.unstage ‘reset HEAD’</code> 当你敲入命令：<code>$ git unstage test.py</code>实际上Git执行的是：<code>$ git reset HEAD test.py</code>配置一个git last，让其显示最后一次提交信息：**<code>$ git config –global alias.last ‘log -1′</code>** 这样，用git last就能显示最近一次的提交：</p>
-<p>$ git last commit adca45d317e6d8a4b23f9811c3d7b7f0f180bfe2<br>Merge: bd6ae48 291bea8<br>Author: Michael Liao<br>Date:   Thu Aug 22 22:49:22 2013 +0800<br>merge &amp; fix hello.py</p>
-<p> </p>
-<p>甚至还有人丧心病狂地把lg配置成了：</p>
-<p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;">&#x67;&#x69;&#x74;&#64;&#103;&#105;&#x74;&#104;&#117;&#x62;&#x2e;&#99;&#111;&#109;</a>](mailto:<a href="mailto:&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;">&#103;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#x2e;&#x63;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
-<p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
-]]></content>
-      <categories>
-        <category>WEB技术</category>
-        <category>综合</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git常用命令一</title>
     <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80/</url>
     <content><![CDATA[<h4 id="1-安装-Github"><a href="#1-安装-Github" class="headerlink" title="1.  安装 Github"></a>1.  安装 Github</h4><hr>
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#109;&#97;&#105;&#x6c;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#x65;&#109;&#97;&#105;&#x6c;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#x63;&#111;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#x61;&#x69;&#x6c;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#109;">&#x65;&#x6d;&#x61;&#x69;&#x6c;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -664,6 +618,52 @@ setcookie("sso", $_GET["sso"]);
 <blockquote>
 <p>另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本： $ <strong>git checkout – test.txt</strong> git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。 命令<strong>git rm</strong>用于删除一个文件。如果一个文件已经被提交到版本库，那么你永远不用担心误删，但是要小心，你只能恢复文件到最新版本，你会丢失**最近一次提交后你修改的内容。</p>
 </blockquote>
+]]></content>
+      <categories>
+        <category>WEB技术</category>
+        <category>综合</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>git常用命令二</title>
+    <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/</url>
+    <content><![CDATA[<p>Git鼓励大量使用分支： <strong>查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d</strong></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
+<p>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
+</blockquote>
+<p>用<strong>git log –graph</strong>命令可以看到<strong>分支合并图</strong>。 通常，合并分支时，如果可能，Git会用Fast forward模式，<strong>但这种模式下，删除分支后，会丢掉分支信息</strong>。</p>
+<blockquote>
+<p>如果要<strong>强制禁用Fast forward模式</strong>，Git就会在merge时<strong>生成一个新的commit，这样，从分支历史上就可以看出分支信息</strong>。准备合并dev分支，请注意**–no-ff参数，表示禁用Fast forward：**</p>
+<p>$ git merge –no-ff -m “merge with no-ff” dev<br>Merge made by the ‘recursive’ strategy.<br>readme.txt |    1 + 1 file changed, 1 insertion(+)</p>
+<p> </p>
+</blockquote>
+<p>因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。合并后，我们用git log看看分支历史：</p>
+<p>$ git log –graph –pretty=oneline –abbrev-commit<br>*   7825a50 merge with no-ff<br>|<br>| * 6224937 add merge<br>|/<br>*   59bc1cb conflict fixed …</p>
+<p>  <strong>分支策略</strong></p>
+<blockquote>
+<p>在实际开发中，我们应该按照几个基本原则进行分支管理： 首先，<strong>master分支应该是非常稳定的</strong>，也就是仅用来发布新版本，<strong>平时不能在上面干活；</strong>那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本</p>
+</blockquote>
+<p>你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。 所以，团队合作的分支看起来就像这样：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/220694-a54e1c1c80a4585d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>git-br-policy</p>
+<p><strong>小结</strong> Git分支十分强大，在团队开发中应该充分应用。 合并分支时，<strong>加上–no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并</strong> 命令<strong>git push origin 可以推送一个本地标签</strong>； 命令<strong>git push origin –tags可以推送全部未推送过的本地标签；</strong> 命令<strong>git tag -d 可以删除一个本地标签；</strong> 命令<strong>git push origin :refs/tags/可以删除一个远程标签</strong>。 <strong>忽略特殊文件</strong> 有些时候，你<strong>必须把某些文件放到Git工作目录中</strong>，<strong>但又不能提交它们</strong>，比如保存了数据库密码的配置文件啦等等，每次git status都会显示Untracked files …，有强迫症的童鞋心里肯定不爽。好在Git考虑到了大家的感受，这个问题解决起来也很简单，在<strong>Git工作区</strong>的<strong>根目录下</strong>创建一个特殊的**.gitignore文件<strong>，然后把</strong>要忽略的文件名填进去，Git就会自动忽略这些文件。**不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。</p>
+<blockquote>
+<p>所有配置文件可以直接在线浏览：**<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a>**</p>
+</blockquote>
+<p>忽略文件的原则是：忽略操作系统自动生成的文件，比如缩略图等； 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件； 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。 举个例子： 假设你在Windows下进行Python开发，Windows会自动在有图片的目录下生成隐藏的缩略图文件. 如果有自定义目录，目录下就会有<strong>Desktop.ini</strong>文件.因此你需要忽略Windows自动生成的垃圾文件：<code>Windows:Thumbs.db ehthumbs.db Desktop.ini</code> 然后，继续忽略Python编译产生的**.pyc、.pyo、dist<strong>等文件或目录：<code>Python: *.py[cod] *.so *.egg *.egg -info dist build</code>加上你自己定义的文件，最终得到一个完整的</strong>.gitignore**文件. 内容如下</p>
+<p># Windows:Thumbs.db ehthumbs.db  Desktop.ini<br># Python:*.py[cod] *.so *.egg *.egg-info dist build<br># My configurations:db.ini deploy_key_rsa</p>
+<p>  最后一步就是把**.gitignore**<strong>也提交到Git</strong>，就完成了！ 当然检验.gitignore的标准是git status命令是不是说working directory clean。 使用Windows的童鞋注意了，如果你在资源管理器里新建一个.gitignore文件，它会非常弱智地提示你必须输入文件名，但是在文本编辑器里“保存”或者“另存为”就可以把文件保存为.gitignore了。小结忽略某些文件时，需要编写.gitignore；.gitignore文件本身要放到版本库里，并且可以对.gitignore做版本管理！ <strong>配置别名</strong> 我们只需要敲一行命令，告诉Git，以后st就表示status：</p>
+<p>$ git config –global alias.st status<br>$ git config –global alias.co checkout<br>$ git config –global alias.ci commit<br>$ git config –global alias.br branch</p>
+<p>  以后提交就可以简写成：<code>$ git ci -m “bala bala bala…”</code> . <strong>–global</strong>参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。 在撤销修改一节中，我们知道，命令<code>git reset HEAD file</code>可以把暂存区的修改撤销掉（unstage），重新放回工作区。既然是一个unstage操作，就可以配置一个unstage别名： <code>$ git config –global alias.unstage ‘reset HEAD’</code> 当你敲入命令：<code>$ git unstage test.py</code>实际上Git执行的是：<code>$ git reset HEAD test.py</code>配置一个git last，让其显示最后一次提交信息：**<code>$ git config –global alias.last ‘log -1′</code>** 这样，用git last就能显示最近一次的提交：</p>
+<p>$ git last commit adca45d317e6d8a4b23f9811c3d7b7f0f180bfe2<br>Merge: bd6ae48 291bea8<br>Author: Michael Liao<br>Date:   Thu Aug 22 22:49:22 2013 +0800<br>merge &amp; fix hello.py</p>
+<p> </p>
+<p>甚至还有人丧心病狂地把lg配置成了：</p>
+<p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;">&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#x63;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
         <category>WEB技术</category>
@@ -1355,22 +1355,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>JAVA的异常处理</title>
-    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
-<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
-<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JQuery动态修改a标签链接地址</title>
     <url>/2017/02/10/jquery%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9a%E6%A0%87%E7%AD%BE%E9%93%BE%E6%8E%A5%E5%9C%B0%E5%9D%80/</url>
     <content><![CDATA[<p>在一个项目中，想隐藏真实的链接地址，使用JQuery的事件可以解决这个问题，代码如下：</p>
@@ -1386,6 +1370,22 @@ public void testCallableCache() throws Exception&#123;
       <tags>
         <tag>JS</tag>
         <tag>JQuery</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JAVA的异常处理</title>
+    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
+<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
+<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1679,7 +1679,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#114;&#x6f;&#x6f;&#x74;&#64;&#x31;&#57;&#x32;&#x2e;&#49;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#50;&#52;&#50;">&#114;&#x6f;&#x6f;&#x74;&#64;&#x31;&#57;&#x32;&#x2e;&#49;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#50;&#52;&#50;</a></p>
+<p>ssh <a href="mailto:&#114;&#x6f;&#x6f;&#x74;&#x40;&#x31;&#x39;&#x32;&#46;&#49;&#x36;&#56;&#x2e;&#53;&#53;&#x2e;&#50;&#x34;&#50;">&#114;&#x6f;&#x6f;&#x74;&#x40;&#x31;&#x39;&#x32;&#46;&#49;&#x36;&#56;&#x2e;&#53;&#53;&#x2e;&#50;&#x34;&#50;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1699,11 +1699,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#x69;&#x6c;&#108;&#64;&#49;&#50;&#56;&#x2e;&#49;&#x39;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#x34;&#50;">&#x62;&#x69;&#x6c;&#108;&#64;&#49;&#50;&#56;&#x2e;&#49;&#x39;&#x39;&#46;&#x32;&#x30;&#x39;&#x2e;&#50;&#x34;&#50;</a></p>
+<p>exit<br>ssh <a href="mailto:&#98;&#x69;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#x39;&#46;&#50;&#x30;&#x39;&#46;&#x32;&#x34;&#50;">&#98;&#x69;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#x39;&#46;&#50;&#x30;&#x39;&#46;&#x32;&#x34;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#x6c;&#x6c;&#64;&#49;&#x32;&#x38;&#x2e;&#49;&#x39;&#x39;&#x2e;&#x32;&#x30;&#57;&#46;&#x32;&#x34;&#50;">&#98;&#x69;&#x6c;&#x6c;&#64;&#49;&#x32;&#x38;&#x2e;&#49;&#x39;&#x39;&#x2e;&#x32;&#x30;&#57;&#46;&#x32;&#x34;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#x6c;&#64;&#49;&#50;&#56;&#46;&#49;&#x39;&#x39;&#46;&#50;&#48;&#57;&#46;&#x32;&#52;&#50;">&#98;&#x69;&#108;&#x6c;&#64;&#49;&#50;&#56;&#46;&#49;&#x39;&#x39;&#46;&#50;&#48;&#57;&#46;&#x32;&#52;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
