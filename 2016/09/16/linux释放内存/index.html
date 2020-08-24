@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux释放内存">
 <meta property="og:url" content="locallhost/2016/09/16/linux%E9%87%8A%E6%94%BE%E5%86%85%E5%AD%98/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="在应用mongodb时，发现服务器内存会暴涨，free几乎没有，还有就是程序如果大量对文件进行操作就会有这种现象，但一般来说都会自动回收的，但有时我们还是需要手动清理来应急。    （1）缓存机制 为了提高文件系统性能，内核利用一部分物理内存分配出缓冲区，用于缓存系统操作和数据文件，当内核收到读写的请求时，内核先去缓存区找是否有请求的数据，有就直接返回，如果没有则通过驱动程序直接操作磁盘。 缓存">
 <meta property="og:locale">
 <meta property="article:published_time" content="2016-09-16T09:11:25.000Z">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>linux释放内存 | 风慕苗</title>
+  <title>linux释放内存 | MerlinFeng's blog</title>
   
 
 
@@ -100,10 +100,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -199,11 +199,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -370,7 +370,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java线程同步策略">
 <meta property="og:url" content="locallhost/2017/06/17/java%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E7%AD%96%E7%95%A5/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="线程安全概述引用《Java Concurrency In Practice》对线程安全的定义  当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象是线程安全的。  这意味着如若要实现线程安全，代码本身必须要封装所有必要的正确性保障手段（比如锁的实现），以确保程序">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-06-17T14:42:41.000Z">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>Java线程同步策略 | 风慕苗</title>
+  <title>Java线程同步策略 | MerlinFeng's blog</title>
   
 
 
@@ -99,10 +99,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -198,11 +198,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -813,7 +813,7 @@ public synchronized long get() &#123;
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

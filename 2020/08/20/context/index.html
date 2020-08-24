@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="context详解">
 <meta property="og:url" content="locallhost/2020/08/20/context/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="简介context.Context 是golang中独特的涉及,可以用来用来设置截止日期、同步信号，传递请求相关值的结构体。与 Goroutine 有比较密切的关系。 在web程序中，每个Request都需要开启一个goroutine做一些事情，这些goroutine又可能会开启其他的goroutine去访问后端资源,比如数据库、RPC服务等,它们需要访问一些共享的资源，比如用户身份信息、认证to">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-08-20T11:55:38.775Z">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>context详解 | 风慕苗</title>
+  <title>context详解 | MerlinFeng's blog</title>
   
 
 
@@ -100,10 +100,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -199,11 +199,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -411,7 +411,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

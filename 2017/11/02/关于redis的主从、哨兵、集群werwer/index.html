@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于redis的主从、哨兵、集群">
 <meta property="og:url" content="locallhost/2017/11/02/%E5%85%B3%E4%BA%8Eredis%E7%9A%84%E4%B8%BB%E4%BB%8E%E3%80%81%E5%93%A8%E5%85%B5%E3%80%81%E9%9B%86%E7%BE%A4werwer/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="关于redis主从、哨兵、集群的介绍网上很多，这里就不赘述了。一、主从 通过持久化功能，Redis保证了即使在服务器重启的情况下也不会损失（或少量损失）数据，因为持久化会把内存中数据保存到硬盘上，重启会从硬盘上加载数据。但是由于数据是存储在一台服务器上的，如果这台服务器出现硬盘故障等问题，也会导致数据丢失。为了避免单点故障，通常的做法是将数据库复制多个副本以部署在不同的服务器上，这样即使有一台服务">
 <meta property="og:locale">
 <meta property="og:image" content="http://qiniu.fengmumiao.com/img-blog.csdn.net%252F20160909152623658.png">
@@ -50,7 +50,7 @@
   };
 </script>
 
-  <title>关于redis的主从、哨兵、集群 | 风慕苗</title>
+  <title>关于redis的主从、哨兵、集群 | MerlinFeng's blog</title>
   
 
 
@@ -101,10 +101,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -200,11 +200,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -402,7 +402,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

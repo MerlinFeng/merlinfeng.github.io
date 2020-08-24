@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="MongDB之仲裁节点">
 <meta property="og:url" content="locallhost/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="之前搭建mongo副本集时，好多地方提到了仲裁节点的概念，说的云里雾里，后来去我大知乎看下找到了满意的答案 &gt; https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;27648448 总结俩点就是 1. 为什么使用奇数个数成员？ 假设一种场景，偶数8节点，IDC网络故障发生分裂，,这两个分裂后的IDC各持有4个节点，因为投票数未超过半数，所以无法选举出新Primary。 2. 仲裁节">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-01-23T03:41:16.000Z">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>MongDB之仲裁节点 | 风慕苗</title>
+  <title>MongDB之仲裁节点 | MerlinFeng's blog</title>
   
 
 
@@ -99,10 +99,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -198,11 +198,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -374,7 +374,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

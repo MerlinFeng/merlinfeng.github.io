@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java实现定时任务的三种方法">
 <meta property="og:url" content="locallhost/2017/06/12/java%E5%AE%9E%E7%8E%B0%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="在应用里经常都有用到在后台跑定时任务的需求。举个例子，比如需要在服务后台跑一个定时任务来进行垃圾回收（译者注：个人觉得用定时任务来跑垃圾回收不是很好的例子，从译者接触到的项目来看，比较常见的是用定时任务来进行非实时计算，清除临时数据、文件等）。 在本文里，3种不同的实现方法：  普通thread实现 TimerTask实现 ScheduledExecutorService实现      普通thr">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-06-12T14:33:20.000Z">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>Java实现定时任务的三种方法 | 风慕苗</title>
+  <title>Java实现定时任务的三种方法 | MerlinFeng's blog</title>
   
 
 
@@ -100,10 +100,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -199,11 +199,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -384,7 +384,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">

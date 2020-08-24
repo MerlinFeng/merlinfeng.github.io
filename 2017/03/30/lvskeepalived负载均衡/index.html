@@ -14,7 +14,7 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-big-counter.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
@@ -26,7 +26,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="lVS+Keepalived负载均衡">
 <meta property="og:url" content="locallhost/2017/03/30/lvskeepalived%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/index.html">
-<meta property="og:site_name" content="风慕苗">
+<meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="一、原理       1、概要介绍如果将TCP&#x2F;IP划分为5层，则Keepalived就是一个类似于35层交换机制的软件，具有35层交换功能，其主要作用是检测web服务器的状态，如果某台web服务器故障，Keepalived将检测到并将其从系统中剔除，当该web服务器工作正常后Keepalived自动将其加入到服务器群中，这些工作全部自动完成，而不需要人工干预，只需要人工修复故障的web服务器即可">
 <meta property="og:locale">
 <meta property="og:image" content="http://blog.chinaunix.net/attachment/201305/2/22312037_136748933421AQ.png">
@@ -51,7 +51,7 @@
   };
 </script>
 
-  <title>lVS+Keepalived负载均衡 | 风慕苗</title>
+  <title>lVS+Keepalived负载均衡 | MerlinFeng's blog</title>
   
 
 
@@ -102,10 +102,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">风慕苗</h1>
+      <h1 class="site-title">MerlinFeng's blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">苗慕风</p>
+      <p class="site-subtitle" itemprop="description">MerlinFeng's blog</p>
   </div>
 
   <div class="site-nav-right">
@@ -201,11 +201,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
       <meta itemprop="name" content="FengQiang">
-      <meta itemprop="description" content="眼盛星光，心向远方">
+      <meta itemprop="description" content="面向接口编程">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风慕苗">
+      <meta itemprop="name" content="MerlinFeng's blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -372,7 +372,7 @@
     <img class="site-author-image" itemprop="image" alt="FengQiang"
       src="/images/avatar.png">
   <p class="site-author-name" itemprop="name">FengQiang</p>
-  <div class="site-description" itemprop="description">眼盛星光，心向远方</div>
+  <div class="site-description" itemprop="description">面向接口编程</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
