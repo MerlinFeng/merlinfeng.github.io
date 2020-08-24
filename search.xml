@@ -153,33 +153,6 @@
       </tags>
   </entry>
   <entry>
-    <title>TCP协议中的三次握手和四次挥手(图解)</title>
-    <url>/2017/08/15/TCP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B(%E5%9B%BE%E8%A7%A3)/</url>
-    <content><![CDATA[<p> </p>
-<h3 id="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"><a href="#建立TCP需要三次握手才能建立，而断开连接则需要四次握手。" class="headerlink" title="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"></a>建立TCP需要三次握手才能建立，而断开连接则需要四次握手。</h3><p> 整个过程如下图所示：</p>
-<p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_131271823564Rx.gif.png"></p>
-<h3 id="先来看看如何建立连接的。"><a href="#先来看看如何建立连接的。" class="headerlink" title="先来看看如何建立连接的。"></a>先来看看如何建立连接的。</h3><p><img src="http://qiniu.fengmumiao.com/img-blog.csdn.net%252F20170104214009596%253Fwatermark%252F2%252Ftext%252FaHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2h1c2xlaQ%253D%253D%252Ffont%252F5a6L5L2T%252Ffontsize%252F400%252Ffill%252FI0JBQkFCMA%253D%253D%252Fdissolve%252F70%252Fgravity%252FCenter.png"></p>
-<p>首先Client端发送连接请求报文，Server段接受连接后回复ACK报文，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。</p>
-<h3 id="那如何断开连接呢？简单的过程如下："><a href="#那如何断开连接呢？简单的过程如下：" class="headerlink" title="那如何断开连接呢？简单的过程如下："></a>那如何断开连接呢？简单的过程如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312718564tZXD.gif.png"></p>
-<p><strong>【注意】中断连接端可以是Client端，也可以是Server端。</strong></p>
-<p> 假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说”我Client端没有数据要发给你了”，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，”告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，”告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，”就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，”就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
-<h3 id="整个过程Client端所经历的状态如下："><a href="#整个过程Client端所经历的状态如下：" class="headerlink" title="整个过程Client端所经历的状态如下："></a>整个过程Client端所经历的状态如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312719804oSkK.gif.png"></p>
-<p>而Server端所经历的过程如下：</p>
-<p><img src="http://hi.csdn.net/attachment/201108/7/0_1312719833030b.gif"></p>
-<p><strong>【注意】</strong> 在TIME_WAIT状态中，如果TCP client端最后一次发送的ACK丢失了，它将重新发送。TIME_WAIT状态中所需要的时间是依赖于实现方法的。典型的值为30秒、1分钟和2分钟。等待之后连接正式关闭，并且所有的资源(包括端口号)都被释放。</p>
-<p><strong>【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？</strong><br>答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，”你发的FIN报文我收到了”。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。</p>
-<p><strong>【问题2】为什么TIME_WAIT状态需要经过2MSL(最大报文段生存时间)才能返回到CLOSE状态？</strong></p>
-<p>答：虽然按道理，四个报文都发送完毕，我们可以直接进入CLOSE状态了，但是我们必须假象网络是不可靠的，有可以最后一个ACK丢失。所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。</p>
-<p>！</p>
-]]></content>
-      <categories>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>TCP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>aggregation result exceeds maximum document size (16MB)</title>
     <url>/2017/03/10/aggregation-result-exceeds-maximum-document-size-16mb/</url>
     <content><![CDATA[<p>mongdb操作数据，数据格式如下，大概三百多条：</p>
@@ -250,6 +223,33 @@
       <tags>
         <tag>服务器</tag>
         <tag>Apache</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>TCP协议中的三次握手和四次挥手(图解)</title>
+    <url>/2017/08/15/TCP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B(%E5%9B%BE%E8%A7%A3)/</url>
+    <content><![CDATA[<p> </p>
+<h3 id="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"><a href="#建立TCP需要三次握手才能建立，而断开连接则需要四次握手。" class="headerlink" title="建立TCP需要三次握手才能建立，而断开连接则需要四次握手。"></a>建立TCP需要三次握手才能建立，而断开连接则需要四次握手。</h3><p> 整个过程如下图所示：</p>
+<p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_131271823564Rx.gif.png"></p>
+<h3 id="先来看看如何建立连接的。"><a href="#先来看看如何建立连接的。" class="headerlink" title="先来看看如何建立连接的。"></a>先来看看如何建立连接的。</h3><p><img src="http://qiniu.fengmumiao.com/img-blog.csdn.net%252F20170104214009596%253Fwatermark%252F2%252Ftext%252FaHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2h1c2xlaQ%253D%253D%252Ffont%252F5a6L5L2T%252Ffontsize%252F400%252Ffill%252FI0JBQkFCMA%253D%253D%252Fdissolve%252F70%252Fgravity%252FCenter.png"></p>
+<p>首先Client端发送连接请求报文，Server段接受连接后回复ACK报文，并为这次连接分配资源。Client端接收到ACK报文后也向Server段发生ACK报文，并分配资源，这样TCP连接就建立了。</p>
+<h3 id="那如何断开连接呢？简单的过程如下："><a href="#那如何断开连接呢？简单的过程如下：" class="headerlink" title="那如何断开连接呢？简单的过程如下："></a>那如何断开连接呢？简单的过程如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312718564tZXD.gif.png"></p>
+<p><strong>【注意】中断连接端可以是Client端，也可以是Server端。</strong></p>
+<p> 假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说”我Client端没有数据要发给你了”，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，”告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息”。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，”告诉Client端，好了，我这边数据发完了，准备好关闭连接了”。Client端收到FIN报文后，”就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，”就知道可以断开连接了”。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！</p>
+<h3 id="整个过程Client端所经历的状态如下："><a href="#整个过程Client端所经历的状态如下：" class="headerlink" title="整个过程Client端所经历的状态如下："></a>整个过程Client端所经历的状态如下：</h3><p><img src="http://qiniu.fengmumiao.com/hi.csdn.net%252Fattachment%252F201108%252F7%252F0_1312719804oSkK.gif.png"></p>
+<p>而Server端所经历的过程如下：</p>
+<p><img src="http://hi.csdn.net/attachment/201108/7/0_1312719833030b.gif"></p>
+<p><strong>【注意】</strong> 在TIME_WAIT状态中，如果TCP client端最后一次发送的ACK丢失了，它将重新发送。TIME_WAIT状态中所需要的时间是依赖于实现方法的。典型的值为30秒、1分钟和2分钟。等待之后连接正式关闭，并且所有的资源(包括端口号)都被释放。</p>
+<p><strong>【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？</strong><br>答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，”你发的FIN报文我收到了”。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。</p>
+<p><strong>【问题2】为什么TIME_WAIT状态需要经过2MSL(最大报文段生存时间)才能返回到CLOSE状态？</strong></p>
+<p>答：虽然按道理，四个报文都发送完毕，我们可以直接进入CLOSE状态了，但是我们必须假象网络是不可靠的，有可以最后一个ACK丢失。所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。</p>
+<p>！</p>
+]]></content>
+      <categories>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>TCP</tag>
       </tags>
   </entry>
   <entry>
@@ -328,34 +328,6 @@
       </tags>
   </entry>
   <entry>
-    <title>golang类型空结构体的通道</title>
-    <url>/2020/08/24/channel_struct/</url>
-    <content><![CDATA[<h1 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h1><p>空结构体的宽度是0，占用了0字节的内存空间。</p>
-<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> s <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) <span class="comment">// prints 0</span></span><br></pre></td></tr></table></figure>
-
-<p>由于空结构体占用0字节，那么空结构体也不需要填充字节。所以空结构体组成的组合数据类型也不会占用内存空间。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type S struct &#123;</span><br><span class="line"></span><br><span class="line">    A struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">    B struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var s S</span><br><span class="line"></span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) &#x2F;&#x2F; prints 0</span><br></pre></td></tr></table></figure>
-
-<h1 id="chan-struct"><a href="#chan-struct" class="headerlink" title="chan struct{}"></a>chan struct{}</h1><p>通过消息来共享数据是golang的一种设计哲学，channel则是这种哲理的体现。</p>
-<p>golang中的空结构体 channel := make(chan struct{})<br>它不能被写入任何数据，只有通过close()函数进行关闭操作，才能进行输出操作。<br>struct{}类型的channel不占用任何内存！<br>用空 struct 是对内存更友好的开发方式，在 go 源代码中针对 空struct 类数据内存申请部分，<br>返回地址都是一个固定的地址。那么就避免了可能的内存滥用。</p>
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>省内存，尤其在事件通信的时候。</li>
-<li>struct零值就是本身，读取close的channel返回零值</li>
-</ul>
-<h2 id="常用用法"><a href="#常用用法" class="headerlink" title="常用用法"></a>常用用法</h2><p>通常struct{}类型channel的用法是使用同步，<strong>一般不需要往channel里面写数据，只有读等待，<br>而读等待会在channel被关闭的时候返回。</strong></p>
-<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> ch <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestChanStruct</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;main() 111&quot;</span>)</span><br><span class="line">    <span class="keyword">go</span> foo()</span><br><span class="line">    log.Println(<span class="string">&quot;main() 222&quot;</span>)</span><br><span class="line">    &lt;-ch</span><br><span class="line">    log.Println(<span class="string">&quot;main() 333&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;foo() 111&quot;</span>)</span><br><span class="line">    time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 222&quot;</span>)</span><br><span class="line">    <span class="built_in">close</span>(ch)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 333&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">=== RUN   TestChanStruct</span><br><span class="line">2020/08/24 19:33:28 main() 111</span><br><span class="line">2020/08/24 19:33:28 main() 222</span><br><span class="line">2020/08/24 19:33:28 foo() 111</span><br><span class="line">2020/08/24 19:33:29 foo() 222</span><br><span class="line">2020/08/24 19:33:29 foo() 333</span><br><span class="line">2020/08/24 19:33:29 main() 333</span><br><span class="line">--- PASS: TestChanStruct (1.00s)</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>channel</tag>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>context详解</title>
     <url>/2020/08/20/context/</url>
     <content><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>context.Context 是golang中独特的涉及,可以用来用来设置截止日期、同步信号，传递请求相关值的结构体。<br>与 Goroutine 有比较密切的关系。</p>
@@ -425,25 +397,36 @@
         <category>Go</category>
       </categories>
       <tags>
-        <tag>golang</tag>
         <tag>context</tag>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
-    <title>equals和==区别</title>
-    <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
-<p> </p>
-<p>1.<strong>如果比较对象是值变量</strong>：只用==，equals()是不存在的。 为毛？通俗点讲呢，equals()是个函数啊亲，因为基本类型int float不是对象，根本就没有函数啊摔。再通俗点，int. equals(),这个写法你感受一下。。<br>2.<strong>如果比较对象是引用型变量</strong>：就是我上面说的那个情况了。我觉得题主就是问这个的。 ==：比较两个引用是不是指向同一个对象实例。 啥，你问我上面那句话啥意思，这说来话长了诶，来坐坐坐，咱从堆栈开始讲起~（自行百度吧亲，实在写不动了，改天补充吧。） equals： 那啥，所有的对象都是继承自Object这个大家都知道吧。然后equals()就是这里面的一个函数，然后那啥， <strong>Object里的**</strong>equals的实现就是直接调用了==操作<strong>。 所以如果这个时候你自定义了一个类，仅仅继承自Object且没有重写equals方法，那么其equals操作也是与Object类一样，仅仅是直接调用==操作。 这个时候他俩没啥区别。当然这是废话，尼玛equals里面这时候本来就用的==，能不一样么摔。 这么说吧，这时候比较自定义类用equals和==是一样一样的，因为这个时候尼玛都是比较句柄地址， 自定义的类是继承于object，而object中的equals就是用==来实现的。参见上面那条。 **如果一个类重写过equals方法（或者继承自一个重写过equals方法的类</strong>，那么效果与==操作就不一样了。其实我觉得这才是楼主真正要问的地方。这里参见最开始的回答。 另外，那啥，再加一句，instanceof 也是个好东西哇。你可以用他检查引用型变量是否属于某一个Class：那啥，返回的也是true 或者false，跟c#里的is差不多的说。</p>
-<p><a href="https://www.zhihu.com/question/26872848">知乎摘过来的！</a></p>
-]]></content>
+    <title>golang类型空结构体的通道</title>
+    <url>/2020/08/24/channel_struct/</url>
+    <content><![CDATA[<h1 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h1><p>空结构体的宽度是0，占用了0字节的内存空间。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> s <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) <span class="comment">// prints 0</span></span><br></pre></td></tr></table></figure>
+
+<p>由于空结构体占用0字节，那么空结构体也不需要填充字节。所以空结构体组成的组合数据类型也不会占用内存空间。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type S struct &#123;</span><br><span class="line"></span><br><span class="line">    A struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">    B struct&#123;&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var s S</span><br><span class="line"></span><br><span class="line">fmt.Println(unsafe.Sizeof(s)) &#x2F;&#x2F; prints 0</span><br></pre></td></tr></table></figure>
+
+<h1 id="chan-struct"><a href="#chan-struct" class="headerlink" title="chan struct{}"></a>chan struct{}</h1><p>通过消息来共享数据是golang的一种设计哲学，channel则是这种哲理的体现。</p>
+<p>golang中的空结构体 channel := make(chan struct{})<br>它不能被写入任何数据，只有通过close()函数进行关闭操作，才能进行输出操作。<br>struct{}类型的channel不占用任何内存！<br>用空 struct 是对内存更友好的开发方式，在 go 源代码中针对 空struct 类数据内存申请部分，<br>返回地址都是一个固定的地址。那么就避免了可能的内存滥用。</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>省内存，尤其在事件通信的时候。</li>
+<li>struct零值就是本身，读取close的channel返回零值</li>
+</ul>
+<h2 id="常用用法"><a href="#常用用法" class="headerlink" title="常用用法"></a>常用用法</h2><p>通常struct{}类型channel的用法是使用同步，<strong>一般不需要往channel里面写数据，只有读等待，<br>而读等待会在channel被关闭的时候返回。</strong></p>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> ch <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestChanStruct</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;main() 111&quot;</span>)</span><br><span class="line">    <span class="keyword">go</span> foo()</span><br><span class="line">    log.Println(<span class="string">&quot;main() 222&quot;</span>)</span><br><span class="line">    &lt;-ch</span><br><span class="line">    log.Println(<span class="string">&quot;main() 333&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">&quot;foo() 111&quot;</span>)</span><br><span class="line">    time.Sleep(<span class="number">1</span> * time.Second)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 222&quot;</span>)</span><br><span class="line">    <span class="built_in">close</span>(ch)</span><br><span class="line">    log.Println(<span class="string">&quot;foo() 333&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">=== RUN   TestChanStruct</span><br><span class="line">2020/08/24 19:33:28 main() 111</span><br><span class="line">2020/08/24 19:33:28 main() 222</span><br><span class="line">2020/08/24 19:33:28 foo() 111</span><br><span class="line">2020/08/24 19:33:29 foo() 222</span><br><span class="line">2020/08/24 19:33:29 foo() 333</span><br><span class="line">2020/08/24 19:33:29 main() 333</span><br><span class="line">--- PASS: TestChanStruct (1.00s)</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
+        <category>Go</category>
       </categories>
       <tags>
-        <tag>JAVA</tag>
-        <tag>JAVA基础</tag>
+        <tag>golang</tag>
+        <tag>channel</tag>
       </tags>
   </entry>
   <entry>
@@ -513,6 +496,23 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
+    <title>equals和==区别</title>
+    <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
+<p> </p>
+<p>1.<strong>如果比较对象是值变量</strong>：只用==，equals()是不存在的。 为毛？通俗点讲呢，equals()是个函数啊亲，因为基本类型int float不是对象，根本就没有函数啊摔。再通俗点，int. equals(),这个写法你感受一下。。<br>2.<strong>如果比较对象是引用型变量</strong>：就是我上面说的那个情况了。我觉得题主就是问这个的。 ==：比较两个引用是不是指向同一个对象实例。 啥，你问我上面那句话啥意思，这说来话长了诶，来坐坐坐，咱从堆栈开始讲起~（自行百度吧亲，实在写不动了，改天补充吧。） equals： 那啥，所有的对象都是继承自Object这个大家都知道吧。然后equals()就是这里面的一个函数，然后那啥， <strong>Object里的**</strong>equals的实现就是直接调用了==操作<strong>。 所以如果这个时候你自定义了一个类，仅仅继承自Object且没有重写equals方法，那么其equals操作也是与Object类一样，仅仅是直接调用==操作。 这个时候他俩没啥区别。当然这是废话，尼玛equals里面这时候本来就用的==，能不一样么摔。 这么说吧，这时候比较自定义类用equals和==是一样一样的，因为这个时候尼玛都是比较句柄地址， 自定义的类是继承于object，而object中的equals就是用==来实现的。参见上面那条。 **如果一个类重写过equals方法（或者继承自一个重写过equals方法的类</strong>，那么效果与==操作就不一样了。其实我觉得这才是楼主真正要问的地方。这里参见最开始的回答。 另外，那啥，再加一句，instanceof 也是个好东西哇。你可以用他检查引用型变量是否属于某一个Class：那啥，返回的也是true 或者false，跟c#里的is差不多的说。</p>
+<p><a href="https://www.zhihu.com/question/26872848">知乎摘过来的！</a></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>git pull 错误解决</title>
     <url>/2017/02/13/git-pull-%E9%94%99%E8%AF%AF%E8%A7%A3%E5%86%B3/</url>
     <content><![CDATA[<p>症状：pull的时候 $ <a href="http://lib.csdn.net/base/git" title="Git知识库">Git</a> pull</p>
@@ -534,114 +534,13 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
-    <title>git常用命令二</title>
-    <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/</url>
-    <content><![CDATA[<p>Git鼓励大量使用分支： <strong>查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d</strong></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
-<p>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
-</blockquote>
-<p>用<strong>git log –graph</strong>命令可以看到<strong>分支合并图</strong>。 通常，合并分支时，如果可能，Git会用Fast forward模式，<strong>但这种模式下，删除分支后，会丢掉分支信息</strong>。</p>
-<blockquote>
-<p>如果要<strong>强制禁用Fast forward模式</strong>，Git就会在merge时<strong>生成一个新的commit，这样，从分支历史上就可以看出分支信息</strong>。准备合并dev分支，请注意**–no-ff参数，表示禁用Fast forward：**</p>
-<p>$ git merge –no-ff -m “merge with no-ff” dev<br>Merge made by the ‘recursive’ strategy.<br>readme.txt |    1 + 1 file changed, 1 insertion(+)</p>
-<p> </p>
-</blockquote>
-<p>因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。合并后，我们用git log看看分支历史：</p>
-<p>$ git log –graph –pretty=oneline –abbrev-commit<br>*   7825a50 merge with no-ff<br>|<br>| * 6224937 add merge<br>|/<br>*   59bc1cb conflict fixed …</p>
-<p>  <strong>分支策略</strong></p>
-<blockquote>
-<p>在实际开发中，我们应该按照几个基本原则进行分支管理： 首先，<strong>master分支应该是非常稳定的</strong>，也就是仅用来发布新版本，<strong>平时不能在上面干活；</strong>那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本</p>
-</blockquote>
-<p>你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。 所以，团队合作的分支看起来就像这样：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/220694-a54e1c1c80a4585d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
-<p>git-br-policy</p>
-<p><strong>小结</strong> Git分支十分强大，在团队开发中应该充分应用。 合并分支时，<strong>加上–no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并</strong> 命令<strong>git push origin 可以推送一个本地标签</strong>； 命令<strong>git push origin –tags可以推送全部未推送过的本地标签；</strong> 命令<strong>git tag -d 可以删除一个本地标签；</strong> 命令<strong>git push origin :refs/tags/可以删除一个远程标签</strong>。 <strong>忽略特殊文件</strong> 有些时候，你<strong>必须把某些文件放到Git工作目录中</strong>，<strong>但又不能提交它们</strong>，比如保存了数据库密码的配置文件啦等等，每次git status都会显示Untracked files …，有强迫症的童鞋心里肯定不爽。好在Git考虑到了大家的感受，这个问题解决起来也很简单，在<strong>Git工作区</strong>的<strong>根目录下</strong>创建一个特殊的**.gitignore文件<strong>，然后把</strong>要忽略的文件名填进去，Git就会自动忽略这些文件。**不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。</p>
-<blockquote>
-<p>所有配置文件可以直接在线浏览：**<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a>**</p>
-</blockquote>
-<p>忽略文件的原则是：忽略操作系统自动生成的文件，比如缩略图等； 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件； 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。 举个例子： 假设你在Windows下进行Python开发，Windows会自动在有图片的目录下生成隐藏的缩略图文件. 如果有自定义目录，目录下就会有<strong>Desktop.ini</strong>文件.因此你需要忽略Windows自动生成的垃圾文件：<code>Windows:Thumbs.db ehthumbs.db Desktop.ini</code> 然后，继续忽略Python编译产生的**.pyc、.pyo、dist<strong>等文件或目录：<code>Python: *.py[cod] *.so *.egg *.egg -info dist build</code>加上你自己定义的文件，最终得到一个完整的</strong>.gitignore**文件. 内容如下</p>
-<p># Windows:Thumbs.db ehthumbs.db  Desktop.ini<br># Python:*.py[cod] *.so *.egg *.egg-info dist build<br># My configurations:db.ini deploy_key_rsa</p>
-<p>  最后一步就是把**.gitignore**<strong>也提交到Git</strong>，就完成了！ 当然检验.gitignore的标准是git status命令是不是说working directory clean。 使用Windows的童鞋注意了，如果你在资源管理器里新建一个.gitignore文件，它会非常弱智地提示你必须输入文件名，但是在文本编辑器里“保存”或者“另存为”就可以把文件保存为.gitignore了。小结忽略某些文件时，需要编写.gitignore；.gitignore文件本身要放到版本库里，并且可以对.gitignore做版本管理！ <strong>配置别名</strong> 我们只需要敲一行命令，告诉Git，以后st就表示status：</p>
-<p>$ git config –global alias.st status<br>$ git config –global alias.co checkout<br>$ git config –global alias.ci commit<br>$ git config –global alias.br branch</p>
-<p>  以后提交就可以简写成：<code>$ git ci -m “bala bala bala…”</code> . <strong>–global</strong>参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。 在撤销修改一节中，我们知道，命令<code>git reset HEAD file</code>可以把暂存区的修改撤销掉（unstage），重新放回工作区。既然是一个unstage操作，就可以配置一个unstage别名： <code>$ git config –global alias.unstage ‘reset HEAD’</code> 当你敲入命令：<code>$ git unstage test.py</code>实际上Git执行的是：<code>$ git reset HEAD test.py</code>配置一个git last，让其显示最后一次提交信息：**<code>$ git config –global alias.last ‘log -1′</code>** 这样，用git last就能显示最近一次的提交：</p>
-<p>$ git last commit adca45d317e6d8a4b23f9811c3d7b7f0f180bfe2<br>Merge: bd6ae48 291bea8<br>Author: Michael Liao<br>Date:   Thu Aug 22 22:49:22 2013 +0800<br>merge &amp; fix hello.py</p>
-<p> </p>
-<p>甚至还有人丧心病狂地把lg配置成了：</p>
-<p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;">&#103;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#109;</a>](mailto:<a href="mailto:&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#109;">&#x67;&#x69;&#x74;&#x40;&#x67;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
-<p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
-]]></content>
-      <categories>
-        <category>WEB技术</category>
-        <category>综合</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>golang中的interface</title>
-    <url>/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/</url>
-    <content><![CDATA[<h2 id="interface-是一种类型"><a href="#interface-是一种类型" class="headerlink" title="interface 是一种类型"></a>interface 是一种类型</h2><hr>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">   Get() int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>首先 <strong>interface 是一种类型</strong>，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种<strong>具有一组方法的类型</strong>，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 <strong>empty interface</strong>。 <strong>如果一个类型实现了一个 interface 中所有方法，我们说类型实现了该 interface</strong>，所以所有类型都实现了 empty interface，因为任何一种类型至少实现了 0 个方法。go 没有显式的关键字用来实现 interface，只需要实现 interface 包含的方法即可。</p>
-<h2 id="interface-变量存储的是实现者的值"><a href="#interface-变量存储的是实现者的值" class="headerlink" title="interface 变量存储的是实现者的值"></a>interface 变量存储的是实现者的值</h2><hr>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;1</span><br><span class="line">type I interface &#123;    </span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;2</span><br><span class="line">type S struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func(s S) Get()int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func(s *S) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;3</span><br><span class="line">func f(i I)&#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    s :&#x3D; S&#123;&#125;</span><br><span class="line">    f(&amp;s)  &#x2F;&#x2F;4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>这段代码在 <code>#1</code> 定义了 interface I，在 <code>#2</code> 用 struct S 实现了 I 定义的两个方法，接着在 <code>#3</code> 定义了一个函数 f 参数类型是 I，S 实现了 I 的两个方法就说 S 是 I 的实现者，执行 <code>f(&amp;s)</code> 就完了一次 interface 类型的使用。 interface 的重要用途就体现在<strong>函数 f 的参数中</strong>，如果有多种类型实现了某个 interface，<strong>这些类型的值都可以直接使用 interface 的变量存储</strong>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">s :&#x3D; S&#123;&#125;</span><br><span class="line">var i I &#x2F;&#x2F;声明 i</span><br><span class="line">i &#x3D; &amp;s &#x2F;&#x2F;赋值 s 到 i</span><br><span class="line">fmt.Println(i.Get())</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>不难看出 interface 的变量中存储的是实现了 interface 的类型的对象值，这种能力是 <a href="http://en.wikipedia.org/wiki/Duck_typing">duck typing</a>。在使用 interface 时不需要显式在 struct 上声明要实现哪个 interface ，只需要实现对应 interface 中的方法即可，go 会自动进行 interface 的检查，并在运行时执行从其他类型到 interface 的自动转换，即使实现了多个 interface，go 也会在使用对应 interface 时实现自动转换，这就是 interface 的魔力所在。</p>
-<h2 id="如何判断-interface-变量存储的是哪种类型"><a href="#如何判断-interface-变量存储的是哪种类型" class="headerlink" title="如何判断 interface 变量存储的是哪种类型"></a>如何判断 interface 变量存储的是哪种类型</h2><hr>
-<p>一个 interface 被多种类型实现时，有时候我们需要区分 interface 的变量究竟存储哪种类型的值，go 可以使用 <code>comma, ok</code> 的形式做区分 <code>value, ok := em.(T)</code>：<strong>em 是 interface 类型的变量，T代表要断言的类型，value 是 interface 变量存储的值，ok 是 bool 类型表示是否为该断言的类型 T</strong>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if t, ok :&#x3D; i.(*S); ok &#123;</span><br><span class="line">    fmt.Println(&quot;s implements I&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<p>ok 是 true 表明 i 存储的是 <code>*S</code> 类型的值，false 则不是，这种区分能力叫 <a href="https://tour.golang.org/methods/15">Type assertions</a> (类型断言)。 如果需要区分多种类型，可以使用 switch 断言，更简单直接，这种断言方式只能在 switch 语句中使用。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">switch t :&#x3D; i.(type) &#123;</span><br><span class="line">case *S:</span><br><span class="line">    fmt.Println(&quot;i store *S&quot;, t)</span><br><span class="line">case *R:</span><br><span class="line">    fmt.Println(&quot;i store *R&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<h2 id="空的-interface"><a href="#空的-interface" class="headerlink" title="空的 interface"></a>空的 interface</h2><hr>
-<p><code>interface&#123;&#125;</code> 是一个空的 interface 类型，根据前文的定义：一个类型如果实现了一个 interface 的所有方法就说该类型实现了这个 interface，空的 interface 没有方法，所以可以认为所有的类型都实现了 <code>interface&#123;&#125;</code>。如果定义一个函数参数是 <code>interface&#123;&#125;</code> 类型，这个函数应该可以接受任何类型作为它的参数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func doSomething(v interface&#123;&#125;)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果函数的参数 v 可以接受任何类型，那么函数被调用时在函数内部 v 是不是表示的是任何类型？并不是，虽然函数的参数可以接受任何类型，并不表示 v 就是任何类型，在函数 doSomething 内部 v 仅仅是一个 interface 类型，之所以函数可以接受任何类型是在 go 执行时传递到函数的任何类型都被自动转换成 <code>interface&#123;&#125;</code>。go 是如何进行转换的，以及 v 存储的值究竟是怎么做到可以接受任何类型的，感兴趣的可以看看 <a href="https://research.swtch.com/interfaces">Russ Cox 关于 interface 的实现</a> 。 既然空的 interface 可以接受任何类型的参数，那么一个 <code>interface&#123;&#125;</code>类型的 slice 是不是就可以接受任何类型的 slice ?</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func printAll(vals []interface&#123;&#125;) &#123; &#x2F;&#x2F;1</span><br><span class="line">    for _, val :&#x3D; range vals &#123;</span><br><span class="line">        fmt.Println(val)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">    names :&#x3D; \[\]string&#123;&quot;stanley&quot;, &quot;david&quot;, &quot;oscar&quot;&#125;</span><br><span class="line">    printAll(names)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>上面的代码是按照我们的假设修改的，执行之后竟然会报 <code>cannot use names (type []string) as type []interface &#123;&#125; in argument to printAll</code> 错误，why？ 这个错误说明 go 没有帮助我们自动把 slice 转换成 <code>interface&#123;&#125;</code> 类型的 slice，所以出错了。<strong>go 不会对 类型是<code>interface&#123;&#125;</code> 的 slice 进行转换</strong> 。为什么 go 不帮我们自动转换，一开始我也很好奇，最后终于在 go 的 wiki 中找到了答案 <a href="https://github.com/golang/go/wiki/InterfaceSlice">https://github.com/golang/go/wiki/InterfaceSlice</a> 大意是 <code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的 methods 数据，一个是指向其存储值的指针，也就是 interface 变量存储的值，因而 slice []interface{} 其长度是固定的<code>N*2</code>，但是 []T 的长度是<code>N*sizeof(T)</code>，两种 slice 实际存储值的大小是有区别的(文中只介绍两种 slice 的不同，至于为什么不能转换猜测可能是 runtime 转换代价比较大)。 但是我们可以手动进行转换来达到我们的目的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var dataSlice []int &#x3D; foo()</span><br><span class="line">var interfaceSlice []interface&#123;&#125; &#x3D; make([]interface&#123;&#125;, len(dataSlice))</span><br><span class="line">for i, d :&#x3D; range dataSlice &#123;</span><br><span class="line">    interfaceSlice[i] &#x3D; d</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> </p>
-<h2 id="interface-的实现者的-receiver-如何选择"><a href="#interface-的实现者的-receiver-如何选择" class="headerlink" title="interface 的实现者的 receiver 如何选择"></a>interface 的实现者的 receiver 如何选择</h2><hr>
-<p>在我们上文的例子中调用 f 是 <code>f(&amp;s)</code> 也就是 S 的指针类型，为什么不能是 <code>f(s)</code> 呢，如果是 s 会有什么问题？改成 f(s) 然后执行代码。</p>
-<p>cannot use s (type S) as type I in argument to f:<br>    S does not implement I (Set method has pointer receiver)</p>
-<p> </p>
-<p>这个错误的意思是 S 没有实现 I，哪里出了问题？*<em>关键点是 S 中 set 方法的 receiver 是个 pointer <em>S</em></em> 。 interface 定义时并没有严格规定实现者的方法 receiver 是个 value receiver 还是 pointer receiver，上面代码中的 S 的 Set receiver 是 pointer，也就是实现 I 的两个方法的 receiver 一个是 value 一个是 pointer，使用 <code>f(s)</code>的形势调用，传递给 f 的是个 s 的一份拷贝，在进行 s 的拷贝到 I 的转换时，s 的拷贝不满足 Set 方法的 receiver 是个 pointer，也就没有实现 I。<strong>go 中函数都是按值传递即 passed by value</strong>。 那反过来会怎样，如果 receiver 是 value，函数用 pointer 的形式调用？</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">type SS struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Get() int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">func f(i I) &#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">      ss :&#x3D; SS&#123;&#125;</span><br><span class="line">    f(&amp;ss) &#x2F;&#x2F;ponter</span><br><span class="line">    f(ss)  &#x2F;&#x2F;value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p>I 的实现者 SS 的方法 receiver 都是 value receiver，执行代码可以看到无论是 pointer 还是 value 都可以正确执行。 导致这一现象的原因是什么？ 如果是按 pointer 调用，go 会自动进行转换，因为有了指针总是能得到指针指向的值是什么，如果是 value 调用，go 将无从得知 value 的原始值是什么，因为 value 是份拷贝。<strong>go 会把指针进行隐式转换得到 value，但反过来则不行</strong>。 对于 receiver 是 value 的 method，任何在 method 内部对 value 做出的改变都不影响调用者看到的 value，这就是按值传递。 另一个说明上述现象的例子是这样的来自 <a href="https://play.golang.org/p/TvR758rfre">https://play.golang.org/p/TvR758rfre</a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line">type Animal interface &#123;</span><br><span class="line">    Speak() string</span><br><span class="line">&#125;</span><br><span class="line">type Dog struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (d Dog) Speak() string &#123;</span><br><span class="line">    return &quot;Woof!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Cat struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;1</span><br><span class="line">func (c *Cat) Speak() string &#123;</span><br><span class="line">    return &quot;Meow!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Llama struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (l Llama) Speak() string &#123;</span><br><span class="line">    return &quot;?????&quot;</span><br><span class="line">&#125;</span><br><span class="line">type JavaProgrammer struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (j JavaProgrammer) Speak() string &#123;</span><br><span class="line">    return &quot;Design patterns!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    animals :&#x3D; \[\]Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, Llama&#123;&#125;, JavaProgrammer&#123;&#125;&#125;</span><br><span class="line">    for _, animal :&#x3D; range animals &#123;</span><br><span class="line">        fmt.Println(animal.Speak())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> </p>
-<p><code>#1</code> Cat 的 speak receiver 是 pointer，interface Animal 的 slice，Cat 的值是一个 value，同样会因为 receiver 不一致而导致无法执行。</p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>git常用命令一</title>
     <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80/</url>
     <content><![CDATA[<h4 id="1-安装-Github"><a href="#1-安装-Github" class="headerlink" title="1.  安装 Github"></a>1.  安装 Github</h4><hr>
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#109;&#97;&#x69;&#108;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#101;&#109;&#97;&#x69;&#108;&#64;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#x6d;&#x61;&#105;&#x6c;&#x40;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;">&#x65;&#x6d;&#x61;&#105;&#x6c;&#x40;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#99;&#x6f;&#109;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -730,26 +629,281 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
+    <title>git常用命令二</title>
+    <url>/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/</url>
+    <content><![CDATA[<p>Git鼓励大量使用分支： <strong>查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d</strong></p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
+<p>当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。</p>
+</blockquote>
+<p>用<strong>git log –graph</strong>命令可以看到<strong>分支合并图</strong>。 通常，合并分支时，如果可能，Git会用Fast forward模式，<strong>但这种模式下，删除分支后，会丢掉分支信息</strong>。</p>
+<blockquote>
+<p>如果要<strong>强制禁用Fast forward模式</strong>，Git就会在merge时<strong>生成一个新的commit，这样，从分支历史上就可以看出分支信息</strong>。准备合并dev分支，请注意**–no-ff参数，表示禁用Fast forward：**</p>
+<p>$ git merge –no-ff -m “merge with no-ff” dev<br>Merge made by the ‘recursive’ strategy.<br>readme.txt |    1 + 1 file changed, 1 insertion(+)</p>
+<p> </p>
+</blockquote>
+<p>因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。合并后，我们用git log看看分支历史：</p>
+<p>$ git log –graph –pretty=oneline –abbrev-commit<br>*   7825a50 merge with no-ff<br>|<br>| * 6224937 add merge<br>|/<br>*   59bc1cb conflict fixed …</p>
+<p>  <strong>分支策略</strong></p>
+<blockquote>
+<p>在实际开发中，我们应该按照几个基本原则进行分支管理： 首先，<strong>master分支应该是非常稳定的</strong>，也就是仅用来发布新版本，<strong>平时不能在上面干活；</strong>那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本</p>
+</blockquote>
+<p>你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了。 所以，团队合作的分支看起来就像这样：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/220694-a54e1c1c80a4585d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"></p>
+<p>git-br-policy</p>
+<p><strong>小结</strong> Git分支十分强大，在团队开发中应该充分应用。 合并分支时，<strong>加上–no-ff参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并</strong> 命令<strong>git push origin 可以推送一个本地标签</strong>； 命令<strong>git push origin –tags可以推送全部未推送过的本地标签；</strong> 命令<strong>git tag -d 可以删除一个本地标签；</strong> 命令<strong>git push origin :refs/tags/可以删除一个远程标签</strong>。 <strong>忽略特殊文件</strong> 有些时候，你<strong>必须把某些文件放到Git工作目录中</strong>，<strong>但又不能提交它们</strong>，比如保存了数据库密码的配置文件啦等等，每次git status都会显示Untracked files …，有强迫症的童鞋心里肯定不爽。好在Git考虑到了大家的感受，这个问题解决起来也很简单，在<strong>Git工作区</strong>的<strong>根目录下</strong>创建一个特殊的**.gitignore文件<strong>，然后把</strong>要忽略的文件名填进去，Git就会自动忽略这些文件。**不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了。</p>
+<blockquote>
+<p>所有配置文件可以直接在线浏览：**<a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a>**</p>
+</blockquote>
+<p>忽略文件的原则是：忽略操作系统自动生成的文件，比如缩略图等； 忽略编译生成的中间文件、可执行文件等，也就是如果一个文件是通过另一个文件自动生成的，那自动生成的文件就没必要放进版本库，比如Java编译产生的.class文件； 忽略你自己的带有敏感信息的配置文件，比如存放口令的配置文件。 举个例子： 假设你在Windows下进行Python开发，Windows会自动在有图片的目录下生成隐藏的缩略图文件. 如果有自定义目录，目录下就会有<strong>Desktop.ini</strong>文件.因此你需要忽略Windows自动生成的垃圾文件：<code>Windows:Thumbs.db ehthumbs.db Desktop.ini</code> 然后，继续忽略Python编译产生的**.pyc、.pyo、dist<strong>等文件或目录：<code>Python: *.py[cod] *.so *.egg *.egg -info dist build</code>加上你自己定义的文件，最终得到一个完整的</strong>.gitignore**文件. 内容如下</p>
+<p># Windows:Thumbs.db ehthumbs.db  Desktop.ini<br># Python:*.py[cod] *.so *.egg *.egg-info dist build<br># My configurations:db.ini deploy_key_rsa</p>
+<p>  最后一步就是把**.gitignore**<strong>也提交到Git</strong>，就完成了！ 当然检验.gitignore的标准是git status命令是不是说working directory clean。 使用Windows的童鞋注意了，如果你在资源管理器里新建一个.gitignore文件，它会非常弱智地提示你必须输入文件名，但是在文本编辑器里“保存”或者“另存为”就可以把文件保存为.gitignore了。小结忽略某些文件时，需要编写.gitignore；.gitignore文件本身要放到版本库里，并且可以对.gitignore做版本管理！ <strong>配置别名</strong> 我们只需要敲一行命令，告诉Git，以后st就表示status：</p>
+<p>$ git config –global alias.st status<br>$ git config –global alias.co checkout<br>$ git config –global alias.ci commit<br>$ git config –global alias.br branch</p>
+<p>  以后提交就可以简写成：<code>$ git ci -m “bala bala bala…”</code> . <strong>–global</strong>参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。 在撤销修改一节中，我们知道，命令<code>git reset HEAD file</code>可以把暂存区的修改撤销掉（unstage），重新放回工作区。既然是一个unstage操作，就可以配置一个unstage别名： <code>$ git config –global alias.unstage ‘reset HEAD’</code> 当你敲入命令：<code>$ git unstage test.py</code>实际上Git执行的是：<code>$ git reset HEAD test.py</code>配置一个git last，让其显示最后一次提交信息：**<code>$ git config –global alias.last ‘log -1′</code>** 这样，用git last就能显示最近一次的提交：</p>
+<p>$ git last commit adca45d317e6d8a4b23f9811c3d7b7f0f180bfe2<br>Merge: bd6ae48 291bea8<br>Author: Michael Liao<br>Date:   Thu Aug 22 22:49:22 2013 +0800<br>merge &amp; fix hello.py</p>
+<p> </p>
+<p>甚至还有人丧心病狂地把lg配置成了：</p>
+<p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#105;&#116;&#x40;&#x67;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;">&#103;&#105;&#116;&#x40;&#x67;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#105;&#x74;&#64;&#103;&#x69;&#116;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;">&#x67;&#105;&#x74;&#64;&#103;&#x69;&#116;&#104;&#117;&#x62;&#46;&#99;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
+]]></content>
+      <categories>
+        <category>WEB技术</category>
+        <category>综合</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang中的interface</title>
+    <url>/2018/05/30/golang%E4%B8%AD%E7%9A%84interface/</url>
+    <content><![CDATA[<h2 id="interface-是一种类型"><a href="#interface-是一种类型" class="headerlink" title="interface 是一种类型"></a>interface 是一种类型</h2><hr>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">   Get() int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>首先 <strong>interface 是一种类型</strong>，从它的定义可以看出来用了 type 关键字，更准确的说 interface 是一种<strong>具有一组方法的类型</strong>，这些方法定义了 interface 的行为。 go 允许不带任何方法的 interface ，这种类型的 interface 叫 <strong>empty interface</strong>。 <strong>如果一个类型实现了一个 interface 中所有方法，我们说类型实现了该 interface</strong>，所以所有类型都实现了 empty interface，因为任何一种类型至少实现了 0 个方法。go 没有显式的关键字用来实现 interface，只需要实现 interface 包含的方法即可。</p>
+<h2 id="interface-变量存储的是实现者的值"><a href="#interface-变量存储的是实现者的值" class="headerlink" title="interface 变量存储的是实现者的值"></a>interface 变量存储的是实现者的值</h2><hr>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;1</span><br><span class="line">type I interface &#123;    </span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;2</span><br><span class="line">type S struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func(s S) Get()int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func(s *S) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;3</span><br><span class="line">func f(i I)&#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    s :&#x3D; S&#123;&#125;</span><br><span class="line">    f(&amp;s)  &#x2F;&#x2F;4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>这段代码在 <code>#1</code> 定义了 interface I，在 <code>#2</code> 用 struct S 实现了 I 定义的两个方法，接着在 <code>#3</code> 定义了一个函数 f 参数类型是 I，S 实现了 I 的两个方法就说 S 是 I 的实现者，执行 <code>f(&amp;s)</code> 就完了一次 interface 类型的使用。 interface 的重要用途就体现在<strong>函数 f 的参数中</strong>，如果有多种类型实现了某个 interface，<strong>这些类型的值都可以直接使用 interface 的变量存储</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">s :&#x3D; S&#123;&#125;</span><br><span class="line">var i I &#x2F;&#x2F;声明 i</span><br><span class="line">i &#x3D; &amp;s &#x2F;&#x2F;赋值 s 到 i</span><br><span class="line">fmt.Println(i.Get())</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>不难看出 interface 的变量中存储的是实现了 interface 的类型的对象值，这种能力是 <a href="http://en.wikipedia.org/wiki/Duck_typing">duck typing</a>。在使用 interface 时不需要显式在 struct 上声明要实现哪个 interface ，只需要实现对应 interface 中的方法即可，go 会自动进行 interface 的检查，并在运行时执行从其他类型到 interface 的自动转换，即使实现了多个 interface，go 也会在使用对应 interface 时实现自动转换，这就是 interface 的魔力所在。</p>
+<h2 id="如何判断-interface-变量存储的是哪种类型"><a href="#如何判断-interface-变量存储的是哪种类型" class="headerlink" title="如何判断 interface 变量存储的是哪种类型"></a>如何判断 interface 变量存储的是哪种类型</h2><hr>
+<p>一个 interface 被多种类型实现时，有时候我们需要区分 interface 的变量究竟存储哪种类型的值，go 可以使用 <code>comma, ok</code> 的形式做区分 <code>value, ok := em.(T)</code>：<strong>em 是 interface 类型的变量，T代表要断言的类型，value 是 interface 变量存储的值，ok 是 bool 类型表示是否为该断言的类型 T</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if t, ok :&#x3D; i.(*S); ok &#123;</span><br><span class="line">    fmt.Println(&quot;s implements I&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<p>ok 是 true 表明 i 存储的是 <code>*S</code> 类型的值，false 则不是，这种区分能力叫 <a href="https://tour.golang.org/methods/15">Type assertions</a> (类型断言)。 如果需要区分多种类型，可以使用 switch 断言，更简单直接，这种断言方式只能在 switch 语句中使用。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">switch t :&#x3D; i.(type) &#123;</span><br><span class="line">case *S:</span><br><span class="line">    fmt.Println(&quot;i store *S&quot;, t)</span><br><span class="line">case *R:</span><br><span class="line">    fmt.Println(&quot;i store *R&quot;, t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="空的-interface"><a href="#空的-interface" class="headerlink" title="空的 interface"></a>空的 interface</h2><hr>
+<p><code>interface&#123;&#125;</code> 是一个空的 interface 类型，根据前文的定义：一个类型如果实现了一个 interface 的所有方法就说该类型实现了这个 interface，空的 interface 没有方法，所以可以认为所有的类型都实现了 <code>interface&#123;&#125;</code>。如果定义一个函数参数是 <code>interface&#123;&#125;</code> 类型，这个函数应该可以接受任何类型作为它的参数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func doSomething(v interface&#123;&#125;)&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果函数的参数 v 可以接受任何类型，那么函数被调用时在函数内部 v 是不是表示的是任何类型？并不是，虽然函数的参数可以接受任何类型，并不表示 v 就是任何类型，在函数 doSomething 内部 v 仅仅是一个 interface 类型，之所以函数可以接受任何类型是在 go 执行时传递到函数的任何类型都被自动转换成 <code>interface&#123;&#125;</code>。go 是如何进行转换的，以及 v 存储的值究竟是怎么做到可以接受任何类型的，感兴趣的可以看看 <a href="https://research.swtch.com/interfaces">Russ Cox 关于 interface 的实现</a> 。 既然空的 interface 可以接受任何类型的参数，那么一个 <code>interface&#123;&#125;</code>类型的 slice 是不是就可以接受任何类型的 slice ?</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func printAll(vals []interface&#123;&#125;) &#123; &#x2F;&#x2F;1</span><br><span class="line">    for _, val :&#x3D; range vals &#123;</span><br><span class="line">        fmt.Println(val)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">    names :&#x3D; \[\]string&#123;&quot;stanley&quot;, &quot;david&quot;, &quot;oscar&quot;&#125;</span><br><span class="line">    printAll(names)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>上面的代码是按照我们的假设修改的，执行之后竟然会报 <code>cannot use names (type []string) as type []interface &#123;&#125; in argument to printAll</code> 错误，why？ 这个错误说明 go 没有帮助我们自动把 slice 转换成 <code>interface&#123;&#125;</code> 类型的 slice，所以出错了。<strong>go 不会对 类型是<code>interface&#123;&#125;</code> 的 slice 进行转换</strong> 。为什么 go 不帮我们自动转换，一开始我也很好奇，最后终于在 go 的 wiki 中找到了答案 <a href="https://github.com/golang/go/wiki/InterfaceSlice">https://github.com/golang/go/wiki/InterfaceSlice</a> 大意是 <code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的 methods 数据，一个是指向其存储值的指针，也就是 interface 变量存储的值，因而 slice []interface{} 其长度是固定的<code>N*2</code>，但是 []T 的长度是<code>N*sizeof(T)</code>，两种 slice 实际存储值的大小是有区别的(文中只介绍两种 slice 的不同，至于为什么不能转换猜测可能是 runtime 转换代价比较大)。 但是我们可以手动进行转换来达到我们的目的。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var dataSlice []int &#x3D; foo()</span><br><span class="line">var interfaceSlice []interface&#123;&#125; &#x3D; make([]interface&#123;&#125;, len(dataSlice))</span><br><span class="line">for i, d :&#x3D; range dataSlice &#123;</span><br><span class="line">    interfaceSlice[i] &#x3D; d</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> </p>
+<h2 id="interface-的实现者的-receiver-如何选择"><a href="#interface-的实现者的-receiver-如何选择" class="headerlink" title="interface 的实现者的 receiver 如何选择"></a>interface 的实现者的 receiver 如何选择</h2><hr>
+<p>在我们上文的例子中调用 f 是 <code>f(&amp;s)</code> 也就是 S 的指针类型，为什么不能是 <code>f(s)</code> 呢，如果是 s 会有什么问题？改成 f(s) 然后执行代码。</p>
+<p>cannot use s (type S) as type I in argument to f:<br>    S does not implement I (Set method has pointer receiver)</p>
+<p> </p>
+<p>这个错误的意思是 S 没有实现 I，哪里出了问题？*<em>关键点是 S 中 set 方法的 receiver 是个 pointer <em>S</em></em> 。 interface 定义时并没有严格规定实现者的方法 receiver 是个 value receiver 还是 pointer receiver，上面代码中的 S 的 Set receiver 是 pointer，也就是实现 I 的两个方法的 receiver 一个是 value 一个是 pointer，使用 <code>f(s)</code>的形势调用，传递给 f 的是个 s 的一份拷贝，在进行 s 的拷贝到 I 的转换时，s 的拷贝不满足 Set 方法的 receiver 是个 pointer，也就没有实现 I。<strong>go 中函数都是按值传递即 passed by value</strong>。 那反过来会怎样，如果 receiver 是 value，函数用 pointer 的形式调用？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type I interface &#123;</span><br><span class="line">    Get() int</span><br><span class="line">    Set(int)</span><br><span class="line">&#125;</span><br><span class="line">type SS struct &#123;</span><br><span class="line">    Age int</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Get() int &#123;</span><br><span class="line">    return s.Age</span><br><span class="line">&#125;</span><br><span class="line">func (s SS) Set(age int) &#123;</span><br><span class="line">    s.Age &#x3D; age</span><br><span class="line">&#125;</span><br><span class="line">func f(i I) &#123;</span><br><span class="line">    i.Set(10)</span><br><span class="line">    fmt.Println(i.Get())</span><br><span class="line">&#125;</span><br><span class="line">func main()&#123;</span><br><span class="line">      ss :&#x3D; SS&#123;&#125;</span><br><span class="line">    f(&amp;ss) &#x2F;&#x2F;ponter</span><br><span class="line">    f(ss)  &#x2F;&#x2F;value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>I 的实现者 SS 的方法 receiver 都是 value receiver，执行代码可以看到无论是 pointer 还是 value 都可以正确执行。 导致这一现象的原因是什么？ 如果是按 pointer 调用，go 会自动进行转换，因为有了指针总是能得到指针指向的值是什么，如果是 value 调用，go 将无从得知 value 的原始值是什么，因为 value 是份拷贝。<strong>go 会把指针进行隐式转换得到 value，但反过来则不行</strong>。 对于 receiver 是 value 的 method，任何在 method 内部对 value 做出的改变都不影响调用者看到的 value，这就是按值传递。 另一个说明上述现象的例子是这样的来自 <a href="https://play.golang.org/p/TvR758rfre">https://play.golang.org/p/TvR758rfre</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line">type Animal interface &#123;</span><br><span class="line">    Speak() string</span><br><span class="line">&#125;</span><br><span class="line">type Dog struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (d Dog) Speak() string &#123;</span><br><span class="line">    return &quot;Woof!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Cat struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;1</span><br><span class="line">func (c *Cat) Speak() string &#123;</span><br><span class="line">    return &quot;Meow!&quot;</span><br><span class="line">&#125;</span><br><span class="line">type Llama struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (l Llama) Speak() string &#123;</span><br><span class="line">    return &quot;?????&quot;</span><br><span class="line">&#125;</span><br><span class="line">type JavaProgrammer struct &#123;</span><br><span class="line">&#125;</span><br><span class="line">func (j JavaProgrammer) Speak() string &#123;</span><br><span class="line">    return &quot;Design patterns!&quot;</span><br><span class="line">&#125;</span><br><span class="line">func main() &#123;</span><br><span class="line">    animals :&#x3D; \[\]Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, Llama&#123;&#125;, JavaProgrammer&#123;&#125;&#125;</span><br><span class="line">    for _, animal :&#x3D; range animals &#123;</span><br><span class="line">        fmt.Println(animal.Speak())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p><code>#1</code> Cat 的 speak receiver 是 pointer，interface Animal 的 slice，Cat 的值是一个 value，同样会因为 receiver 不一致而导致无法执行。</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>golang中的一些基本问题</title>
     <url>/2018/01/08/golang%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<h3 id="import中下划线的作用"><a href="#import中下划线的作用" class="headerlink" title="import中下划线的作用"></a>import中下划线的作用</h3><blockquote>
 <p>import 下划线（如：import _ hello/imp）的作用：当导入一个包时，该包下的文件里所有init()函数都会被执行，然而，有些时候我们并不需要把整个包都导入进来，仅仅是是希望它执行init()函数而已。这个时候就可以使用 import _ 引用该包。即使用【import _ 包路径】只是引用该包，仅仅是为了调用init()函数，所以无法通过包名来调用包中的其他函数。</p>
 </blockquote>
-<h3 id="变量赋值"><a href="#变量赋值" class="headerlink" title="变量赋值"></a>变量赋值</h3><p>f, err = os.Open(“foo.txt”) // function call returns two values</p>
-<p>  通常，这类函数会用额外的返回值来表达某种错误类型，例如os.Open是用额外的返回值返回一个error类型的错误，还有一些是用来返回布尔值，通常被称为ok。</p>
-<p>_, err = io.Copy(dst, src) // 丢弃字节数<br>_, ok = x.(T) // 只检测类型，忽略具体值</p>
-<p>  和变量声明一样，我们可以用下划线空白标识符_来丢弃不需要的值。</p>
-<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><p>func name(parameter-list) (result-list) {<br>    body<br>}</p>
-<p>func hypot(x, y float64) float64 {<br>    return math.Sqrt(x*x + y*y)<br>}<br>fmt.Println(hypot(3,4)) // “5”</p>
-<p>#多返回值<br>// findLinks performs an HTTP GET request for url, parses the<br>// response as HTML, and extracts and returns the links.<br>func findLinks(url string) ([]string, error) {<br>    resp, err := http.Get(url)<br>    if err != nil {<br>        return nil, err<br>    }<br>    if resp.StatusCode != http.StatusOK {<br>        resp.Body.Close()<br>        return nil, fmt.Errorf(“getting %s: %s”, url, resp.Status)<br>    }<br>    doc, err := html.Parse(resp.Body)<br>    resp.Body.Close()<br>    if err != nil {<br>        return nil, fmt.Errorf(“parsing %s as HTML: %v”, url, err)<br>    }<br>    return visit(nil, doc), nil<br>}</p>
-<p> </p>
+<h3 id="变量赋值"><a href="#变量赋值" class="headerlink" title="变量赋值"></a>变量赋值</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">f, err &#x3D; os.Open(&quot;foo.txt&quot;) &#x2F;&#x2F; function call returns two values</span><br></pre></td></tr></table></figure>
+
+
+<p>通常，这类函数会用额外的返回值来表达某种错误类型，例如os.Open是用额外的返回值返回一个error类型的错误，还有一些是用来返回布尔值，通常被称为ok。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">_, err &#x3D; io.Copy(dst, src) &#x2F;&#x2F; 丢弃字节数</span><br><span class="line">_, ok &#x3D; x.(T) &#x2F;&#x2F; 只检测类型，忽略具体值</span><br><span class="line">和变量声明一样，我们可以用下划线空白标识符_来丢弃不需要的值。</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">name</span><span class="params">(parameter-list)</span> <span class="params">(result-list)</span></span> &#123;</span><br><span class="line">    body</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">hypot</span><span class="params">(x, y <span class="keyword">float64</span>)</span> <span class="title">float64</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> math.Sqrt(x\*x + y\*y)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(hypot(<span class="number">3</span>,<span class="number">4</span>)) <span class="comment">// &quot;5&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>#多返回值</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="comment">// findLinks performs an HTTP GET request for url, parses the</span></span><br><span class="line"><span class="comment">// response as HTML, and extracts and returns the links.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findLinks</span><span class="params">(url <span class="keyword">string</span>)</span> <span class="params">(\[\]<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">    resp, err := http.Get(url)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> resp.StatusCode != http.StatusOK &#123;</span><br><span class="line">        resp.Body.Close()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;getting %s: %s&quot;</span>, url, resp.Status)</span><br><span class="line">    &#125;</span><br><span class="line">    doc, err := html.Parse(resp.Body)</span><br><span class="line">    resp.Body.Close()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;parsing %s as HTML: %v&quot;</span>, url, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> visit(<span class="literal">nil</span>, doc), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h3><p>在声明可变参数函数时，需要在参数列表的最后一个参数类型之前加上省略符号“…”，这表示该函数会接收任意数量的该类型参数。</p>
-<p>func sum(vals…int) int {<br>    total := 0<br>    for _, val := range vals {<br>        total += val<br>    }<br>    return total<br>}</p>
-<p>  sum函数返回任意个int型参数的和。在函数体中,vals被看作是类型为[] int的切片。sum可以接收任意数量的int型参数：</p>
-<p>fmt.Println(sum())           // “0”<br>fmt.Println(sum(3))          // “3”<br>fmt.Println(sum(1, 2, 3, 4)) // “10”</p>
-<p>  可变参数函数经常被用于格式化字符串。下面的errorf函数构造了一个以行号开头的，经过格式化的错误信息。函数名的后缀f是一种通用的命名规范，代表该可变参数函数可以接收Printf风格的格式化字符串。</p>
-<p>func errorf(linenum int, format string, args …interface{}) {<br>    fmt.Fprintf(os.Stderr, “Line %d: “, linenum)<br>    fmt.Fprintf(os.Stderr, format, args…)<br>    fmt.Fprintln(os.Stderr)<br>}<br>linenum, name := 12, “count”<br>errorf(linenum, “undefined: %s”, name) // “Line 12: undefined: count”</p>
-<p>  interface{}表示函数的最后一个参数可以接收任意类型</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum</span><span class="params">(vals...<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    total := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _, val := <span class="keyword">range</span> vals &#123;</span><br><span class="line">        total += val</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> total</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>sum函数返回任意个int型参数的和。在函数体中,vals被看作是类型为[] int的切片。sum可以接收任意数量的int型参数：</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line">fmt.Println(sum())           <span class="comment">// &quot;0&quot;</span></span><br><span class="line">fmt.Println(sum(<span class="number">3</span>))          <span class="comment">// &quot;3&quot;</span></span><br><span class="line">fmt.Println(sum(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)) <span class="comment">// &quot;10&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>可变参数函数经常被用于格式化字符串。下面的errorf函数构造了一个以行号开头的，经过格式化的错误信息。函数名的后缀f是一种通用的命名规范，代表该可变参数函数可以接收Printf风格的格式化字符串。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">errorf</span><span class="params">(linenum <span class="keyword">int</span>, format <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    fmt.Fprintf(os.Stderr, <span class="string">&quot;Line %d: &quot;</span>, linenum)</span><br><span class="line">    fmt.Fprintf(os.Stderr, format, args...)</span><br><span class="line">    fmt.Fprintln(os.Stderr)</span><br><span class="line">&#125;</span><br><span class="line">linenum, name := <span class="number">12</span>, <span class="string">&quot;count&quot;</span></span><br><span class="line">errorf(linenum, <span class="string">&quot;undefined: %s&quot;</span>, name) <span class="comment">// &quot;Line 12: undefined: count&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>interface{}表示函数的最后一个参数可以接收任意类型</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang并发编程</title>
+    <url>/2018/05/26/golang%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h2><p>在Go语言中，语言本身就已经实现和支持了并发， 我们只需要通过<code>go</code>关键字来开启<code>goroutine</code>即可。 gouroutine其实就是一种协程，类似其他语言中的coroutine， 是在编译器或虚拟机层面上的多任务。它可以运行在一个或多个线程上，但不同于线程，它是<strong>非抢占式的</strong>，所以协程很轻量。</p>
+<pre><code>func main() &#123;
+    for i := 0; i &lt; 1000; i++ &#123;
+    go func(ii int) &#123;
+        for &#123;
+            fmt.Printf(&quot;Hello %d\n&quot;, ii)
+        &#125;
+        &#125;(i)
+    &#125;
+
+    time.Sleep(time.Millisecond)
+&#125;</code></pre>
+<p>上述代码就开启了1000个协程，在1ms内不断的打印字符串，这里需要注意两个点：</p>
+<ol>
+<li>time.Sleep 在main函数退出前，Sleep了1ms。这是因为当main函数退出时，之前开的协程也会随着退出，如果不Sleep，则无法看到打印信息。</li>
+<li>匿名函数将变量i作为参数赋值传入。 如果不传参，变量i也能被使用，但是是以引用的方式。而i在main函数中在不断自增，导致在goroutine打印信息中，无法知道是第几个协程打印的。</li>
+</ol>
+<p>从打印信息上看，跟开线程没什么区别，无非就是数量上不同。但是在操作系统层面，线程是抢占式，而我们之前说协程是非抢占式的，这怎么会一样呢？ 出现上述问题的原因在于，在调用<code>Printf</code>的时候，进行了切换， goroutine主动让出了控制权。我们修改代码如下，演示下非抢占：</p>
+<pre><code>a := [10]int&#123;&#125;
+for i := 0; i &lt; 10; i++ &#123;
+    go func(ii int) &#123;
+        for &#123;
+            a[ii]++
+        &#125;
+    &#125;(i)
+&#125;
+
+time.Sleep(time.Millisecond)
+fmt.Println(a)</code></pre>
+<p>运行上述代码，出现了死循环。因为在开辟的第一个goroutine中，一直循环执行<code>a[ii]++</code>，一直没有让出控制权；而<code>main</code>本质上也是个goroutine，所以后面的代码都没有执行完，也没有退出。 遇到这种情况，我们可以在goroutine中主动让出控制权，例如：</p>
+<pre><code>a[ii]++
+runtime.Gosched()</code></pre>
+<p>goroutine 可能会切换的点 （不能保证）:</p>
+<ul>
+<li>I/O,select</li>
+<li>channel</li>
+<li>等待锁</li>
+<li>runtime.Gosched()</li>
+</ul>
+<h2 id="CSP并发模型"><a href="#CSP并发模型" class="headerlink" title="CSP并发模型"></a>CSP并发模型</h2><p>Go实现了两种并发形式：</p>
+<ol>
+<li>共享内存 + 锁同步</li>
+<li>CSP. 通过goroutine和channel来实现的.</li>
+</ol>
+<p>CSP并发模型是在1970年左右提出的概念，属于比较新的概念，不同于传统的多线程通过共享内存来通信，CSP讲究的是“以通信的方式来共享内存”。</p>
+<blockquote>
+<p>Do not communicate by sharing memory; instead, share memory by communicating 不要以共享内存的方式来通信，相反，要通过通信来共享内存。</p>
+</blockquote>
+<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p>channel 是用来在不同goroutine之间进行通信的，无论传值还是取值， 它都是阻塞的。</p>
+<pre><code>c := make(chan int)
+c &lt;- 1</code></pre>
+<p>上面代码直接运行会造成死锁：</p>
+<pre><code>all goroutines are asleep - deadlock!</code></pre>
+<p>所以一般在使用channel前先开一个goroutine去接收channel:</p>
+<pre><code>func createWorker() chan int &#123;
+    c := make(chan int)
+    go func() &#123;
+        for n := range c &#123;
+            fmt.Println(&quot;received:&quot;, n)
+        &#125;
+    &#125;()
+
+    return c
+&#125;
+
+func main() &#123;
+    var channels [10]chan int
+
+    for i, _ := range channels &#123;
+        channels[i] = createWorker()
+    &#125;
+
+    for i, c := range channels &#123;
+        c &lt;- i
+    &#125;
+
+    time.Sleep(time.Millisecond)
+&#125;</code></pre>
+<p>在上述代码中，我们定义了一个<code>createWorker</code>，用来创建一个接收者，同时返回了一个channel。同时我们可以对返回的channel做限制，例如：</p>
+<pre><code>func createWorker() chan&lt;- int // 只能发送数据
+func createWorker() &lt;-chan int // 只能接收数据</code></pre>
+<p>一般可以通过<code>n := &lt;- c</code>来接收数据，在上述例子中使用了range，因为channel是可以close的。 <code>close(c)</code>关闭channel， 但是关闭后在worker中依然能接收到channel（只要goroutine没有退出）。而接收到的数据是定义的channel的零值，在上述例子中，则收到0.</p>
+<ul>
+<li>通过<code>n,ok := &lt;- c</code>的ok来判断channel是否关闭；也可以通过range来接收；</li>
+<li>如果往已经关闭的channel写数据，会panic：<code>send on closed channel</code>. <strong>不要从接收端关闭channel，也不要关闭有多个并发发送者的channel</strong></li>
+</ul>
+<h3 id="等待任务结束"><a href="#等待任务结束" class="headerlink" title="等待任务结束"></a>等待任务结束</h3><p>在之前的例子中，我们都是通过Sleep方法来粗略的控制任务的执行，这在实际生产中肯定不能这么干。之前也说了channel是用来通信的，那么我们可以通过channel来告诉使用者任务已经执行完了。 代码优化如下：</p>
+<pre><code>type worker struct &#123;
+    in   chan int
+    done chan bool
+&#125;
+
+func createWorker() worker &#123;
+    w := worker&#123;
+        in:   make(chan int),
+        done: make(chan bool),
+    &#125;
+
+    go func(w worker) &#123;
+        for n := range w.in &#123;
+            fmt.Println(&quot;received:&quot;, n)
+            w.done &lt;- true
+        &#125;
+    &#125;(w)
+
+    return w
+&#125;
+
+func chanNormal() &#123;
+    var workers [10]worker
+
+    for i, _ := range workers &#123;
+        workers[i] = createWorker()
+    &#125;
+
+    for i, w := range workers &#123;
+        w.in &lt;- i
+    &#125;
+
+    for _, w := range workers &#123;
+        &lt;-w.done
+    &#125;
+
+&#125;
+
+func main() &#123;
+    chanNormal()
+&#125;</code></pre>
+<p>除了我们自己定义channel，go也为我们提供了<code>sync.WaitGroup</code>，来管理一组任务。</p>
+<pre><code>var wg sync.WaitGroup
+wg.Add(1)
+wg.Done()
+wg.Wait()</code></pre>
+<h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>将struct中的done抽象成一个方法，在<code>create</code>的时候实现，这样在<code>worker</code>中就不用管具体代码了，只要调用done方法即可。</p>
 ]]></content>
       <categories>
         <category>Go</category>
@@ -926,151 +1080,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>Golang并发编程</title>
-    <url>/2018/05/26/golang%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h2><p>在Go语言中，语言本身就已经实现和支持了并发， 我们只需要通过<code>go</code>关键字来开启<code>goroutine</code>即可。 gouroutine其实就是一种协程，类似其他语言中的coroutine， 是在编译器或虚拟机层面上的多任务。它可以运行在一个或多个线程上，但不同于线程，它是<strong>非抢占式的</strong>，所以协程很轻量。</p>
-<pre><code>func main() &#123;
-    for i := 0; i &lt; 1000; i++ &#123;
-    go func(ii int) &#123;
-        for &#123;
-            fmt.Printf(&quot;Hello %d\n&quot;, ii)
-        &#125;
-        &#125;(i)
-    &#125;
-
-    time.Sleep(time.Millisecond)
-&#125;</code></pre>
-<p>上述代码就开启了1000个协程，在1ms内不断的打印字符串，这里需要注意两个点：</p>
-<ol>
-<li>time.Sleep 在main函数退出前，Sleep了1ms。这是因为当main函数退出时，之前开的协程也会随着退出，如果不Sleep，则无法看到打印信息。</li>
-<li>匿名函数将变量i作为参数赋值传入。 如果不传参，变量i也能被使用，但是是以引用的方式。而i在main函数中在不断自增，导致在goroutine打印信息中，无法知道是第几个协程打印的。</li>
-</ol>
-<p>从打印信息上看，跟开线程没什么区别，无非就是数量上不同。但是在操作系统层面，线程是抢占式，而我们之前说协程是非抢占式的，这怎么会一样呢？ 出现上述问题的原因在于，在调用<code>Printf</code>的时候，进行了切换， goroutine主动让出了控制权。我们修改代码如下，演示下非抢占：</p>
-<pre><code>a := [10]int&#123;&#125;
-for i := 0; i &lt; 10; i++ &#123;
-    go func(ii int) &#123;
-        for &#123;
-            a[ii]++
-        &#125;
-    &#125;(i)
-&#125;
-
-time.Sleep(time.Millisecond)
-fmt.Println(a)</code></pre>
-<p>运行上述代码，出现了死循环。因为在开辟的第一个goroutine中，一直循环执行<code>a[ii]++</code>，一直没有让出控制权；而<code>main</code>本质上也是个goroutine，所以后面的代码都没有执行完，也没有退出。 遇到这种情况，我们可以在goroutine中主动让出控制权，例如：</p>
-<pre><code>a[ii]++
-runtime.Gosched()</code></pre>
-<p>goroutine 可能会切换的点 （不能保证）:</p>
-<ul>
-<li>I/O,select</li>
-<li>channel</li>
-<li>等待锁</li>
-<li>runtime.Gosched()</li>
-</ul>
-<h2 id="CSP并发模型"><a href="#CSP并发模型" class="headerlink" title="CSP并发模型"></a>CSP并发模型</h2><p>Go实现了两种并发形式：</p>
-<ol>
-<li>共享内存 + 锁同步</li>
-<li>CSP. 通过goroutine和channel来实现的.</li>
-</ol>
-<p>CSP并发模型是在1970年左右提出的概念，属于比较新的概念，不同于传统的多线程通过共享内存来通信，CSP讲究的是“以通信的方式来共享内存”。</p>
-<blockquote>
-<p>Do not communicate by sharing memory; instead, share memory by communicating 不要以共享内存的方式来通信，相反，要通过通信来共享内存。</p>
-</blockquote>
-<h2 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h2><p>channel 是用来在不同goroutine之间进行通信的，无论传值还是取值， 它都是阻塞的。</p>
-<pre><code>c := make(chan int)
-c &lt;- 1</code></pre>
-<p>上面代码直接运行会造成死锁：</p>
-<pre><code>all goroutines are asleep - deadlock!</code></pre>
-<p>所以一般在使用channel前先开一个goroutine去接收channel:</p>
-<pre><code>func createWorker() chan int &#123;
-    c := make(chan int)
-    go func() &#123;
-        for n := range c &#123;
-            fmt.Println(&quot;received:&quot;, n)
-        &#125;
-    &#125;()
-
-    return c
-&#125;
-
-func main() &#123;
-    var channels [10]chan int
-
-    for i, _ := range channels &#123;
-        channels[i] = createWorker()
-    &#125;
-
-    for i, c := range channels &#123;
-        c &lt;- i
-    &#125;
-
-    time.Sleep(time.Millisecond)
-&#125;</code></pre>
-<p>在上述代码中，我们定义了一个<code>createWorker</code>，用来创建一个接收者，同时返回了一个channel。同时我们可以对返回的channel做限制，例如：</p>
-<pre><code>func createWorker() chan&lt;- int // 只能发送数据
-func createWorker() &lt;-chan int // 只能接收数据</code></pre>
-<p>一般可以通过<code>n := &lt;- c</code>来接收数据，在上述例子中使用了range，因为channel是可以close的。 <code>close(c)</code>关闭channel， 但是关闭后在worker中依然能接收到channel（只要goroutine没有退出）。而接收到的数据是定义的channel的零值，在上述例子中，则收到0.</p>
-<ul>
-<li>通过<code>n,ok := &lt;- c</code>的ok来判断channel是否关闭；也可以通过range来接收；</li>
-<li>如果往已经关闭的channel写数据，会panic：<code>send on closed channel</code>. <strong>不要从接收端关闭channel，也不要关闭有多个并发发送者的channel</strong></li>
-</ul>
-<h3 id="等待任务结束"><a href="#等待任务结束" class="headerlink" title="等待任务结束"></a>等待任务结束</h3><p>在之前的例子中，我们都是通过Sleep方法来粗略的控制任务的执行，这在实际生产中肯定不能这么干。之前也说了channel是用来通信的，那么我们可以通过channel来告诉使用者任务已经执行完了。 代码优化如下：</p>
-<pre><code>type worker struct &#123;
-    in   chan int
-    done chan bool
-&#125;
-
-func createWorker() worker &#123;
-    w := worker&#123;
-        in:   make(chan int),
-        done: make(chan bool),
-    &#125;
-
-    go func(w worker) &#123;
-        for n := range w.in &#123;
-            fmt.Println(&quot;received:&quot;, n)
-            w.done &lt;- true
-        &#125;
-    &#125;(w)
-
-    return w
-&#125;
-
-func chanNormal() &#123;
-    var workers [10]worker
-
-    for i, _ := range workers &#123;
-        workers[i] = createWorker()
-    &#125;
-
-    for i, w := range workers &#123;
-        w.in &lt;- i
-    &#125;
-
-    for _, w := range workers &#123;
-        &lt;-w.done
-    &#125;
-
-&#125;
-
-func main() &#123;
-    chanNormal()
-&#125;</code></pre>
-<p>除了我们自己定义channel，go也为我们提供了<code>sync.WaitGroup</code>，来管理一组任务。</p>
-<pre><code>var wg sync.WaitGroup
-wg.Add(1)
-wg.Done()
-wg.Wait()</code></pre>
-<h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>将struct中的done抽象成一个方法，在<code>create</code>的时候实现，这样在<code>worker</code>中就不用管具体代码了，只要调用done方法即可。</p>
-]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>HashMap与HashTable的区别</title>
     <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
@@ -1169,6 +1178,24 @@ wg.Wait()</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>java中String、StringBuffer、StringBuilder的区别</title>
+    <url>/2017/05/13/java%E4%B8%ADstring%E3%80%81stringbuffer%E3%80%81stringbuilder%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p><strong>java中String、StringBuffer、StringBuilder是编程中经常使用的字符串类，他们之间的区别也是经常在面试中会问到的问题。</strong> </p>
+<p><strong>1.可变与不可变</strong><br>String类中使用字符数组保存字符串，如下就是，因为有“final”修饰符，所以可以知道string对象是不可变的。 <strong>private final char value[];</strong> StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串，如下就是，可知这两种对象都是可变的。<br>**　　　　char[] value;**</p>
+<p><strong>2.是否多线程安全</strong><br>String中的对象是不可变的，也就可以理解为常量，<strong>显然线程安全</strong>。 AbstractStringBuilder是StringBuilder与StringBuffer的公共父类，定义了一些字符串的基本操作，如expandCapacity、append、insert、indexOf等公共方法。 StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是<strong>线程安全的</strong>。看如下源码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public synchronized StringBuffer reverse() &#123;</span><br><span class="line">    super.reverse();</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public int indexOf(String str) &#123;</span><br><span class="line">    return indexOf(str, 0);        &#x2F;&#x2F;存在 public synchronized int indexOf(String str, int fromIndex) 方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>StringBuilder并没有对方法进行加同步锁，所以是<strong>非线程安全的</strong>。</p>
+<p><strong>3.StringBuilder与StringBuffer共同点</strong></p>
+<p>StringBuilder与StringBuffer有公共父类AbstractStringBuilder(<strong>抽象类</strong>)。 抽象类与接口的其中一个区别是：抽象类中可以定义一些子类的公共方法，子类只需要增加新的功能，不需要重复写已经存在的方法；而接口中只是对方法的申明和常量的定义。 StringBuilder、StringBuffer的方法都会调用AbstractStringBuilder中的公共方法，如super.append(…)。只是StringBuffer会在方法上加synchronized关键字，进行同步。 **　　最后，如果程序不是多线程的，那么使用StringBuilder效率高于StringBuffer。**</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java中this和super的用法总结</title>
     <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p><strong>this</strong> </p>
@@ -1229,24 +1256,6 @@ wg.Wait()</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>java中String、StringBuffer、StringBuilder的区别</title>
-    <url>/2017/05/13/java%E4%B8%ADstring%E3%80%81stringbuffer%E3%80%81stringbuilder%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p><strong>java中String、StringBuffer、StringBuilder是编程中经常使用的字符串类，他们之间的区别也是经常在面试中会问到的问题。</strong> </p>
-<p><strong>1.可变与不可变</strong><br>String类中使用字符数组保存字符串，如下就是，因为有“final”修饰符，所以可以知道string对象是不可变的。 <strong>private final char value[];</strong> StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串，如下就是，可知这两种对象都是可变的。<br>**　　　　char[] value;**</p>
-<p><strong>2.是否多线程安全</strong><br>String中的对象是不可变的，也就可以理解为常量，<strong>显然线程安全</strong>。 AbstractStringBuilder是StringBuilder与StringBuffer的公共父类，定义了一些字符串的基本操作，如expandCapacity、append、insert、indexOf等公共方法。 StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是<strong>线程安全的</strong>。看如下源码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public synchronized StringBuffer reverse() &#123;</span><br><span class="line">    super.reverse();</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public int indexOf(String str) &#123;</span><br><span class="line">    return indexOf(str, 0);        &#x2F;&#x2F;存在 public synchronized int indexOf(String str, int fromIndex) 方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>StringBuilder并没有对方法进行加同步锁，所以是<strong>非线程安全的</strong>。</p>
-<p><strong>3.StringBuilder与StringBuffer共同点</strong></p>
-<p>StringBuilder与StringBuffer有公共父类AbstractStringBuilder(<strong>抽象类</strong>)。 抽象类与接口的其中一个区别是：抽象类中可以定义一些子类的公共方法，子类只需要增加新的功能，不需要重复写已经存在的方法；而接口中只是对方法的申明和常量的定义。 StringBuilder、StringBuffer的方法都会调用AbstractStringBuilder中的公共方法，如super.append(…)。只是StringBuffer会在方法上加synchronized关键字，进行同步。 **　　最后，如果程序不是多线程的，那么使用StringBuilder效率高于StringBuffer。**</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JAVA原子变量操作</title>
     <url>/2017/06/04/java%E5%8E%9F%E5%AD%90%E5%8F%98%E9%87%8F%E6%93%8D%E4%BD%9C/</url>
     <content><![CDATA[<p>Java从JDK1.5开始提供了java.util.concurrent.atomic包，定义了一些常见类型的原子变量。这些原子变量为我们提供了一种操作单一变量无锁(<em>lock-free</em>)的线程安全(<em>thread-safe</em>)方式。实际上该包下面的类为我们提供了类似<code>volatile</code>变量的特性，同时还提供了诸如<code>boolean compareAndSet(expectedValue, updateValue)</code>的功能。不使用锁实现线程安全听起来似乎很不可思议，这其实是通过CPU的compare and swap指令实现的，由于硬件指令支持当然不需要加锁了。</p>
@@ -1304,8 +1313,8 @@ wg.Wait()</code></pre>
 ]]></content>
       <categories>
         <category>JAVA</category>
-        <category>JAVA并发</category>
         <category>JAVA提高</category>
+        <category>JAVA并发</category>
       </categories>
       <tags>
         <tag>JAVA</tag>
@@ -1356,22 +1365,6 @@ wg.Wait()</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>JAVA的异常处理</title>
-    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
-<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
-<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JQuery动态修改a标签链接地址</title>
     <url>/2017/02/10/jquery%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9a%E6%A0%87%E7%AD%BE%E9%93%BE%E6%8E%A5%E5%9C%B0%E5%9D%80/</url>
     <content><![CDATA[<p>在一个项目中，想隐藏真实的链接地址，使用JQuery的事件可以解决这个问题，代码如下：</p>
@@ -1387,6 +1380,22 @@ wg.Wait()</code></pre>
       <tags>
         <tag>JS</tag>
         <tag>JQuery</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JAVA的异常处理</title>
+    <url>/2017/05/05/java%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>异常：就是程序在运行时出现不正常情况。 异常由来：问题也是现实生活中一个具体的事物，也可以通过java的类的形式进行描述。并封装成对象。 其实就是java对不正常情况进行描述后的对象体现。 对于问题的划分：两种：一种是严重的问题，一种非严重的问题。 对于严重的，java通过Error类进行描述。 对于Error一般不编写针对性的代码对其进行处理。 对与非严重的，java通过Exception类进行描述。 对于Exception可以使用针对性的处理方式进行处理。 无论Error或者Exception都具有一些共性内容。 比如：不正常情况的信息，引发原因等。 Throwable |–Error |–Exception 异常的处理 java 提供了特有的语句进行处理。</p>
+<p>try<br>{<br>     需要被检测的代码；<br>}<br>catch(异常类 变量)<br>{<br>    处理异常的代码；(处理方式)<br>}<br>finally<br>{<br>    一定会执行的语句；<br>}</p>
+<p>  对捕获到的异常对象进行常见方法操作。 String getMessage()：获取异常信息。   Exceptoin中有一个特殊的子类异常RuntimeException 运行时异常。 如果在函数内容抛出该异常，函数上可以不用声明，编译一样通过。 如果在函数上声明了该异常。调用者可以不用进行处理。编译一样通过； 之所以不用在函数声明，是因为不需要让调用者处理。 当该异常发生，希望程序停止。因为在运行时，出现了无法继续运算的情况，希望停止程序后， 对代码进行修正。 自定义异常时：如果该异常的发生，无法在继续进行运算， 就让自定义异常继承RuntimeException。 对于异常分两种： 1，编译时被检测的异常。 2，编译时不被检测的异常(运行时异常。RuntimeException以及其子类)</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -1453,31 +1462,6 @@ echo urldecode ( json_encode ( $testJSON ) );
       <tags>
         <tag>JS</tag>
         <tag>内存溢出</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>kafka不能远程连接问题</title>
-    <url>/2017/06/14/kafka%E4%B8%8D%E8%83%BD%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>在已安装好的kafka集群进行远程连接时，有如下报错信息</p>
-<blockquote>
-<p> ERROR Error when sending message to topic test with key: null, value: 6 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)</p>
-</blockquote>
-<p>  在kafka本地服务器上进行连接，生产者与消费者皆可运行。</p>
-<p><strong>解决办法：</strong> </p>
-<p>更改配置文件</p>
-<blockquote>
-<p>vi config/server.properties</p>
-</blockquote>
-<p># The address the socket server listens on. It will get the value returned from<br># java.net.InetAddress.getCanonicalHostName() if not configured.<br>#   FORMAT:<br>#     listeners = listener_name://host_name:port<br>#   EXAMPLE:<br>#     listeners = PLAINTEXT://your.host.name:9092<br>listeners=PLAINTEXT://192.168.56.60:9092</p>
-<p>listeners监听注释打开并指定当前机器IP与端口 kafka具体搭建参见文章  <a href="http://onwise.xyz/2017/06/13/kafka%e4%b8%bb%e8%a6%81%e9%85%8d%e7%bd%ae%e5%8f%8a%e9%9b%86%e7%be%a4%e6%90%ad%e5%bb%ba/">kafka主要配置及集群搭建</a></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA提高</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>kafka</tag>
       </tags>
   </entry>
   <entry>
@@ -1584,6 +1568,31 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
+    <title>kafka不能远程连接问题</title>
+    <url>/2017/06/14/kafka%E4%B8%8D%E8%83%BD%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>在已安装好的kafka集群进行远程连接时，有如下报错信息</p>
+<blockquote>
+<p> ERROR Error when sending message to topic test with key: null, value: 6 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)</p>
+</blockquote>
+<p>  在kafka本地服务器上进行连接，生产者与消费者皆可运行。</p>
+<p><strong>解决办法：</strong> </p>
+<p>更改配置文件</p>
+<blockquote>
+<p>vi config/server.properties</p>
+</blockquote>
+<p># The address the socket server listens on. It will get the value returned from<br># java.net.InetAddress.getCanonicalHostName() if not configured.<br>#   FORMAT:<br>#     listeners = listener_name://host_name:port<br>#   EXAMPLE:<br>#     listeners = PLAINTEXT://your.host.name:9092<br>listeners=PLAINTEXT://192.168.56.60:9092</p>
+<p>listeners监听注释打开并指定当前机器IP与端口 kafka具体搭建参见文章  <a href="http://onwise.xyz/2017/06/13/kafka%e4%b8%bb%e8%a6%81%e9%85%8d%e7%bd%ae%e5%8f%8a%e9%9b%86%e7%be%a4%e6%90%ad%e5%bb%ba/">kafka主要配置及集群搭建</a></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA提高</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>kafka</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kafka主要配置及集群搭建</title>
     <url>/2017/06/13/kafka%E4%B8%BB%E8%A6%81%E9%85%8D%E7%BD%AE%E5%8F%8A%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</url>
     <content><![CDATA[<p>一、主要配置 1、Broker配置 <img src="http://img.blog.csdn.net/20160826122948868" alt="这里写图片描述"> 2.Consumer主要配置 <img src="http://img.blog.csdn.net/20160826122959962" alt="这里写图片描述"> 3.Producer主要配置 <img src="http://img.blog.csdn.net/20160826123017944" alt="这里写图片描述"> 以上是关于kafka一些基础说明，在其中我们知道如果要kafka正常运行，必须配置zookeeper，否则无论是kafka集群还是客户端的生存者和消费者都无法正常的工作的，以下是对zookeeper进行一些简单的介绍： 二、zookeeper集群 zookeeper是一个为分布式应用提供一致性服务的软件，它是开源的Hadoop项目的一个子项目，并根据google发表的一篇论文来实现的。zookeeper为分布式系统提供了高笑且易于使用的协同服务，它可以为分布式应用提供相当多的服务，诸如统一命名服务，配置管理，状态同步和组服务等。zookeeper接口简单，我们不必过多地纠结在分布式系统编程难于处理的同步和一致性问题上，你可以使用zookeeper提供的现成(off-the-shelf)服务来实现来实现分布式系统额配置管理，组管理，Leader选举等功能。 zookeeper集群的安装,准备三台服务器server1:192.168.0.1,server2:192.168.0.2, server3:192.168.0.3. 1)下载zookeeper 到<a href="http://zookeeper.apache.org/releases.html">http://zookeeper.apache.org/releases.html</a>去下载最新版本Zookeeper-3.4.5的安装包zookeeper-3.4.5.tar.gz.将文件保存server1的<del>目录下 2)安装zookeeper 先在服务器server分别执行a-c步骤 a)解压 tar -zxvf zookeeper-3.4.5.tar.gz 解压完成后在目录</del>下会发现多出一个目录zookeeper-3.4.5,重新命令为zookeeper b）配置 将conf/zoo_sample.cfg拷贝一份命名为zoo.cfg，也放在conf目录下。然后按照如下值修改其中的配置：</p>
@@ -1639,11 +1648,48 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
+    <title>Linux下apache安全配置策略</title>
+    <url>/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/</url>
+    <content><![CDATA[<blockquote>
+<p>Apache具有灵活的设置，所有Apache的安全特性都要经过周密的设计与规划，进行认真地配置才能够实现。Apache安全配置包括很多层面，有运行环境、认证与授权设置等。Apache的安装配置和运行示例如下：</p>
+</blockquote>
+<p><strong>1、基本配置</strong> 1) 修改apache的版本信息，使外部访问看到的apache信息是经过伪装或错误的，这个可以尽可能的保证apache的安全。 2) 建立安全的apache的目录结构。ServerRoot  DocumentRoot  ScripAlias   Customlog  Errorlog   均放在单独的目录环境中。以上主要目录相互独立并且不存在父子逻辑关系。 3) ServerRoot目录只能具有管理权限用户访问；DocumentRoot能够被管理Web站点内容的用户访问和使用Apache服务器的Apache用户和Apache用户组访问；只有admin组的用户可以访问日志目录。  各个目录设置独立的权限 4) 禁止默认访问的存在，只对指定的目录开启访问权限。 5) 更改apache的默认路径，单独建立路径提供apache文件的存放 6) 通过使用例如“Apache DoS Evasive Maneuvers Module ”等工具来实现Apache服务器对DoS攻击的防范。其工具可以快速拒绝来自相同地址对同一URL的重复请求。 7) 以Nobody用户运行 一般情况下，Apache是由Root 来安装和运行的。如果Apache Server进程具有Root用户特权，那么它将给系统的安全构成很大的威胁，应确保Apache Server进程以最可能低的权限用户来运行。通过修改httpd.conf文件中的下列选项，以Nobody用户运行Apache 达到相对安全的目的。 User nobody <strong>2、ServerRoot目录的权限</strong> 为了确保所有的配置是适当的和安全的，需要严格控制Apache 主目录的访问权限，使非超级用户不能修改该目录中的内容。Apache 的主目录对应于Apache Server配置文件httpd.conf的Server Root控制项中，应为： Server Root /usr/local/apache <strong>3、SSI的配置</strong> 在配置文件access.conf 或httpd.conf中的确Options指令处加入Includes NO EXEC选项，用以禁用Apache Server 中的执行功能。避免用户直接执行Apache 服务器中的执行程序，而造成服务器系统的公开化。 Options Includes Noexec <strong>4、阻止用户修改系统设置</strong> 在Apache 服务器的配置文件中进行以下的设置，阻止用户建立、修改 .htaccess文件，防止用户超越能定义的系统安全特性。</p>
+<p>AllowOveride None<br>Options None<br>Allow from all</p>
+<p>然后再分别对特定的目录进行适当的配置。 <strong>5、改变Apache 服务器的确省访问特性</strong> Apache 的默认设置只能保障一定程度的安全，如果服务器能够通过正常的映射规则找到文件，那么客户端便会获取该文件，如<a href="http://local/">http://local</a> host/~ root/ 将允许用户访问整个文件系统。在服务器文件中加入如下内容：</p>
+<p>order deny,ellow<br>Deny from all</p>
+<p>将禁止对文件系统的缺省访问。 <strong>6、CGI脚本的安全考虑</strong> CGI脚本是一系列可以通过Web服务器来运行的程序。为了保证系统的安全性，应确保CGI的作者是可信的。对CGI而言，最好将其限制在一个特定的 目录下，如cgi-bin之下，便于管理；另外应该保证CGI目录下的文件是不可写的，避免一些欺骗性的程序驻留或混迹其中；如果能够给用户提供一个安全 性良好的CGI程序的模块作为参考，也许会减少许多不必要的麻烦和安全隐患；除去CGI目录下的所有非业务应用的脚本，以防异常的信息泄漏。 以上这些常用的举措可以给Apache Server 一个基本的安全运行环境，显然在具体实施上还要做进一步的细化分解，制定出符合实际应用的安全配置方案。 Apache Server基于主机的访问控制 Apache Server默认情况下的安全配置是拒绝一切访问。假定Apache Server内容存放在/usr/local/apache/share 目录下，下面的指令将实现这种设置：</p>
+<p>Deny from all<br>Allow Override None</p>
+<p>则禁止在任一目录下改变认证和访问控制方法。</p>
+<blockquote>
+<p>同样，可以用特有的命令Deny、Allow指定某些用户可以访问，哪些用户不能访问，提供一定的灵活性。当Deny、Allow一起用时，用命令Order决定Deny和Allow合用的顺序，如下所示：</p>
+</blockquote>
+<p>1、 拒绝某类地址的用户对服务器的访问权（Deny） 如：Deny from all</p>
+<p>Deny from test.cnn.com<br>Deny from 204.168.190.13<br>Deny from 10.10.10.0/255.255.0.0</p>
+<p>2、 允许某类地址的用户对服务器的访问权（Allow） 如：Allow from all Allow from test.cnn.com Allow from 204.168.190.13 Allow from 10.10.10.0/255.255.0.0 Deny和Allow指令后可以输入多个变量。 3、简单配置实例：</p>
+<p>Order Allow, Deny<br>Allow from all<br>Deny from <a href="http://www.test.com/">www.test.com</a></p>
+<p>指想让所有的人访问Apache服务器，但不希望来自<a href="http://www.test.com/">www.test.com</a>的任何访问。</p>
+<p>Order Deny, Allow<br>Deny from all<br>Allow from test.cnn.com</p>
+<p>指不想让所有人访问，但希望给test.cnn.com网站的来访。 Apache Sever的用户认证与授权 概括的讲，用户认证就是验证用户的身份的真实性，如用户帐号是否在数据库中，及用户帐号所对应的密码是否正确；用户授权表示检验有效用户是否被许可访 问特定的资源。在Apache中，几乎所有的安全模块实际上兼顾这两个方面。从安全的角度来看，用户的认证和授权相当于选择性访问控制。 <strong>建立用户的认证授权需要三个步骤：</strong> 1、建立用户库 用户名和口令列表需要存在于文件（mod_auth模块）或数据库（mod_auth_dbm模块）中。基于安全的原因，该文件不能存放在文挡的根目 录下。如，存放在/usr/local/etc/httpd下的users文件，其格式与UNIX口令文件格式相似，但口令是以加密的形式存放的。应用程 序htpasswd可以用来添加或更改程序： htpasswd –c /usr/local/etc/httpd/users martin -c表明添加新用户，martin为新添加的用户名，在程序执行过程中，两次输入口令回答。用户名和口令添加到users文件中。产生的用户文件有如下的形式： martin:WrU808BHQai36 jane:iABCQFQs40E8M art:FadHN3W753sSU 第一域是用户名，第二个域是用户密码。 2、配置服务器的保护域 为了使Apache服务器能够利用用户文件中的用户名和口令信息，需要设置保护域（Realm）。一个域实际上是站点的一部分（如一个目录、文档等） 或整个站点只供部分用户访问。在相关目录下的.htaccess文件或httpd.conf ( acces.conf ) 中的段中，由AuthName来指定被保护层的域。在.htaccess文件中对用户文件有效用户的授权访问及指定域保护有如下指定：</p>
+<p>AuthName “restricted stuff”<br>Authtype Basic<br>AuthUserFile /usr/local/etc/httpd/users<br>Require valid-user</p>
+<p>其中，AuthName指出了保护域的域名（Realm Name）。valid-user参数意味着user文件中的所有用户都是可用的。一旦用户输入了一个有效的用户/口令时，同一个域内的其他资源都可以利 用同样的用户/口令来进行访问，同样可以使两个不同的区域共用同样的用户/口令。 3、告诉服务器哪些用户拥有资源的访问权限 如果想将一资源的访问权限授予一组客户，可以将他们的名字都列在Require之后。最好的办法是利用组（group）文件。组的操作和标准的UNIX的组的概念类似，任一个用户可以属于一个和数个组。这样就可以在配置文件中利用Require对组赋予某些权限。如：</p>
+<p>Require group staff<br>Require group staff admin<br>Require user adminuser</p>
+<p>指定了一个组、几个组或一个用户的访问权限。</p>
+]]></content>
+      <categories>
+        <category>WEB技术</category>
+        <category>服务器</category>
+      </categories>
+      <tags>
+        <tag>服务器</tag>
+        <tag>Apache</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux服务器的基本设置</title>
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#114;&#x6f;&#111;&#116;&#64;&#x31;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#53;&#53;&#46;&#50;&#52;&#50;">&#114;&#x6f;&#111;&#116;&#64;&#x31;&#x39;&#50;&#46;&#49;&#54;&#56;&#x2e;&#53;&#53;&#46;&#50;&#52;&#50;</a></p>
+<p>ssh <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#57;&#50;&#46;&#x31;&#54;&#x38;&#46;&#53;&#x35;&#46;&#50;&#x34;&#x32;">&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#57;&#50;&#46;&#x31;&#54;&#x38;&#46;&#53;&#x35;&#46;&#50;&#x34;&#x32;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1663,11 +1709,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#x32;&#56;&#46;&#49;&#57;&#57;&#x2e;&#50;&#x30;&#x39;&#46;&#x32;&#x34;&#50;">&#x62;&#x69;&#x6c;&#x6c;&#x40;&#x31;&#x32;&#56;&#46;&#49;&#57;&#57;&#x2e;&#50;&#x30;&#x39;&#46;&#x32;&#x34;&#50;</a></p>
+<p>exit<br>ssh <a href="mailto:&#98;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#x2e;&#x31;&#57;&#57;&#46;&#50;&#x30;&#57;&#46;&#x32;&#52;&#50;">&#98;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#x2e;&#x31;&#57;&#57;&#46;&#50;&#x30;&#57;&#46;&#x32;&#52;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#x32;&#52;&#x32;">&#98;&#x69;&#108;&#x6c;&#x40;&#49;&#x32;&#x38;&#46;&#x31;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#x32;&#52;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#105;&#108;&#108;&#64;&#49;&#50;&#x38;&#x2e;&#x31;&#57;&#57;&#46;&#x32;&#48;&#x39;&#x2e;&#x32;&#x34;&#x32;">&#98;&#105;&#108;&#108;&#64;&#49;&#50;&#x38;&#x2e;&#x31;&#57;&#57;&#46;&#x32;&#48;&#x39;&#x2e;&#x32;&#x34;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -1704,43 +1750,6 @@ function validId15(_id){
       </categories>
       <tags>
         <tag>服务器</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux下apache安全配置策略</title>
-    <url>/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/</url>
-    <content><![CDATA[<blockquote>
-<p>Apache具有灵活的设置，所有Apache的安全特性都要经过周密的设计与规划，进行认真地配置才能够实现。Apache安全配置包括很多层面，有运行环境、认证与授权设置等。Apache的安装配置和运行示例如下：</p>
-</blockquote>
-<p><strong>1、基本配置</strong> 1) 修改apache的版本信息，使外部访问看到的apache信息是经过伪装或错误的，这个可以尽可能的保证apache的安全。 2) 建立安全的apache的目录结构。ServerRoot  DocumentRoot  ScripAlias   Customlog  Errorlog   均放在单独的目录环境中。以上主要目录相互独立并且不存在父子逻辑关系。 3) ServerRoot目录只能具有管理权限用户访问；DocumentRoot能够被管理Web站点内容的用户访问和使用Apache服务器的Apache用户和Apache用户组访问；只有admin组的用户可以访问日志目录。  各个目录设置独立的权限 4) 禁止默认访问的存在，只对指定的目录开启访问权限。 5) 更改apache的默认路径，单独建立路径提供apache文件的存放 6) 通过使用例如“Apache DoS Evasive Maneuvers Module ”等工具来实现Apache服务器对DoS攻击的防范。其工具可以快速拒绝来自相同地址对同一URL的重复请求。 7) 以Nobody用户运行 一般情况下，Apache是由Root 来安装和运行的。如果Apache Server进程具有Root用户特权，那么它将给系统的安全构成很大的威胁，应确保Apache Server进程以最可能低的权限用户来运行。通过修改httpd.conf文件中的下列选项，以Nobody用户运行Apache 达到相对安全的目的。 User nobody <strong>2、ServerRoot目录的权限</strong> 为了确保所有的配置是适当的和安全的，需要严格控制Apache 主目录的访问权限，使非超级用户不能修改该目录中的内容。Apache 的主目录对应于Apache Server配置文件httpd.conf的Server Root控制项中，应为： Server Root /usr/local/apache <strong>3、SSI的配置</strong> 在配置文件access.conf 或httpd.conf中的确Options指令处加入Includes NO EXEC选项，用以禁用Apache Server 中的执行功能。避免用户直接执行Apache 服务器中的执行程序，而造成服务器系统的公开化。 Options Includes Noexec <strong>4、阻止用户修改系统设置</strong> 在Apache 服务器的配置文件中进行以下的设置，阻止用户建立、修改 .htaccess文件，防止用户超越能定义的系统安全特性。</p>
-<p>AllowOveride None<br>Options None<br>Allow from all</p>
-<p>然后再分别对特定的目录进行适当的配置。 <strong>5、改变Apache 服务器的确省访问特性</strong> Apache 的默认设置只能保障一定程度的安全，如果服务器能够通过正常的映射规则找到文件，那么客户端便会获取该文件，如<a href="http://local/">http://local</a> host/~ root/ 将允许用户访问整个文件系统。在服务器文件中加入如下内容：</p>
-<p>order deny,ellow<br>Deny from all</p>
-<p>将禁止对文件系统的缺省访问。 <strong>6、CGI脚本的安全考虑</strong> CGI脚本是一系列可以通过Web服务器来运行的程序。为了保证系统的安全性，应确保CGI的作者是可信的。对CGI而言，最好将其限制在一个特定的 目录下，如cgi-bin之下，便于管理；另外应该保证CGI目录下的文件是不可写的，避免一些欺骗性的程序驻留或混迹其中；如果能够给用户提供一个安全 性良好的CGI程序的模块作为参考，也许会减少许多不必要的麻烦和安全隐患；除去CGI目录下的所有非业务应用的脚本，以防异常的信息泄漏。 以上这些常用的举措可以给Apache Server 一个基本的安全运行环境，显然在具体实施上还要做进一步的细化分解，制定出符合实际应用的安全配置方案。 Apache Server基于主机的访问控制 Apache Server默认情况下的安全配置是拒绝一切访问。假定Apache Server内容存放在/usr/local/apache/share 目录下，下面的指令将实现这种设置：</p>
-<p>Deny from all<br>Allow Override None</p>
-<p>则禁止在任一目录下改变认证和访问控制方法。</p>
-<blockquote>
-<p>同样，可以用特有的命令Deny、Allow指定某些用户可以访问，哪些用户不能访问，提供一定的灵活性。当Deny、Allow一起用时，用命令Order决定Deny和Allow合用的顺序，如下所示：</p>
-</blockquote>
-<p>1、 拒绝某类地址的用户对服务器的访问权（Deny） 如：Deny from all</p>
-<p>Deny from test.cnn.com<br>Deny from 204.168.190.13<br>Deny from 10.10.10.0/255.255.0.0</p>
-<p>2、 允许某类地址的用户对服务器的访问权（Allow） 如：Allow from all Allow from test.cnn.com Allow from 204.168.190.13 Allow from 10.10.10.0/255.255.0.0 Deny和Allow指令后可以输入多个变量。 3、简单配置实例：</p>
-<p>Order Allow, Deny<br>Allow from all<br>Deny from <a href="http://www.test.com/">www.test.com</a></p>
-<p>指想让所有的人访问Apache服务器，但不希望来自<a href="http://www.test.com/">www.test.com</a>的任何访问。</p>
-<p>Order Deny, Allow<br>Deny from all<br>Allow from test.cnn.com</p>
-<p>指不想让所有人访问，但希望给test.cnn.com网站的来访。 Apache Sever的用户认证与授权 概括的讲，用户认证就是验证用户的身份的真实性，如用户帐号是否在数据库中，及用户帐号所对应的密码是否正确；用户授权表示检验有效用户是否被许可访 问特定的资源。在Apache中，几乎所有的安全模块实际上兼顾这两个方面。从安全的角度来看，用户的认证和授权相当于选择性访问控制。 <strong>建立用户的认证授权需要三个步骤：</strong> 1、建立用户库 用户名和口令列表需要存在于文件（mod_auth模块）或数据库（mod_auth_dbm模块）中。基于安全的原因，该文件不能存放在文挡的根目 录下。如，存放在/usr/local/etc/httpd下的users文件，其格式与UNIX口令文件格式相似，但口令是以加密的形式存放的。应用程 序htpasswd可以用来添加或更改程序： htpasswd –c /usr/local/etc/httpd/users martin -c表明添加新用户，martin为新添加的用户名，在程序执行过程中，两次输入口令回答。用户名和口令添加到users文件中。产生的用户文件有如下的形式： martin:WrU808BHQai36 jane:iABCQFQs40E8M art:FadHN3W753sSU 第一域是用户名，第二个域是用户密码。 2、配置服务器的保护域 为了使Apache服务器能够利用用户文件中的用户名和口令信息，需要设置保护域（Realm）。一个域实际上是站点的一部分（如一个目录、文档等） 或整个站点只供部分用户访问。在相关目录下的.htaccess文件或httpd.conf ( acces.conf ) 中的段中，由AuthName来指定被保护层的域。在.htaccess文件中对用户文件有效用户的授权访问及指定域保护有如下指定：</p>
-<p>AuthName “restricted stuff”<br>Authtype Basic<br>AuthUserFile /usr/local/etc/httpd/users<br>Require valid-user</p>
-<p>其中，AuthName指出了保护域的域名（Realm Name）。valid-user参数意味着user文件中的所有用户都是可用的。一旦用户输入了一个有效的用户/口令时，同一个域内的其他资源都可以利 用同样的用户/口令来进行访问，同样可以使两个不同的区域共用同样的用户/口令。 3、告诉服务器哪些用户拥有资源的访问权限 如果想将一资源的访问权限授予一组客户，可以将他们的名字都列在Require之后。最好的办法是利用组（group）文件。组的操作和标准的UNIX的组的概念类似，任一个用户可以属于一个和数个组。这样就可以在配置文件中利用Require对组赋予某些权限。如：</p>
-<p>Require group staff<br>Require group staff admin<br>Require user adminuser</p>
-<p>指定了一个组、几个组或一个用户的访问权限。</p>
-]]></content>
-      <categories>
-        <category>WEB技术</category>
-        <category>服务器</category>
-      </categories>
-      <tags>
-        <tag>服务器</tag>
-        <tag>Apache</tag>
       </tags>
   </entry>
   <entry>
@@ -1854,6 +1863,42 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
+    <title>MongDB之仲裁节点</title>
+    <url>/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/</url>
+    <content><![CDATA[<p>之前搭建mongo副本集时，好多地方提到了仲裁节点的概念，说的云里雾里，后来去我大知乎看下找到了满意的答案</p>
+<p>&gt; <strong><a href="https://www.zhihu.com/question/27648448">https://www.zhihu.com/question/27648448</a></strong></p>
+<p>总结俩点就是</p>
+<p>1. 为什么使用奇数个数成员？ 假设一种场景，偶数8节点，IDC网络故障发生分裂，,这两个分裂后的IDC各持有4个节点，因为投票数未超过半数，所以无法选举出新Primary。 2. 仲裁节点作用？ 仲裁节点并不需要太多系统资源，也并不持有数据本身，而是参与投票。 投票选举机制，根据数据最后操作、更新时间戳等判定，若有两方都为最新，且票数相等，此环节需要等待若干分钟。 仲裁节点打破这个僵局</p>
+<p>总之就是集群切换时方便选出Primary节点</p>
+<p>下面来说下仲裁节点的设置</p>
+<p>仲裁节点不持有数据，所以可以在集群节点中的一台再加个端口多开一台，但是目录要配置不同</p>
+<p>如下</p>
+<p> mongod.conf</p>
+<blockquote>
+<p>dbpath=/data/mongodb/db/ logpath=/data/mongodb/log/mongodb.log pidfilepath=/usr/local/mongodb/run/mongodb.pid #bind_ip=172.21.1.60 fork=true directoryperdb=true logappend=true replSet=dcclog port=27017 #oplogSize=10000 noprealloc=true</p>
+</blockquote>
+<p> mongd_1.conf</p>
+<blockquote>
+<p>dbpath=/data/mongodb_1/db/ #path logpath=/data/mongodb_1/log/mongodb.log #loh pidfilepath=/usr/local/mongodb/run_1/mongodb.pid #pid #bind_ip=172.21.1.60 fork=true directoryperdb=true logappend=true replSet=dcclog #bind_ip=10.10.148.132 port=27018#端口更换 oplogSize=10000 noprealloc=true</p>
+<p>arbiterOnly = true #仲裁</p>
+</blockquote>
+<p>然后启动时执行</p>
+<blockquote>
+<p>/usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod.conf</p>
+</blockquote>
+<blockquote>
+<p>/usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod_1.conf</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>MongoDB</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MongoDB</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MongoDB内存篇</title>
     <url>/2017/02/23/mongodb%E5%86%85%E5%AD%98%E7%AF%87/</url>
     <content><![CDATA[<p>刚刚接触MongoDB，惊讶于它对内存的贪得无厌，至于个中缘由，先了解下Linux是如何管理内存的，再说说MongoDB是如何使用内存的，答案自然就清楚了。 首先查看MongoDB服务器的top命令结果：</p>
@@ -1916,42 +1961,6 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>MongDB之仲裁节点</title>
-    <url>/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/</url>
-    <content><![CDATA[<p>之前搭建mongo副本集时，好多地方提到了仲裁节点的概念，说的云里雾里，后来去我大知乎看下找到了满意的答案</p>
-<p>&gt; <strong><a href="https://www.zhihu.com/question/27648448">https://www.zhihu.com/question/27648448</a></strong></p>
-<p>总结俩点就是</p>
-<p>1. 为什么使用奇数个数成员？ 假设一种场景，偶数8节点，IDC网络故障发生分裂，,这两个分裂后的IDC各持有4个节点，因为投票数未超过半数，所以无法选举出新Primary。 2. 仲裁节点作用？ 仲裁节点并不需要太多系统资源，也并不持有数据本身，而是参与投票。 投票选举机制，根据数据最后操作、更新时间戳等判定，若有两方都为最新，且票数相等，此环节需要等待若干分钟。 仲裁节点打破这个僵局</p>
-<p>总之就是集群切换时方便选出Primary节点</p>
-<p>下面来说下仲裁节点的设置</p>
-<p>仲裁节点不持有数据，所以可以在集群节点中的一台再加个端口多开一台，但是目录要配置不同</p>
-<p>如下</p>
-<p> mongod.conf</p>
-<blockquote>
-<p>dbpath=/data/mongodb/db/ logpath=/data/mongodb/log/mongodb.log pidfilepath=/usr/local/mongodb/run/mongodb.pid #bind_ip=172.21.1.60 fork=true directoryperdb=true logappend=true replSet=dcclog port=27017 #oplogSize=10000 noprealloc=true</p>
-</blockquote>
-<p> mongd_1.conf</p>
-<blockquote>
-<p>dbpath=/data/mongodb_1/db/ #path logpath=/data/mongodb_1/log/mongodb.log #loh pidfilepath=/usr/local/mongodb/run_1/mongodb.pid #pid #bind_ip=172.21.1.60 fork=true directoryperdb=true logappend=true replSet=dcclog #bind_ip=10.10.148.132 port=27018#端口更换 oplogSize=10000 noprealloc=true</p>
-<p>arbiterOnly = true #仲裁</p>
-</blockquote>
-<p>然后启动时执行</p>
-<blockquote>
-<p>/usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod.conf</p>
-</blockquote>
-<blockquote>
-<p>/usr/local/mongodb/bin/mongod -f /usr/local/mongodb/etc/mongod_1.conf</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>MongoDB</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MongoDB</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MongoDB搭建副本集</title>
     <url>/2017/01/23/mongodb%E6%90%AD%E5%BB%BA%E5%89%AF%E6%9C%AC%E9%9B%86/</url>
     <content><![CDATA[<h1 id="MongoDB-复制（副本集）"><a href="#MongoDB-复制（副本集）" class="headerlink" title="MongoDB 复制（副本集）"></a>MongoDB 复制（副本集）</h1><p>MongoDB复制是将数据同步在多个服务器的过程。 复制提供了数据的冗余备份，并在多个服务器上存储数据副本，提高了数据的可用性， 并可以保证数据的安全性。 复制还允许您从硬件故障和服务中断中恢复数据。</p>
@@ -1998,6 +2007,30 @@ function validId15(_id){
 <p>  <strong>2.主从复制的几种方式</strong>  </p>
 <p>同步复制 所谓的同步复制，意思是master的变化，必须等待slave-1,slave-2,…,slave-n完成后才能返回。 这样，显然不可取，也不是MYSQL复制的默认设置。比如，在WEB前端页面上，用户增加了条记录，需要等待很长时间。   异步复制 如同AJAX请求一样。master只需要完成自己的数据库操作即可。至于slaves是否收到二进制日志，是否完成操作，不用关心。MYSQL的默认设置。   半同步复制 master只保证slaves中的一个操作成功，就返回，其他slave不管。 这个功能，是由google为MYSQL引入的。    </p>
 <p>  <strong>3.主从复制分析</strong>   问题1：master的写操作，slaves被动的进行一样的操作，保持数据一致性，那么slave是否可以主动的进行写操作？   假设slave可以主动的进行写操作，slave又无法通知master，这样就导致了master和slave数据不一致了。因此slave不应该进行写操作，至少是slave上涉及到复制的数据库不可以写。实际上，这里已经揭示了读写分离的概念。   问题2：主从复制中，可以有N个slave,可是这些slave又不能进行写操作，要他们干嘛？   可以实现数据备份。 类似于高可用的功能，一旦master挂了，可以让slave顶上去，同时slave提升为master。 异地容灾，比如master在北京，地震挂了，那么在上海的slave还可以继续。 主要用于实现scale out,分担负载,可以将读的任务分散到slaves上。 【很可能的情况是，一个系统的读操作远远多于写操作，因此写操作发向master，读操作发向slaves进行操作】   问题3：主从复制中有master,slave1,slave2,…等等这么多MYSQL数据库，那比如一个JAVA WEB应用到底应该连接哪个数据库?   当 然，我们在应用程序中可以这样，insert/delete/update这些更新数据库的操作，用connection(for master)进行操作，select用connection(for slaves)进行操作。那我们的应用程序还要完成怎么从slaves选择一个来执行select，例如简单的轮循算法。 这样的话，相当于应用程序完成了SQL语句的路由，而且与MYSQL的主从复制架构非常关联，一旦master挂了，某些slave挂了，那么应用程序就要修改了。能不能让应用程序与MYSQL的主从复制架构没有什么太多关系呢？可以看下面的图： <img src="http://static.open-open.com/lib/uploadImg/20141014/20141014162019_695.jpg?_=5618522">   找一个组件，application program只需要与它打交道，用它来完成MYSQL的代理，实现SQL语句的路由。   mysql proxy并不负责，怎么从众多的slaves挑一个？可以交给另一个组件(比如haproxy)来完成。   这就是所谓的MYSQL READ WRITE SPLITE，MYSQL的读写分离。   问题4：如果mysql proxy , direct , master他们中的某些挂了怎么办？   总统一般都会弄个副总统，以防不测。同样的，可以给这些关键的节点来个备份。   问题5：当master的二进制日志每产生一个事件，都需要发往slave，如果我们有N个slave,那是发N次，还是只发一次？   如果只发一次，发给了slave-1，那slave-2,slave-3,…它们怎么办？ 显 然，应该发N次。实际上，在MYSQL master内部，维护N个线程，每一个线程负责将二进制日志文件发往对应的slave。master既要负责写操作，还的维护N个线程，负担会很重。可 以这样，slave-1是master的从，slave-1又是slave-2,slave-3,…的主，同时slave-1不再负责select。 slave-1将master的复制线程的负担，转移到自己的身上。这就是所谓的多级复制的概念。   问题6：当一个select发往mysql proxy，可能这次由slave-2响应，下次由slave-3响应，这样的话，就无法利用查询缓存了。   应该找一个共享式的缓存，比如memcache来解决。将slave-2,slave-3,…这些查询的结果都缓存至mamcache中。</p>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL 重设密码以及允许远程访问</title>
+    <url>/2017/02/08/mysql-%E9%87%8D%E8%AE%BE%E5%AF%86%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE/</url>
+    <content><![CDATA[<p>mysql 重设密码 修改MySQL的配置文件（默认为/etc/my.cnf）,在[mysqld]下添加一行skip-grant-tables 保存配置文件后，重启MySQL服务 service mysqld restart 再次进入MySQL命令行 mysql -uroot -p,输入密码时直接回车，就会进入MySQL数据库了，这个时候按照常规流程修改root密码即可。 UPDATE user SET Password=password(“test123”) WHERE user=’root’; mysql允许远程访问 1. vim /etc/mysql/my.cnf 注释掉bind_address 127.0.0.1 mysql -uroot -p mysql&gt;update user set host = ‘%’ where user = ‘root’; mysql&gt;GRANT ALL PRIVILEGES ON <em>.</em> TO ‘myuser’@’%’ IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION; 2. 首先以 root 帐户登陆 MySQL</p>
+<blockquote>
+<p>MySQL -uroot -p (123456 为 root 用户的密码。)</p>
+</blockquote>
+<p>创建远程登陆用户并授权</p>
+<blockquote>
+<p>grant all PRIVILEGES on test_db.* to root@’192.168.1.101’ identified by ‘123456’;</p>
+</blockquote>
+<p>上面的语句表示将 test_db 数据库的所有权限授权给 root 这个用户，允许 root 用户在 192.168.1.101 这个 IP 进行远程登陆，并设置 root 用户的密码为 123456 。 下面逐一分析所有的参数： all PRIVILEGES 表示赋予所有的权限给指定用户，这里也可以替换为赋予某一具体的权限，例如select,insert,update,delete,create,drop 等，具体权限间用“,”半角逗号分隔。 test_db.* 表示上面的权限是针对于哪个表的，test_db指的是数据库，后面的 * 表示对于所有的表，由此可以推理出：对于全部数据库的全部表授权为“_._”，对于某一数据库的全部表授权为“数据库名.*”，对于某一数据库的某一表授权为“数据库名.表名”。 root 表示你要给哪个用户授权，这个用户可以是存在的用户，也可以是不存在的用户。 192.168.1.101 表示允许远程连接的 IP 地址，如果想不限制链接的 IP 则设置为“%”即可。 123456 为用户的密码。 执行了上面的语句后，再执行下面的语句，方可立即生效。</p>
+<blockquote>
+<p>flush privileges;</p>
+</blockquote>
 ]]></content>
       <categories>
         <category>MySQL</category>
@@ -2077,20 +2110,21 @@ function validId15(_id){
       </tags>
   </entry>
   <entry>
-    <title>MySQL 重设密码以及允许远程访问</title>
-    <url>/2017/02/08/mysql-%E9%87%8D%E8%AE%BE%E5%AF%86%E7%A0%81%E4%BB%A5%E5%8F%8A%E5%85%81%E8%AE%B8%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE/</url>
-    <content><![CDATA[<p>mysql 重设密码 修改MySQL的配置文件（默认为/etc/my.cnf）,在[mysqld]下添加一行skip-grant-tables 保存配置文件后，重启MySQL服务 service mysqld restart 再次进入MySQL命令行 mysql -uroot -p,输入密码时直接回车，就会进入MySQL数据库了，这个时候按照常规流程修改root密码即可。 UPDATE user SET Password=password(“test123”) WHERE user=’root’; mysql允许远程访问 1. vim /etc/mysql/my.cnf 注释掉bind_address 127.0.0.1 mysql -uroot -p mysql&gt;update user set host = ‘%’ where user = ‘root’; mysql&gt;GRANT ALL PRIVILEGES ON <em>.</em> TO ‘myuser’@’%’ IDENTIFIED BY ‘mypassword’ WITH GRANT OPTION; 2. 首先以 root 帐户登陆 MySQL</p>
-<blockquote>
-<p>MySQL -uroot -p (123456 为 root 用户的密码。)</p>
+    <title>MySQL中的共享锁与排它锁</title>
+    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
+    <content><![CDATA[<blockquote>
+<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
 </blockquote>
-<p>创建远程登陆用户并授权</p>
-<blockquote>
-<p>grant all PRIVILEGES on test_db.* to root@’192.168.1.101’ identified by ‘123456’;</p>
-</blockquote>
-<p>上面的语句表示将 test_db 数据库的所有权限授权给 root 这个用户，允许 root 用户在 192.168.1.101 这个 IP 进行远程登陆，并设置 root 用户的密码为 123456 。 下面逐一分析所有的参数： all PRIVILEGES 表示赋予所有的权限给指定用户，这里也可以替换为赋予某一具体的权限，例如select,insert,update,delete,create,drop 等，具体权限间用“,”半角逗号分隔。 test_db.* 表示上面的权限是针对于哪个表的，test_db指的是数据库，后面的 * 表示对于所有的表，由此可以推理出：对于全部数据库的全部表授权为“_._”，对于某一数据库的全部表授权为“数据库名.*”，对于某一数据库的某一表授权为“数据库名.表名”。 root 表示你要给哪个用户授权，这个用户可以是存在的用户，也可以是不存在的用户。 192.168.1.101 表示允许远程连接的 IP 地址，如果想不限制链接的 IP 则设置为“%”即可。 123456 为用户的密码。 执行了上面的语句后，再执行下面的语句，方可立即生效。</p>
-<blockquote>
-<p>flush privileges;</p>
-</blockquote>
+<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
+<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
+<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
+<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
+<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
+<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
+<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
+<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
 ]]></content>
       <categories>
         <category>MySQL</category>
@@ -2328,31 +2362,6 @@ OPTIONALLY ENCLOSED BY &#39;&quot;&#39;
 LINES TERMINATED BY &#39;\\n&#39;;
 
   2）source source只针对sql文件，测试数据六千万条网页url表信息，导入平均每0.2秒导入5000条数据，大概在四十分钟导入。 3)经常忽略的 和mysqldump相对的 mysqlimport</code></pre>
-]]></content>
-      <categories>
-        <category>MySQL</category>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL中的共享锁与排它锁</title>
-    <url>/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/</url>
-    <content><![CDATA[<blockquote>
-<p>记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！</p>
-</blockquote>
-<p>行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。</p>
-<h2 id="共享锁-Share-Lock"><a href="#共享锁-Share-Lock" class="headerlink" title="共享锁(Share Lock)"></a>共享锁(Share Lock)</h2><p>共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
-<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><p>SELECT … LOCK IN SHARE MODE; 在查询语句后面增加 <code>LOCK IN SHARE MODE</code> ，Mysql会对查询结果中的每行都加共享锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
-<h2 id="排他锁（eXclusive-Lock）"><a href="#排他锁（eXclusive-Lock）" class="headerlink" title="排他锁（eXclusive Lock）"></a>排他锁（eXclusive Lock）</h2><p>共享锁又称写锁，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
-<h3 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h3><p>SELECT … FOR UPDATE; 在查询语句后面增加 <code>FOR UPDATE</code> ，Mysql会对查询结果中的每行都加排他锁，当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
-<h2 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h2><p>InnoDB还有两个表锁： 意向共享锁（IS）：表示事务准备给数据行加入共享锁，也就是说一个数据行加共享锁前必须先取得该表的IS锁 意向排他锁（IX）：类似上面，表示事务准备给数据行加入排他锁，说明事务在一个数据行加排他锁前必须先取得该表的IX锁。</p>
-<h4 id="意向锁是InnoDB自动加的，不需要用户干预。"><a href="#意向锁是InnoDB自动加的，不需要用户干预。" class="headerlink" title="意向锁是InnoDB自动加的，不需要用户干预。"></a>意向锁是InnoDB自动加的，不需要用户干预。</h4><p>对于insert、update、delete，InnoDB会自动给涉及的数据加排他锁（X）；对于一般的Select语句，InnoDB不会加任何锁，事务可以通过以下语句给显示加共享锁或排他锁。 共享锁： <code>SELECT ... LOCK IN SHARE MODE;</code> 排他锁： <code>SELECT ... FOR UPDATE;</code></p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><h3 id="行级锁与表级锁"><a href="#行级锁与表级锁" class="headerlink" title="行级锁与表级锁"></a>行级锁与表级锁</h3><p>行级锁都是基于索引的，如果一条SQL语句用不到索引是不会使用行级锁的，会使用表级锁。行级锁的缺点是：由于需要请求大量的锁资源，所以速度慢，内存消耗大。</p>
-<h3 id="行级锁与死锁"><a href="#行级锁与死锁" class="headerlink" title="行级锁与死锁"></a>行级锁与死锁</h3><p>MyISAM中是不会产生死锁的，因为MyISAM总是一次性获得所需的全部锁，要么全部满足，要么全部等待。而在InnoDB中，锁是逐步获得的，就造成了死锁的可能。 在MySQL中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，MySQL就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。 在UPDATE、DELETE操作时，MySQL不仅锁定WHERE条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的next-key locking。 当两个事务同时执行，一个锁住了逐渐索引在等待其他相关索引，一个锁定了非主键索引，在等待主键索引。这样就会发生死锁。 发生死锁后，InnoDB一般都可以检测到，并使一个事务释放锁回退，另一个获取锁完成事务。</p>
-<h4 id="有多种方法可以避免死锁，这里只介绍常见的三种"><a href="#有多种方法可以避免死锁，这里只介绍常见的三种" class="headerlink" title="有多种方法可以避免死锁，这里只介绍常见的三种"></a>有多种方法可以避免死锁，这里只介绍常见的三种</h4><p>1、如果不同程序会并发存取多个表，尽量约定以相同的顺序访问表，可以大大降低死锁机会。 2、在同一个事务中，尽可能做到一次锁定所需要的所有资源，减少死锁产生概率； 3、对于非常容易产生死锁的业务部分，可以尝试使用升级锁定颗粒度，通过表级锁定来减少死锁产生的概率；</p>
 ]]></content>
       <categories>
         <category>MySQL</category>
@@ -2868,70 +2877,6 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
-    <title>PHP神器之Composer</title>
-    <url>/2016/12/27/php%E7%A5%9E%E5%99%A8%E4%B9%8Bcomposer/</url>
-    <content><![CDATA[<p>Composer是一个非常流行的PHP包依赖管理工具,已经取代PEAR包管理器,对于PHP开发者来说掌握Composer是必须的. 对于使用者来说Composer非常的简单,通过简单的一条命令将需要的代码包下载到vendor目录下,然后开发者就可以引入包并使用了. 其中的关键在于你项目定义的composer.json,可以定义项目需要依赖的包(可能有多个),而依赖的包可能又依赖其他的包(这就是组件的好处),这些都不用你烦心,Composer会自动下载你需要的一切,一切在于composer.json的定义. Composer对于使用者来说是很透明,但是其背后的理念还是需要了解一下的,其的诞生也不是偶然的,得益于Github的快速发展,PHP语言也越来越现代化,显得更高大上了. 为了理解Composer,先大概了解下其结构:</p>
-<p><strong>Composer的结构</strong></p>
-<ul>
-<li>Composer命令行工具:这个理解就比较简单了,通过使用者定义的Composer.json去下载你需要的代码,假如只是简单的使用Composer,那么掌握一些具体命令就完全可以了</li>
-<li>Autoloading代码加载器:通过Composer,开发者可以通过多种方式去使用,而其中的关键在于PHP的命名空间概念,以及PSR-4标准的发展,Composer只是根据这二者开发了一个代码自动加载器</li>
-<li>Github:有了Github,PHP开发人员可以将开源的代码托管在这上面,而Composer的发展源于Github,Composer本质上就是将Github上的代码下载到本地.</li>
-<li>Packagist:对于使用者来说使用的是Composer的命令行工具,那么命令行工具怎么知道有多少包可以被用户使用呢,这主要就是依赖于Packagist,Packagist是Composer主要的一个包信息存储库,包开发者将具体代码托管到Github上,将包信息提交到Packagist上,这样使用者就可以通过Composer去使用.</li>
-<li>Composer根据本地定义的composer.json信息去查询Packagist,Packagist根据Composer.json/Package.json信息解析,最终对应到github仓库,Composer最终下载代码的时候还要依赖于Github仓库上的Composer.json,这里涉及到三种类型的composer.json,含义是不一样的.</li>
-<li>Composer.json:这是Composer的核心,是Composer的规则,上面也提到了三种类型的Composer.json,在使用的时候一定要注意区分,我初学的时候就总是搞乱.</li>
-</ul>
-<p><strong>Composer命令行工具</strong></p>
-<p><strong>composer init</strong> 使用者可以在自己的项目下创建composer.json以便定义你项目的依赖包,也可以通过composer init交互式的创建composer.json.<br> <strong>composer install</strong> 应该是最常用的命令,composer会根据本地的composer.json安装包,将下载的包放入项目下的vendor目录下,同时将安装时候的包版本信息放入到composer.lock,以便锁定版本. 其实在install的时候,假如发现composer.lock版本和目前vendor目录下的代码版本是一致的,则Composer会什么也不做,composer.lock的目的就是让你安心在目前这个版本下工作,而不获取最新版本的包.</p>
-<p><strong>composer update</strong> 那么如何更新composer.lock以便获取到最新版本的包呢?通过这个命令即可更新最新版本的包 <strong>composer config</strong> 这个命令还是建议了解下,全局的配置保存在COMPOSER_HOME/config.json,非全局的配置信息则存储在本项目目录下.</p>
-<blockquote>
-<p>composer config –list -g composer config -g notify-on-install false composer global config bin-dir –absolute</p>
-</blockquote>
-<p><strong>composer create-project</strong> 这个命令不常用,但是个人觉得还是很重要的,使用普通的install命令是将项目所有的依赖包下载到本项目vendor目录下.而通过这个命令则是将所有的代码及其依赖的包放到一个目录下,相当于执行了一个git clone命令,一般是包的开发者可能为了修复bug会使用该命令.</p>
-<p><strong>composer global</strong> 这是一个全局的安装命令,它允许你在COMPOSER_HOME目录下执行Composer的命令,比如install,update.当然你的COMPOSER_HOME要在$PATH环境下. 比如执行composer global require fabpot/php-cs-fixer,现在php-cs-fixer命令行可以全局运行了,如果稍后想更新它,只需要运行composer global update</p>
-<p><strong>composer dump-autoload</strong> 当你修改项目下的composer.json的文件,并不一定要运行composer update命令进行更新,有的时候可以使用该命令来更新加载器,比如你要引用本地自定义的包(不是来自于packagist),后面会通过实践来说明该命令.</p>
-<p><strong>composer require</strong> 假如手动或者交互式创建composer.json文件,可以直接使用该命令来安装包</p>
-<blockquote>
-<p>composer require  cerdic/css-tidy:1.5.2 composer require “ywdblog/phpcomposer:dev-master”</p>
-</blockquote>
-<p><strong>–prefer-source和–prefer-dist参数</strong> –prefer-dist:对于稳定的包来说,一般Composer安装默认使用该参数,这也能加快安装,比如有可能直接从packagist安装了相应的包,而不用实际去Github上下载包. –prefer-source:假如使用该参数,则会直接从Github上安装,安装包后vendor目录下还含有.git信息</p>
-<blockquote>
-<p>composer require “ywdblog/phpcomposer:dev-master” –prefer-source #在vendor/ywdblog/phpcomposer目录下含有.git信息</p>
-</blockquote>
-<p><strong>如何给Composer添加代理</strong> 在国内使用Composer下载特别慢,可以通过二个方法进行加速</p>
-<ul>
-<li>composer config repo.packagist composer “<a href="https://packagist.phpcomposer.com“/">https://packagist.phpcomposer.com“</a></li>
-<li>编辑composer.json</li>
-</ul>
-<blockquote>
-<p>“repositories”: { “packagist”: { “type”: “composer”, “url”: “<a href="https://packagist.phpcomposer.com&quot;/">https://packagist.phpcomposer.com&quot;</a> } }</p>
-</blockquote>
-<p><strong>Autoloading代码加载器</strong> composer本身集成一个autoloader,支持PSR-4,PSR-0,classmap,files autoloading. 这里通过一个例子来说明通过Composer如何引用classmap,files,本地符合PSR-4标准的代码 编辑composer.json</p>
-<blockquote>
-<p>“autoload”: { “classmap”: [“othsrc/“,”classsrc.php”], “files”: [“othsrc/filesrc.php”], “psr-4”: {“Foo\Bar\“: “src”} }</p>
-</blockquote>
-<p>composer dump-autoload 通过上述的操作,对于PSR-4来说等同注册了一个PSR-4 autoloader(从FooBar命名空间) 假如不想使用Composer的autoloader,可以直接包含vendor/composer/autoload_*.php 文件,配置自己的加载器. 具体的例子托管在github上,可参考. <strong>Repositories</strong> 关于Repositories,了解其不是必须的,但是假如掌握则更能理解Composer,对于Repositories,其中文文档和英文文档解释的很好,这里也进行了一些摘抄. <strong>基本概念</strong> 包: Composer是一个依赖管理工具,它在本地安装一些资源包和包的描述(比如包名称和对应的版本),比较重要的元数据描述是dist和source,dist指向一个存档,该存档是对一个资源包的某个版本的数据进行的打包.source指向一个开发中的源,这通常是一个源代码仓库(比如git) 资源库: 一个资源库是一个包的来源.它是一个packages/versions的列表. Composer将查看所有你定义的repositories以找到项目需要的资源包(这句话很重要). 默认情况下已经将Packagist.org注册到Composer(或者理解为Packagist.org是Composer资源库默认的仓库类型) <strong>Composer资源库类型</strong> Composer资源库包括四种类型,默认的是composer类型,也就是packagist.org所使用的资源类型. 它使用一个单一的packages.json文件,包含了所有的资源包元数据.当你将包发布到pckagist.org上,则默认系统会创建一个packages.json,不过我没有找到我的包对应的文件. <strong>VCS资源库类型</strong> 假如你想构建一个私有的Composer私有资源库类型,可以使用该类型,这里举一个例子,比如你在自己项目的composer.json定义如下,则就可以使用对应的Github上的代码了.</p>
-<blockquote>
-<p>{ “repositories”: [ { “type”: “vcs”, “url”: “<a href="https://github.com/ywdblog/phpcomposer&quot;">https://github.com/ywdblog/phpcomposer&quot;</a> } ], “require”: { “ywdblog/phpcomposer”: “dev-master” } }</p>
-</blockquote>
-<p>当运行composer update的时候,Comoser实际上是从Github上下载包而不是从pckagist.org上下载. 另外假如需要使用Package资源库类型或者PEAR资源库类型,参考官方文档即可,一般在composer.json中定义name、version属性即可. <strong>Composer.json</strong> 在本文上面也多次提到了composer.json,比如你希望使用第三方包则需要在本地定义composer.json,Composer安装第三方包后,也会在第三方包目录下发现composer.json,那么这二者都叫composer.json,有什么区别呢?理解这非常的重要. 假如你在自己的项目下面定义一个composer.json,则这个包称之为ROOT包,这个composer.json定义你项目需要的条件(比如你的项目可能依赖一个第三方包). composer.json中有些属性只能被ROOT包使用,比如config属性只在ROOT包中生效. 一个资源包是不是ROOT包,取决于它的上下文,比如你git clone ywdblog/phpcomposer,则这时候本地phpcomposer目录就是ROOT包,假如你在本地phpcomposer目录下composer require ywdblog/phpcomposer,则这时候你的项目phpcomposer就是ROOT包. 了解composer-schema.json可参考该网址,Laravel作为一个成熟的框架,其定义的composer.json非常经典 <strong>关于包的版本</strong> 当使用者在本地配置composer.json的时候,可以指定需要包的特定版本,Composer支持从Github仓库中下载Tag或者分支下的包. 对于Github上的Tag来说,Packagist会创建对应包的版本,它符合X.Y.Z,vX.Y.Z,X.Y.Z-包类型,就是说Github上虽然只有一个特定版本的包,但Composer支持多种形式的引用方式,比如:</p>
-<blockquote>
-<p>composer require monolog/monolog1.0.0-RC1 composer require monolog/monolog  v1.0.0-RC1 composer require monolog/monolog1.0.* composer require monolog/monolog  ~1.10</p>
-</blockquote>
-<p>对于Github上的分支来说,Packagist会创建对应包的版本,假如分支名看起来像一个版本,将创建{分支名}-dev的包版本号,如果分支名看起来不像一个版本号,它将会创建dev-{分支名}形式的版本号</p>
-<blockquote>
-<p>composer require monolog/monolog  master-dev composer require monolog/monolog  master.x-dev</p>
-</blockquote>
-<p><strong>总结:</strong> 理解Composer,最重要的是实践,最后也能明白PSR-4和命名空间,也可以尝试将你的项目发布到pckagist.org上.</p>
-]]></content>
-      <categories>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PHP生成UUID</title>
     <url>/2017/02/19/php%E7%94%9F%E6%88%90uuid/</url>
     <content><![CDATA[<p>UUID是指在一台机器上生成的数字，它保证对在同一时空中的所有机器都是唯一的。通常平台 会提供生成UUID的API。UUID按照开放软件基金会(OSF)制定的标准计算，用到了以太网卡地址、纳秒级时间、芯片ID码和许多可能的数字。由以 下几部分的组合：当前日期和时间(UUID的第一个部分与时间有关，如果你在生成一个UUID之后，过几秒又生成一个UUID，则第一个部分不同，其余相 同)，时钟序列，全局唯一的IEEE机器识别号（如果有网卡，从网卡获得，没有网卡以其他方式获得），UUID的唯一缺陷在于生成的结果串会比较长。关于 UUID这个标准使用最普遍的是微软的GUID(Globals Unique Identifiers)。 在ColdFusion中可以用CreateUUID()函数很简单的生成UUID，其格式为：xxxxxxxx-xxxx-xxxx- xxxxxxxxxxxxxxxx(8-4-4-16)，其中每个 x 是 0-9 或 a-f 范围内的一个十六进制的数字。而标准的UUID格式为：xxxxxxxx-xxxx-xxxx-xxxxxx-xxxxxxxxxx (8-4-4-4-12)  </p>
@@ -3053,6 +2998,70 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </tags>
   </entry>
   <entry>
+    <title>PHP神器之Composer</title>
+    <url>/2016/12/27/php%E7%A5%9E%E5%99%A8%E4%B9%8Bcomposer/</url>
+    <content><![CDATA[<p>Composer是一个非常流行的PHP包依赖管理工具,已经取代PEAR包管理器,对于PHP开发者来说掌握Composer是必须的. 对于使用者来说Composer非常的简单,通过简单的一条命令将需要的代码包下载到vendor目录下,然后开发者就可以引入包并使用了. 其中的关键在于你项目定义的composer.json,可以定义项目需要依赖的包(可能有多个),而依赖的包可能又依赖其他的包(这就是组件的好处),这些都不用你烦心,Composer会自动下载你需要的一切,一切在于composer.json的定义. Composer对于使用者来说是很透明,但是其背后的理念还是需要了解一下的,其的诞生也不是偶然的,得益于Github的快速发展,PHP语言也越来越现代化,显得更高大上了. 为了理解Composer,先大概了解下其结构:</p>
+<p><strong>Composer的结构</strong></p>
+<ul>
+<li>Composer命令行工具:这个理解就比较简单了,通过使用者定义的Composer.json去下载你需要的代码,假如只是简单的使用Composer,那么掌握一些具体命令就完全可以了</li>
+<li>Autoloading代码加载器:通过Composer,开发者可以通过多种方式去使用,而其中的关键在于PHP的命名空间概念,以及PSR-4标准的发展,Composer只是根据这二者开发了一个代码自动加载器</li>
+<li>Github:有了Github,PHP开发人员可以将开源的代码托管在这上面,而Composer的发展源于Github,Composer本质上就是将Github上的代码下载到本地.</li>
+<li>Packagist:对于使用者来说使用的是Composer的命令行工具,那么命令行工具怎么知道有多少包可以被用户使用呢,这主要就是依赖于Packagist,Packagist是Composer主要的一个包信息存储库,包开发者将具体代码托管到Github上,将包信息提交到Packagist上,这样使用者就可以通过Composer去使用.</li>
+<li>Composer根据本地定义的composer.json信息去查询Packagist,Packagist根据Composer.json/Package.json信息解析,最终对应到github仓库,Composer最终下载代码的时候还要依赖于Github仓库上的Composer.json,这里涉及到三种类型的composer.json,含义是不一样的.</li>
+<li>Composer.json:这是Composer的核心,是Composer的规则,上面也提到了三种类型的Composer.json,在使用的时候一定要注意区分,我初学的时候就总是搞乱.</li>
+</ul>
+<p><strong>Composer命令行工具</strong></p>
+<p><strong>composer init</strong> 使用者可以在自己的项目下创建composer.json以便定义你项目的依赖包,也可以通过composer init交互式的创建composer.json.<br> <strong>composer install</strong> 应该是最常用的命令,composer会根据本地的composer.json安装包,将下载的包放入项目下的vendor目录下,同时将安装时候的包版本信息放入到composer.lock,以便锁定版本. 其实在install的时候,假如发现composer.lock版本和目前vendor目录下的代码版本是一致的,则Composer会什么也不做,composer.lock的目的就是让你安心在目前这个版本下工作,而不获取最新版本的包.</p>
+<p><strong>composer update</strong> 那么如何更新composer.lock以便获取到最新版本的包呢?通过这个命令即可更新最新版本的包 <strong>composer config</strong> 这个命令还是建议了解下,全局的配置保存在COMPOSER_HOME/config.json,非全局的配置信息则存储在本项目目录下.</p>
+<blockquote>
+<p>composer config –list -g composer config -g notify-on-install false composer global config bin-dir –absolute</p>
+</blockquote>
+<p><strong>composer create-project</strong> 这个命令不常用,但是个人觉得还是很重要的,使用普通的install命令是将项目所有的依赖包下载到本项目vendor目录下.而通过这个命令则是将所有的代码及其依赖的包放到一个目录下,相当于执行了一个git clone命令,一般是包的开发者可能为了修复bug会使用该命令.</p>
+<p><strong>composer global</strong> 这是一个全局的安装命令,它允许你在COMPOSER_HOME目录下执行Composer的命令,比如install,update.当然你的COMPOSER_HOME要在$PATH环境下. 比如执行composer global require fabpot/php-cs-fixer,现在php-cs-fixer命令行可以全局运行了,如果稍后想更新它,只需要运行composer global update</p>
+<p><strong>composer dump-autoload</strong> 当你修改项目下的composer.json的文件,并不一定要运行composer update命令进行更新,有的时候可以使用该命令来更新加载器,比如你要引用本地自定义的包(不是来自于packagist),后面会通过实践来说明该命令.</p>
+<p><strong>composer require</strong> 假如手动或者交互式创建composer.json文件,可以直接使用该命令来安装包</p>
+<blockquote>
+<p>composer require  cerdic/css-tidy:1.5.2 composer require “ywdblog/phpcomposer:dev-master”</p>
+</blockquote>
+<p><strong>–prefer-source和–prefer-dist参数</strong> –prefer-dist:对于稳定的包来说,一般Composer安装默认使用该参数,这也能加快安装,比如有可能直接从packagist安装了相应的包,而不用实际去Github上下载包. –prefer-source:假如使用该参数,则会直接从Github上安装,安装包后vendor目录下还含有.git信息</p>
+<blockquote>
+<p>composer require “ywdblog/phpcomposer:dev-master” –prefer-source #在vendor/ywdblog/phpcomposer目录下含有.git信息</p>
+</blockquote>
+<p><strong>如何给Composer添加代理</strong> 在国内使用Composer下载特别慢,可以通过二个方法进行加速</p>
+<ul>
+<li>composer config repo.packagist composer “<a href="https://packagist.phpcomposer.com“/">https://packagist.phpcomposer.com“</a></li>
+<li>编辑composer.json</li>
+</ul>
+<blockquote>
+<p>“repositories”: { “packagist”: { “type”: “composer”, “url”: “<a href="https://packagist.phpcomposer.com&quot;/">https://packagist.phpcomposer.com&quot;</a> } }</p>
+</blockquote>
+<p><strong>Autoloading代码加载器</strong> composer本身集成一个autoloader,支持PSR-4,PSR-0,classmap,files autoloading. 这里通过一个例子来说明通过Composer如何引用classmap,files,本地符合PSR-4标准的代码 编辑composer.json</p>
+<blockquote>
+<p>“autoload”: { “classmap”: [“othsrc/“,”classsrc.php”], “files”: [“othsrc/filesrc.php”], “psr-4”: {“Foo\Bar\“: “src”} }</p>
+</blockquote>
+<p>composer dump-autoload 通过上述的操作,对于PSR-4来说等同注册了一个PSR-4 autoloader(从FooBar命名空间) 假如不想使用Composer的autoloader,可以直接包含vendor/composer/autoload_*.php 文件,配置自己的加载器. 具体的例子托管在github上,可参考. <strong>Repositories</strong> 关于Repositories,了解其不是必须的,但是假如掌握则更能理解Composer,对于Repositories,其中文文档和英文文档解释的很好,这里也进行了一些摘抄. <strong>基本概念</strong> 包: Composer是一个依赖管理工具,它在本地安装一些资源包和包的描述(比如包名称和对应的版本),比较重要的元数据描述是dist和source,dist指向一个存档,该存档是对一个资源包的某个版本的数据进行的打包.source指向一个开发中的源,这通常是一个源代码仓库(比如git) 资源库: 一个资源库是一个包的来源.它是一个packages/versions的列表. Composer将查看所有你定义的repositories以找到项目需要的资源包(这句话很重要). 默认情况下已经将Packagist.org注册到Composer(或者理解为Packagist.org是Composer资源库默认的仓库类型) <strong>Composer资源库类型</strong> Composer资源库包括四种类型,默认的是composer类型,也就是packagist.org所使用的资源类型. 它使用一个单一的packages.json文件,包含了所有的资源包元数据.当你将包发布到pckagist.org上,则默认系统会创建一个packages.json,不过我没有找到我的包对应的文件. <strong>VCS资源库类型</strong> 假如你想构建一个私有的Composer私有资源库类型,可以使用该类型,这里举一个例子,比如你在自己项目的composer.json定义如下,则就可以使用对应的Github上的代码了.</p>
+<blockquote>
+<p>{ “repositories”: [ { “type”: “vcs”, “url”: “<a href="https://github.com/ywdblog/phpcomposer&quot;">https://github.com/ywdblog/phpcomposer&quot;</a> } ], “require”: { “ywdblog/phpcomposer”: “dev-master” } }</p>
+</blockquote>
+<p>当运行composer update的时候,Comoser实际上是从Github上下载包而不是从pckagist.org上下载. 另外假如需要使用Package资源库类型或者PEAR资源库类型,参考官方文档即可,一般在composer.json中定义name、version属性即可. <strong>Composer.json</strong> 在本文上面也多次提到了composer.json,比如你希望使用第三方包则需要在本地定义composer.json,Composer安装第三方包后,也会在第三方包目录下发现composer.json,那么这二者都叫composer.json,有什么区别呢?理解这非常的重要. 假如你在自己的项目下面定义一个composer.json,则这个包称之为ROOT包,这个composer.json定义你项目需要的条件(比如你的项目可能依赖一个第三方包). composer.json中有些属性只能被ROOT包使用,比如config属性只在ROOT包中生效. 一个资源包是不是ROOT包,取决于它的上下文,比如你git clone ywdblog/phpcomposer,则这时候本地phpcomposer目录就是ROOT包,假如你在本地phpcomposer目录下composer require ywdblog/phpcomposer,则这时候你的项目phpcomposer就是ROOT包. 了解composer-schema.json可参考该网址,Laravel作为一个成熟的框架,其定义的composer.json非常经典 <strong>关于包的版本</strong> 当使用者在本地配置composer.json的时候,可以指定需要包的特定版本,Composer支持从Github仓库中下载Tag或者分支下的包. 对于Github上的Tag来说,Packagist会创建对应包的版本,它符合X.Y.Z,vX.Y.Z,X.Y.Z-包类型,就是说Github上虽然只有一个特定版本的包,但Composer支持多种形式的引用方式,比如:</p>
+<blockquote>
+<p>composer require monolog/monolog1.0.0-RC1 composer require monolog/monolog  v1.0.0-RC1 composer require monolog/monolog1.0.* composer require monolog/monolog  ~1.10</p>
+</blockquote>
+<p>对于Github上的分支来说,Packagist会创建对应包的版本,假如分支名看起来像一个版本,将创建{分支名}-dev的包版本号,如果分支名看起来不像一个版本号,它将会创建dev-{分支名}形式的版本号</p>
+<blockquote>
+<p>composer require monolog/monolog  master-dev composer require monolog/monolog  master.x-dev</p>
+</blockquote>
+<p><strong>总结:</strong> 理解Composer,最重要的是实践,最后也能明白PSR-4和命名空间,也可以尝试将你的项目发布到pckagist.org上.</p>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis持久化存储</title>
     <url>/2018/05/11/redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/</url>
     <content><![CDATA[<blockquote>
@@ -3111,20 +3120,6 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </categories>
       <tags>
         <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Runnable和Thread的区别</title>
-    <url>/2017/05/05/runnable%E5%92%8Cthread%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p>在Java中可有两种方式实现多线程，一种是继承Thread类，一种是实现Runnable接口； Thread类是在java.lang包中定义的。 一个类只要继承了Thread类同时覆写了本类中的run()方法就可以实现多线程操作了，但是一个类只能继承一个父类，这是此方法的局限， 两种实现方式的区别和联系： 在程序开发中只要是多线程肯定永远以实现Runnable接口为主，因为实现Runnable接口相比 继承Thread类有如下好处： -&gt;避免点继承的局限，一个类可以继承多个接口。 -&gt;适合于资源的共享</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA并发</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -3246,6 +3241,20 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </categories>
       <tags>
         <tag>TCP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Runnable和Thread的区别</title>
+    <url>/2017/05/05/runnable%E5%92%8Cthread%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p>在Java中可有两种方式实现多线程，一种是继承Thread类，一种是实现Runnable接口； Thread类是在java.lang包中定义的。 一个类只要继承了Thread类同时覆写了本类中的run()方法就可以实现多线程操作了，但是一个类只能继承一个父类，这是此方法的局限， 两种实现方式的区别和联系： 在程序开发中只要是多线程肯定永远以实现Runnable接口为主，因为实现Runnable接口相比 继承Thread类有如下好处： -&gt;避免点继承的局限，一个类可以继承多个接口。 -&gt;适合于资源的共享</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA并发</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
@@ -3479,29 +3488,6 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>二分法查找与顺序查找</title>
-    <url>/2015/08/15/%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E4%B8%8E%E9%A1%BA%E5%BA%8F%E6%9F%A5%E6%89%BE/</url>
-    <content><![CDATA[<p>面试过成功京城会遇到算法题，而经常问到直接或间接的的就有查找，本文主要介绍二分法顺查</p>
-<p><strong>一、顺序查找</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php    </span><br><span class="line">&#x2F;&#x2F;顺序查找数组中某个数  </span><br><span class="line">&#x2F;&#x2F;如从一个数组中找到一个数：34  </span><br><span class="line">&#x2F;&#x2F;$arr &#x3D; array(23,45,67,34,9,34,6)如果查到则输出下标，否则输出查无此数  </span><br><span class="line"></span><br><span class="line">$arr &#x3D; array(23,45,67,34,9,34,6);  </span><br><span class="line">&#x2F;&#x2F;设一个标志位  </span><br><span class="line">$flag &#x3D; false;  </span><br><span class="line">foreach($arr as $x &#x3D;&gt; $x_val)  </span><br><span class="line">&#123;  </span><br><span class="line"></span><br><span class="line">    if ($x_val &#x3D;&#x3D; 34)  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &#39;arr\[&#39;.$x.&#39;\]&#x3D;34&#39;.&quot;&lt;br&gt;&quot;;  </span><br><span class="line">        $flag &#x3D; true;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">if ($flag&#x3D;&#x3D;false)  </span><br><span class="line">&#123;  </span><br><span class="line">    echo &quot;查无此数！&quot;;  </span><br><span class="line">&#125;     </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>简单明了 ，但当数据量过大时可能会耗费时间空间等等，所以就有了二分法的概念</p>
-<p> <strong>二、二分法</strong></p>
-<p> 首先找到数组中间这个数，然后与要查找的数比较，如果要查找的数大于中间这个数，则说明应该向后找，否则向前找，如果想等，则说明找到。</p>
-<p> <strong>前提：</strong>该数组必须是有序数列，如果该数组无序，必须先排序后查找</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php    </span><br><span class="line">&#x2F;&#x2F;二分查找数组中某个数  </span><br><span class="line">&#x2F;&#x2F;如从一个数组中找到一个数：134  </span><br><span class="line">&#x2F;&#x2F;$arr &#x3D; array(23,45,67,89,90,134,236)如果查到则输出下标，否则输出查无此数  </span><br><span class="line"></span><br><span class="line">function binarySearch(&amp;$arr,$val,$leftindex,$rightindex)  </span><br><span class="line">&#123;  </span><br><span class="line">    if($rightindex &lt; $leftindex)  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &quot;查无此数！&quot;;  </span><br><span class="line">        return 0;  </span><br><span class="line">    &#125;  </span><br><span class="line">    &#x2F;&#x2F;四舍五入取整数值  </span><br><span class="line">    $middleindex &#x3D; round(($leftindex + $rightindex)&#x2F;2);  </span><br><span class="line">    if($val &gt; $arr\[$middleindex\])  </span><br><span class="line">    &#123;  </span><br><span class="line">        binarySearch($arr,$val,$middleindex + 1,$rightindex);  </span><br><span class="line">    &#125;  </span><br><span class="line">    elseif($val &lt; $arr\[$middleindex\])  </span><br><span class="line">    &#123;  </span><br><span class="line">        binarySearch($arr,$val,$leftindex,$middleindex - 1);  </span><br><span class="line">    &#125;  </span><br><span class="line">    else  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &#39;arr\[&#39;.&quot;$middleindex&quot;.&#39;\]&#x3D;134&#39;.&quot;&lt;br&gt;&quot;;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">    $arr &#x3D; array(23,45,67,89,90,134,236);  </span><br><span class="line">    sort（$arr）;&#x2F;&#x2F;先排序</span><br><span class="line">&#x2F;&#x2F;  $leftindex &#x3D; 0;左下标  </span><br><span class="line">&#x2F;&#x2F;  $rightindex &#x3D; count($arr)-1;右下标  </span><br><span class="line">&#x2F;&#x2F;      $val &#x3D; 134;要找的值  </span><br><span class="line">    binarySearch($arr,134,0,count($arr) - 1)  </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>此处应用了递归，但是快速定位，大大提高效率！</p>
-]]></content>
-      <categories>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>PHP</tag>
-        <tag>程序设计</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>关于redis的主从、哨兵、集群</title>
     <url>/2017/11/02/%E5%85%B3%E4%BA%8Eredis%E7%9A%84%E4%B8%BB%E4%BB%8E%E3%80%81%E5%93%A8%E5%85%B5%E3%80%81%E9%9B%86%E7%BE%A4werwer/</url>
     <content><![CDATA[<h3 id="关于redis主从、哨兵、集群的介绍网上很多，这里就不赘述了。"><a href="#关于redis主从、哨兵、集群的介绍网上很多，这里就不赘述了。" class="headerlink" title="关于redis主从、哨兵、集群的介绍网上很多，这里就不赘述了。"></a>关于redis主从、哨兵、集群的介绍网上很多，这里就不赘述了。</h3><h3 id="一、主从"><a href="#一、主从" class="headerlink" title="一、主从"></a>一、主从</h3><blockquote>
@@ -3689,6 +3675,29 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>二分法查找与顺序查找</title>
+    <url>/2015/08/15/%E4%BA%8C%E5%88%86%E6%B3%95%E6%9F%A5%E6%89%BE%E4%B8%8E%E9%A1%BA%E5%BA%8F%E6%9F%A5%E6%89%BE/</url>
+    <content><![CDATA[<p>面试过成功京城会遇到算法题，而经常问到直接或间接的的就有查找，本文主要介绍二分法顺查</p>
+<p><strong>一、顺序查找</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php    </span><br><span class="line">&#x2F;&#x2F;顺序查找数组中某个数  </span><br><span class="line">&#x2F;&#x2F;如从一个数组中找到一个数：34  </span><br><span class="line">&#x2F;&#x2F;$arr &#x3D; array(23,45,67,34,9,34,6)如果查到则输出下标，否则输出查无此数  </span><br><span class="line"></span><br><span class="line">$arr &#x3D; array(23,45,67,34,9,34,6);  </span><br><span class="line">&#x2F;&#x2F;设一个标志位  </span><br><span class="line">$flag &#x3D; false;  </span><br><span class="line">foreach($arr as $x &#x3D;&gt; $x_val)  </span><br><span class="line">&#123;  </span><br><span class="line"></span><br><span class="line">    if ($x_val &#x3D;&#x3D; 34)  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &#39;arr\[&#39;.$x.&#39;\]&#x3D;34&#39;.&quot;&lt;br&gt;&quot;;  </span><br><span class="line">        $flag &#x3D; true;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">if ($flag&#x3D;&#x3D;false)  </span><br><span class="line">&#123;  </span><br><span class="line">    echo &quot;查无此数！&quot;;  </span><br><span class="line">&#125;     </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>简单明了 ，但当数据量过大时可能会耗费时间空间等等，所以就有了二分法的概念</p>
+<p> <strong>二、二分法</strong></p>
+<p> 首先找到数组中间这个数，然后与要查找的数比较，如果要查找的数大于中间这个数，则说明应该向后找，否则向前找，如果想等，则说明找到。</p>
+<p> <strong>前提：</strong>该数组必须是有序数列，如果该数组无序，必须先排序后查找</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php    </span><br><span class="line">&#x2F;&#x2F;二分查找数组中某个数  </span><br><span class="line">&#x2F;&#x2F;如从一个数组中找到一个数：134  </span><br><span class="line">&#x2F;&#x2F;$arr &#x3D; array(23,45,67,89,90,134,236)如果查到则输出下标，否则输出查无此数  </span><br><span class="line"></span><br><span class="line">function binarySearch(&amp;$arr,$val,$leftindex,$rightindex)  </span><br><span class="line">&#123;  </span><br><span class="line">    if($rightindex &lt; $leftindex)  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &quot;查无此数！&quot;;  </span><br><span class="line">        return 0;  </span><br><span class="line">    &#125;  </span><br><span class="line">    &#x2F;&#x2F;四舍五入取整数值  </span><br><span class="line">    $middleindex &#x3D; round(($leftindex + $rightindex)&#x2F;2);  </span><br><span class="line">    if($val &gt; $arr\[$middleindex\])  </span><br><span class="line">    &#123;  </span><br><span class="line">        binarySearch($arr,$val,$middleindex + 1,$rightindex);  </span><br><span class="line">    &#125;  </span><br><span class="line">    elseif($val &lt; $arr\[$middleindex\])  </span><br><span class="line">    &#123;  </span><br><span class="line">        binarySearch($arr,$val,$leftindex,$middleindex - 1);  </span><br><span class="line">    &#125;  </span><br><span class="line">    else  </span><br><span class="line">    &#123;  </span><br><span class="line">        echo &#39;arr\[&#39;.&quot;$middleindex&quot;.&#39;\]&#x3D;134&#39;.&quot;&lt;br&gt;&quot;;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">    $arr &#x3D; array(23,45,67,89,90,134,236);  </span><br><span class="line">    sort（$arr）;&#x2F;&#x2F;先排序</span><br><span class="line">&#x2F;&#x2F;  $leftindex &#x3D; 0;左下标  </span><br><span class="line">&#x2F;&#x2F;  $rightindex &#x3D; count($arr)-1;右下标  </span><br><span class="line">&#x2F;&#x2F;      $val &#x3D; 134;要找的值  </span><br><span class="line">    binarySearch($arr,134,0,count($arr) - 1)  </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>此处应用了递归，但是快速定位，大大提高效率！</p>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+        <tag>程序设计</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>浅谈PHP5中垃圾回收算法(Garbage Collection)的演化</title>
     <url>/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>PHP是一门托管型语言，在PHP编程中程序员不需要手工处理内存资源的分配与释放（使用C编写PHP或Zend扩展除外），这就意味着PHP本身实现了垃圾回收机制（Garbage Collection）。现在如果去PHP官方网站（<a href="http://php.net/">php.net</a>）可以看到，目前PHP5的两个分支版本PHP5.2和PHP5.3是分别更新的，这是因为许多项目仍然使用5.2版本的PHP，而5.3版本对5.2并不是完全兼容。PHP5.3在PHP5.2的基础上做了诸多改进，其中垃圾回收算法就属于一个比较大的改变。本文将分别讨论PHP5.2和PHP5.3的垃圾回收机制，并讨论这种演化和改进对于程序员编写PHP的影响以及要注意的问题。</p>
@@ -3800,6 +3809,26 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>韩天峰-2017 年 PHP 程序员未来路在何方</title>
+    <url>/2017/04/01/%E9%9F%A9%E5%A4%A9%E5%B3%B0-2017-%E5%B9%B4-php-%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9C%AA%E6%9D%A5%E8%B7%AF%E5%9C%A8%E4%BD%95%E6%96%B9/</url>
+    <content><![CDATA[<p>PHP 从诞生到现在已经有20多年历史，从Web时代兴起到移动互联网退潮，互联网领域各种编程语言和技术层出不穷， Node.js 、 GO 、 Python 不断地在挑战 PHP 的地位。这些技术的推动者非常热衷于唱衰 PHP ， PHP 语言的未来在哪里？PHP 程序员当如何应对未来的变革？ 作为老牌的Web后端编程语言，PHP 在全球市场占有率非常高，仅次于 Java ，从各个招聘网站的数据上来看PHP 开发的职位非常多，薪资水平也非常不错。实际在中小企业、互联网创业公司PHP的市场地位是高于 Java 的。Java 在超大型企业、传统软件行业、金融领域优势更大。目前来看 Node.js、 GO 、 Python 、 Ruby 等语言还难以企及PHP和Java。 PHP 语言之所以能有今天的地位，得益于PHP语言设计者一直遵从实用主义，将技术的复杂性隐藏在底层。PHP 语言入门简单，容易掌握，程序健壮性好，不容易出现像 Java 、 C++ 等其他语言那样复杂的问题，如内存泄漏和 Crash ，跟踪调试相对轻松很多。PHP 官方提供的标准库非常强大，各种功能函数都能在官方的标准库中找到，包括MySQL、Memcache、Redis、GD图形库、CURL、XML、JSON等等，免除了开发者到处找库的烦恼。PHP 的文档非常棒，每个函数都有详细的说明和使用示例。第三方类库和工具、代码、项目也很丰富。开发者可以快速、高效地使用 PHP 编写开发各类软件。到目前为止市面上仍然没有出现比 PHP 更简单易用的编程语言。所以 PHP 的前景还是很广阔的，与其纠结于编程语言的选择，不如好好地深入学习使用 PHP 。 作为一个资深的 PHP 开发者，在技术上给各位 PHP 程序十点未来的建议，希望对大家有所帮助。</p>
+<h2 id="1-Composer"><a href="#1-Composer" class="headerlink" title="1. Composer"></a>1. Composer</h2><p>第一点就要提 Composer ，自从 Composer 出现后，PHP 的依赖管理可以变得非常简单。程序内依赖一些类库和框架，直接使用 Composer 引入即可，通过使用 composer update 安装依赖的包。解决了过去加载外部库的各种难题。Composer 也有国内镜像，速度非常快。现在绝大部分PHP开源的项目都提供了 Composer 的支持，建议大家在项目中使用 Composer 来解决 PHP 代码包管理的问题，不要再使用下载源码、手工 include 的原始方法。</p>
+<h2 id="2-PHP7"><a href="#2-PHP7" class="headerlink" title="2. PHP7"></a>2. PHP7</h2><p>PHP7 版本对 Zend 引擎做了大量修改，大幅提升了 PHP 语言的性能，使用 PHP7 可以使你的程序性能瞬间翻倍。即使是 WordPress 这样重量级的软件运行在 PHP7 都能有上千 QPS ，相当于一台服务器每天就能处理 8000 万次请求。使用 PHP7 ，做好 MySQL 优化，使用 Memcache 和 Redis 进行加速，这套技术架构完全可以应对相当大规模的系统。除了某些亿级用户的平台之外，一般规模的系统完全没有压力。</p>
+<h2 id="3-PSR"><a href="#3-PSR" class="headerlink" title="3. PSR"></a>3. PSR</h2><p>PSR 是 <a href="http://link.zhihu.com/?target=http://www.php-fig.org/">PHP Framework Interop Group</a> 组织制定的PHP语言开发规范，约定了很多方面的规则，如命名空间、类名 规范、编码风格标准、Autoload、公共接口等。现在已经成为PHP技术社区事实上的标准了。很多知名的 PHP 框架和类库都遵守了 PSR 规范。PHP 开发者应当学习掌握 PSR 规范，在开发程序时应当尽量遵循 PSR 规范。</p>
+<h2 id="4-Swoole"><a href="#4-Swoole" class="headerlink" title="4. Swoole"></a>4. Swoole</h2><p>2017 年 PHP 还局限于做 Web 网站吗？No ，如果你还不知道 Swoole ，赶快去了解一下吧。Swoole 的口号是重新定义 PHP 语言，Swoole 是一个异步并行的通信引擎，作为 PHP 的扩展来运行。Node.js 的异步回调 Swoole 有，Go语言的协程 Swoole 也有，这完全颠覆了对 PHP 的认知。使用 Swoole PHP 可以实现常驻内存的 Server 程序，可以实现 TCP 、 UDP 异步网络通信的编程开发。过去PHP只能做一个 Web 网站，现在使用 Swoole 可以做 Java 、C++ 才能实现的通信服务，比如 WebSocket 即使通信、聊天、推送服务器、RPC 远程调用服务、网关、代理、游戏服务器等。如果你想用 PHP 做点 Web 系统之外的东西，Swoole 是最好的选择。</p>
+<h2 id="5-Laravel"><a href="#5-Laravel" class="headerlink" title="5. Laravel"></a>5. Laravel</h2><p>最近几年最火热的 PHP 框架，官网号称是为 Web 艺术家设计的框架，可见这套框架有多优雅。Laravel 提供的功能模块丰富，API 设计简洁，表达力强。而且它的社区非常活跃，代码贡献者众多，第三方的插件非常多，生态系统相当繁荣。 Laravel 底层使用了很多 symfony2 组件，通过 composer 实现了依赖管理。如果还在纠结使用什么PHP框架，不如选择 Laravel 。 Laravel 提供的命令行工具基于 symfony.console 实现，功能强大，集成了各种项目管理、自动生成代码的功能。</p>
+<h2 id="6-Phar"><a href="#6-Phar" class="headerlink" title="6. Phar"></a>6. Phar</h2><p>PHP5.3 之后支持了类似 Java 的 jar 包，名为 phar。用来将多个 PHP 文件打包为一个文件。这个特性使得 PHP 也可以像 Java 一样方便地实现应用程序打包和组件化。一个应用程序可以打成一个 Phar 包，直接放到 PHP-FPM 中运行。配合 Swoole ，可以在命令行下执行 php server.phar 一键启动服务器。PHP 的代码包可以用 Phar 打包成组件，放到 Swoole 的服务器容器中去加载执行。</p>
+<h2 id="7-C-C-GO"><a href="#7-C-C-GO" class="headerlink" title="7. C/C++/GO"></a>7. C/C++/GO</h2><p>任何技术有优点就有缺点，PHP 作为一门动态脚本语言，优点是开发方便效率高。缺点就是性能差。在密集运算的场景下比 C 、 C++ 相差几十倍甚至上百倍。另外 PHP 不可以直接操作底层，需要依赖扩展库来提供 API 实现。PHP 程序员可以学习一门静态编译语言作为补充实现动静互补，C/C++/Go 都是不错的选择。而且静态语言的编程体验与动态语言完全不同，学习过程可以让你得到更大的提升。 掌握 C/C++ 语言后，还可以阅读 PHP 、 Swoole 、 Nginx 、Redis 、 Linux内核 等开源软件的源码，了解其底层运行原理。 现在最新版本的Swoole提供了C++扩展模块的支持，封装了Zend API，用C++操作PHP变得很简单，可以用C++实现PHP扩展函数和类。</p>
+<h2 id="8-HTML5"><a href="#8-HTML5" class="headerlink" title="8. HTML5"></a>8. HTML5</h2><p>作为 Web 前端新一代标准，HTML5 未来前景非常广阔，市场需求量非常大。从 PC 网站、B/S 企业软件、移动端网页、APP，这些领域都在拥抱 HTML5，掌握了 HTML5 才能在下一波互联网技术大潮中存活下来。</p>
+<h2 id="9-Vue-js"><a href="#9-Vue-js" class="headerlink" title="9. Vue.js"></a>9. Vue.js</h2><p>PHP 程序员除了写后台程序之外，还有很大一部分工作在展现层，和浏览器前端打交道。2017 年你还在用 jQuery 操作 DOM 实现界面渲染吗？已经完全 out 了。现在用 Vue.js 可以非常方便地实现数据和 DOM 元素的绑定。通过 Ajax 请求后台接口返回数据后，更新前端数据自动实现界面渲染。2017 年再不学 Vue 就晚了。 如果你不光要写 Web 程序，同时还希望兼顾 Android 、IOS 、PC 客户端等平台，React Native 是一个不错的选择。</p>
+<h2 id="10-深度学习-人工智能"><a href="#10-深度学习-人工智能" class="headerlink" title="10. 深度学习/人工智能"></a>10. 深度学习/人工智能</h2><p>互联网的未来属于人工智能，如果你还不了解机器学习、深度学习、人工智能这些概念，那你需要尽快学习了解一下。现在互联网巨头们都在布局人工智能，包括 Google 、 Facebook 、微软、亚马逊 和国内的百度。虽然现在还处于科学研究的阶段，但未来互联网的各个领域都会应用到人工智能，包括自动驾驶、大数据分析、网络游戏、图像识别、语言处理等。当然现在普通的工程师可能还无法参与到人工智能产品中，但至少应该理解深度学习/人工智能的基本概念和原理。</p>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+  </entry>
+  <entry>
     <title>阻止JS冒泡事件</title>
     <url>/2017/02/12/%E9%98%BB%E6%AD%A2js%E5%86%92%E6%B3%A1%E4%BA%8B%E4%BB%B6/</url>
     <content><![CDATA[<p><strong>什么是JS事件冒泡？：</strong> 在一个对象上触发某类事件（比如单击onclick事件），如果此对象定义了此事件的处理程序，那么此事件就会调用这个处理程序，如果没有定义此事件处理程序或者事件返回true，那么这个事件会向这个对象的父级对象传播，从里到外，直至它被处理（父级对象所有同类事件都将被激活），或者它到达了对象层次的最顶层，即document对象（有些浏览器是window）。  <strong>解决方法</strong> 1.JavaScript 阻止事件冒泡，无使用其它插件来辅助，原生JS代码，考虑到浏览器的兼容性问题，这里对IE/火狐、Operating以及Chrome都有针对性的判断，代码如下：</p>
@@ -3821,26 +3850,6 @@ $(function() {
       <tags>
         <tag>JS</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>韩天峰-2017 年 PHP 程序员未来路在何方</title>
-    <url>/2017/04/01/%E9%9F%A9%E5%A4%A9%E5%B3%B0-2017-%E5%B9%B4-php-%E7%A8%8B%E5%BA%8F%E5%91%98%E6%9C%AA%E6%9D%A5%E8%B7%AF%E5%9C%A8%E4%BD%95%E6%96%B9/</url>
-    <content><![CDATA[<p>PHP 从诞生到现在已经有20多年历史，从Web时代兴起到移动互联网退潮，互联网领域各种编程语言和技术层出不穷， Node.js 、 GO 、 Python 不断地在挑战 PHP 的地位。这些技术的推动者非常热衷于唱衰 PHP ， PHP 语言的未来在哪里？PHP 程序员当如何应对未来的变革？ 作为老牌的Web后端编程语言，PHP 在全球市场占有率非常高，仅次于 Java ，从各个招聘网站的数据上来看PHP 开发的职位非常多，薪资水平也非常不错。实际在中小企业、互联网创业公司PHP的市场地位是高于 Java 的。Java 在超大型企业、传统软件行业、金融领域优势更大。目前来看 Node.js、 GO 、 Python 、 Ruby 等语言还难以企及PHP和Java。 PHP 语言之所以能有今天的地位，得益于PHP语言设计者一直遵从实用主义，将技术的复杂性隐藏在底层。PHP 语言入门简单，容易掌握，程序健壮性好，不容易出现像 Java 、 C++ 等其他语言那样复杂的问题，如内存泄漏和 Crash ，跟踪调试相对轻松很多。PHP 官方提供的标准库非常强大，各种功能函数都能在官方的标准库中找到，包括MySQL、Memcache、Redis、GD图形库、CURL、XML、JSON等等，免除了开发者到处找库的烦恼。PHP 的文档非常棒，每个函数都有详细的说明和使用示例。第三方类库和工具、代码、项目也很丰富。开发者可以快速、高效地使用 PHP 编写开发各类软件。到目前为止市面上仍然没有出现比 PHP 更简单易用的编程语言。所以 PHP 的前景还是很广阔的，与其纠结于编程语言的选择，不如好好地深入学习使用 PHP 。 作为一个资深的 PHP 开发者，在技术上给各位 PHP 程序十点未来的建议，希望对大家有所帮助。</p>
-<h2 id="1-Composer"><a href="#1-Composer" class="headerlink" title="1. Composer"></a>1. Composer</h2><p>第一点就要提 Composer ，自从 Composer 出现后，PHP 的依赖管理可以变得非常简单。程序内依赖一些类库和框架，直接使用 Composer 引入即可，通过使用 composer update 安装依赖的包。解决了过去加载外部库的各种难题。Composer 也有国内镜像，速度非常快。现在绝大部分PHP开源的项目都提供了 Composer 的支持，建议大家在项目中使用 Composer 来解决 PHP 代码包管理的问题，不要再使用下载源码、手工 include 的原始方法。</p>
-<h2 id="2-PHP7"><a href="#2-PHP7" class="headerlink" title="2. PHP7"></a>2. PHP7</h2><p>PHP7 版本对 Zend 引擎做了大量修改，大幅提升了 PHP 语言的性能，使用 PHP7 可以使你的程序性能瞬间翻倍。即使是 WordPress 这样重量级的软件运行在 PHP7 都能有上千 QPS ，相当于一台服务器每天就能处理 8000 万次请求。使用 PHP7 ，做好 MySQL 优化，使用 Memcache 和 Redis 进行加速，这套技术架构完全可以应对相当大规模的系统。除了某些亿级用户的平台之外，一般规模的系统完全没有压力。</p>
-<h2 id="3-PSR"><a href="#3-PSR" class="headerlink" title="3. PSR"></a>3. PSR</h2><p>PSR 是 <a href="http://link.zhihu.com/?target=http://www.php-fig.org/">PHP Framework Interop Group</a> 组织制定的PHP语言开发规范，约定了很多方面的规则，如命名空间、类名 规范、编码风格标准、Autoload、公共接口等。现在已经成为PHP技术社区事实上的标准了。很多知名的 PHP 框架和类库都遵守了 PSR 规范。PHP 开发者应当学习掌握 PSR 规范，在开发程序时应当尽量遵循 PSR 规范。</p>
-<h2 id="4-Swoole"><a href="#4-Swoole" class="headerlink" title="4. Swoole"></a>4. Swoole</h2><p>2017 年 PHP 还局限于做 Web 网站吗？No ，如果你还不知道 Swoole ，赶快去了解一下吧。Swoole 的口号是重新定义 PHP 语言，Swoole 是一个异步并行的通信引擎，作为 PHP 的扩展来运行。Node.js 的异步回调 Swoole 有，Go语言的协程 Swoole 也有，这完全颠覆了对 PHP 的认知。使用 Swoole PHP 可以实现常驻内存的 Server 程序，可以实现 TCP 、 UDP 异步网络通信的编程开发。过去PHP只能做一个 Web 网站，现在使用 Swoole 可以做 Java 、C++ 才能实现的通信服务，比如 WebSocket 即使通信、聊天、推送服务器、RPC 远程调用服务、网关、代理、游戏服务器等。如果你想用 PHP 做点 Web 系统之外的东西，Swoole 是最好的选择。</p>
-<h2 id="5-Laravel"><a href="#5-Laravel" class="headerlink" title="5. Laravel"></a>5. Laravel</h2><p>最近几年最火热的 PHP 框架，官网号称是为 Web 艺术家设计的框架，可见这套框架有多优雅。Laravel 提供的功能模块丰富，API 设计简洁，表达力强。而且它的社区非常活跃，代码贡献者众多，第三方的插件非常多，生态系统相当繁荣。 Laravel 底层使用了很多 symfony2 组件，通过 composer 实现了依赖管理。如果还在纠结使用什么PHP框架，不如选择 Laravel 。 Laravel 提供的命令行工具基于 symfony.console 实现，功能强大，集成了各种项目管理、自动生成代码的功能。</p>
-<h2 id="6-Phar"><a href="#6-Phar" class="headerlink" title="6. Phar"></a>6. Phar</h2><p>PHP5.3 之后支持了类似 Java 的 jar 包，名为 phar。用来将多个 PHP 文件打包为一个文件。这个特性使得 PHP 也可以像 Java 一样方便地实现应用程序打包和组件化。一个应用程序可以打成一个 Phar 包，直接放到 PHP-FPM 中运行。配合 Swoole ，可以在命令行下执行 php server.phar 一键启动服务器。PHP 的代码包可以用 Phar 打包成组件，放到 Swoole 的服务器容器中去加载执行。</p>
-<h2 id="7-C-C-GO"><a href="#7-C-C-GO" class="headerlink" title="7. C/C++/GO"></a>7. C/C++/GO</h2><p>任何技术有优点就有缺点，PHP 作为一门动态脚本语言，优点是开发方便效率高。缺点就是性能差。在密集运算的场景下比 C 、 C++ 相差几十倍甚至上百倍。另外 PHP 不可以直接操作底层，需要依赖扩展库来提供 API 实现。PHP 程序员可以学习一门静态编译语言作为补充实现动静互补，C/C++/Go 都是不错的选择。而且静态语言的编程体验与动态语言完全不同，学习过程可以让你得到更大的提升。 掌握 C/C++ 语言后，还可以阅读 PHP 、 Swoole 、 Nginx 、Redis 、 Linux内核 等开源软件的源码，了解其底层运行原理。 现在最新版本的Swoole提供了C++扩展模块的支持，封装了Zend API，用C++操作PHP变得很简单，可以用C++实现PHP扩展函数和类。</p>
-<h2 id="8-HTML5"><a href="#8-HTML5" class="headerlink" title="8. HTML5"></a>8. HTML5</h2><p>作为 Web 前端新一代标准，HTML5 未来前景非常广阔，市场需求量非常大。从 PC 网站、B/S 企业软件、移动端网页、APP，这些领域都在拥抱 HTML5，掌握了 HTML5 才能在下一波互联网技术大潮中存活下来。</p>
-<h2 id="9-Vue-js"><a href="#9-Vue-js" class="headerlink" title="9. Vue.js"></a>9. Vue.js</h2><p>PHP 程序员除了写后台程序之外，还有很大一部分工作在展现层，和浏览器前端打交道。2017 年你还在用 jQuery 操作 DOM 实现界面渲染吗？已经完全 out 了。现在用 Vue.js 可以非常方便地实现数据和 DOM 元素的绑定。通过 Ajax 请求后台接口返回数据后，更新前端数据自动实现界面渲染。2017 年再不学 Vue 就晚了。 如果你不光要写 Web 程序，同时还希望兼顾 Android 、IOS 、PC 客户端等平台，React Native 是一个不错的选择。</p>
-<h2 id="10-深度学习-人工智能"><a href="#10-深度学习-人工智能" class="headerlink" title="10. 深度学习/人工智能"></a>10. 深度学习/人工智能</h2><p>互联网的未来属于人工智能，如果你还不了解机器学习、深度学习、人工智能这些概念，那你需要尽快学习了解一下。现在互联网巨头们都在布局人工智能，包括 Google 、 Facebook 、微软、亚马逊 和国内的百度。虽然现在还处于科学研究的阶段，但未来互联网的各个领域都会应用到人工智能，包括自动驾驶、大数据分析、网络游戏、图像识别、语言处理等。当然现在普通的工程师可能还无法参与到人工智能产品中，但至少应该理解深度学习/人工智能的基本概念和原理。</p>
-]]></content>
-      <categories>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
   </entry>
   <entry>
     <title>Nginx原理</title>
