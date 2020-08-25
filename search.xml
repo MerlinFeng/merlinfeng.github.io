@@ -253,6 +253,48 @@
       </tags>
   </entry>
   <entry>
+    <title>array与slice区别</title>
+    <url>/2019/05/12/array_slice/</url>
+    <content><![CDATA[<h1 id="array-类型"><a href="#array-类型" class="headerlink" title="array 类型"></a>array 类型</h1><blockquote>
+<p>array是固定长度的数组，使用前必须确定数组长度</p>
+</blockquote>
+<p><code>golang array</code> 特点：</p>
+<ul>
+<li>golang中的数组是值类型,也就是说，如果你将一个数组赋值给另外一个数组，那么，实际上就是整个数组拷贝了一份</li>
+<li>如果golang中的数组作为函数的参数，那么实际传递的参数是一份数组的拷贝，而不是数组的指针</li>
+<li>array的长度也是Type的一部分，这样就说明[10]int和[20]int是不一样的。</li>
+</ul>
+<h1 id="slice类型"><a href="#slice类型" class="headerlink" title="slice类型"></a>slice类型</h1><ul>
+<li>slice是一个引用类型，是一个动态的指向数组切片的指针。</li>
+<li>slice是一个不定长的，总是指向底层的数组array的数据结构。</li>
+</ul>
+<ol>
+<li>创建slice</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//动态数组创建，类似创建数组，但是没有指定固定长度</span></span><br><span class="line"><span class="keyword">var</span> al []<span class="keyword">int</span>     <span class="comment">//创建slice</span></span><br><span class="line">sl := <span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="number">10</span>)  <span class="comment">//创建有10个元素的slice</span></span><br><span class="line">sl:=[]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125; <span class="comment">//创建有初始化元素的slice</span></span><br></pre></td></tr></table></figure>
+
+
+<p>2.先创建数组,在数组的基础上建立切片slice</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> arr =[<span class="number">10</span>]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>，<span class="number">4</span>,<span class="number">5</span>。<span class="number">6</span>&#125;  </span><br><span class="line">sl := arr[<span class="number">2</span>:<span class="number">5</span>] <span class="comment">//创建有3个元素的slice</span></span><br></pre></td></tr></table></figure>
+
+
+<p>3.slice有一些简便的操作</p>
+<ul>
+<li><code>slice</code>的默认开始位置是0，<code>ar[:n]</code>等价于<code>ar[0:n]</code></li>
+<li><code>slice</code>的第二个序列默认是数组的长度，<code>ar[n:]</code>等价于<code>ar[n:len(ar)]</code></li>
+</ul>
+<h1 id="数组和slice的区别"><a href="#数组和slice的区别" class="headerlink" title="数组和slice的区别"></a>数组和slice的区别</h1><p>声明数组时，方括号内写明了数组的长度或者…,声明slice时候，方括号内为空<br>作为函数参数时，数组传递的是数组的副本，而slice传递的是指针</p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+        <tag>slice</tag>
+        <tag>array</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bootstrap modal 弹窗 数据清除</title>
     <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
     <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
@@ -351,74 +393,8 @@
         <category>Go</category>
       </categories>
       <tags>
-        <tag>channel</tag>
         <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>cookie跨域session共享</title>
-    <url>/2017/02/14/cookie%E8%B7%A8%E5%9F%9Fsession%E5%85%B1%E4%BA%AB/</url>
-    <content><![CDATA[<p>session是存储在服务器的。 本篇主要通过一些实践中的案例和大家分享一下踩到坑，重点说明了cookie跨域问题和session服务器共享问题，以php语言为使用语言进行说明。</p>
-<h2 id="先聊聊cookie"><a href="#先聊聊cookie" class="headerlink" title="先聊聊cookie"></a>先聊聊cookie</h2><h3 id="设置cookie无效"><a href="#设置cookie无效" class="headerlink" title="设置cookie无效"></a>设置cookie无效</h3><p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, 900);</p>
-<p>  这个问题很多刚入门php的小伙们都会碰到。这个代码的本意应当是想设置cookie sso的有效期为15分钟，可是执行这个代码后发现没有效果。为什么呢？因为第三个参数expire表示的是过期的时间节点，而不是有效时间，所以如果希望设置cookie为15分钟，正确的做法应当是获取当前的时间戳加上15分钟。</p>
-<p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, time() + 900);</p>
-<p>setcookie这个函数还有path、domain参数都比较常用，强烈建议刚学php的小伙们多翻阅手册。php手册地址： <a href="http://php.net/manual/zh/index.php">http://php.net/manual/zh/index.php</a></p>
-<h3 id="获取cookie值获取不到"><a href="#获取cookie值获取不到" class="headerlink" title="获取cookie值获取不到"></a>获取cookie值获取不到</h3><p>先看这样一段代码</p>
-<p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, time() + 900);<br>var_dump($_COOKIE[“sso”]);</p>
-<p>明明设置了cookie，为什么第一次刷新页面取不到值，第二次刷新页面就可以了呢？ 要解决这个问题，要先了解一下setcookie后发生了什么？因为cookie是保存在客户端的，php是服务端语言，实际上setcookie之后只是在返回的http头增加一个cookie的头信息，告诉客户端需要设置一个酱紫的cookie，如下图：</p>
-<p><img src="http://qiniu.fengmumiao.com/Uz6zuiv.png">      </p>
-<p>php中setcookie返回的http头</p>
-<p>而$_COOKIE这个数组里面保存客户端传递上来的cookie。自然第一次刷新的时候因为客户端没有相应的cookie值，所以$_COOKIE是没有sso的信息的。第一次请求过后，因为服务器设置了cookie sso，所以第一次请求过来客户端就有了cookie sso的信息，所以第二次请求的时候就会带上sso的信息，服务端就能通过$_COOKIE取到值了。</p>
-<h3 id="cookie跨域问题"><a href="#cookie跨域问题" class="headerlink" title="cookie跨域问题"></a>cookie跨域问题</h3><p>这个可以说是cookie中一个比较热门的问题，面试的时候一般很爱聊这方面的问题。 跨域的业务需求大概是酱紫：用户在a.com进行了登录，希望在b.com也同步进行了登录。如果是同一个主域比较简单，可以通过setcookie中的domain参数进行设定：例如有x.a.com和xx.a.com，可以通过设置domain为a.com，从而a.com的所有二级域名都可以共享这一个cookie。基于安全方面的原因，在a.com下面设置domain为b.com是无效的。 那么是否真的没有办法可以实现这个了呢？这个还是有一些奇巧淫技的，这里介绍一种使用内框iframe的方法。 具体思路：在a.com下设置cookie后，嵌入一个iframe框链接b.com的页面，b.com设置好页面cookie后，再嵌入一个a.com的页面，然后通过parent.parent就可以调用最外层的a.com的js方法，从而进行跳转或者一些其它的操作。具体代码示例如下： 假设a.com有页面：login.php和callback.php，b.com有页面synclogin.php a.com的login.php代码：</p>
-<?php
-$sso = "e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW";
-setcookie("sso", $sso);
-?>
-<p>login success…</p>
-<script type="text/javascript">
-    function jumpTo() {
-        location.href = "http://a.com";
-    }
-</script>
-<iframe src="http://b.com/synclogin.php?sso=<?php echo $sso; ?>"></iframe>
-
-<p>b.com的synclogin.php页面</p>
-<?php
-setcookie("sso", $_GET["sso"]);
-?>
-<iframe src="http://a.com/callback.php"></iframe>
-
-<p>a.com的callback.php页面</p>
-<script type="text/javascript">
-    parent.parent.jumpTo();
-</script>
-
-<p>代码看起来也不难，值得一提的是这里嵌入了两个iframe，因为如果只用一个iframe的话，即在b.com的synclogin.php内直接调用父窗体的jumpTo方法，在有些浏览器下会提示没有权限的错误：</p>
-<p>Error: Permission denied to access property</p>
-<p>这里只是演示了cookie跨域同步的思路，具体细节还有很多可以改进的地方，比如iframe链接的页面可以考虑改成静态的页面，这样效率会比php动态页面快很多，还有像参数校验、多个主域（比如还有c.om）同时登录等等，这里就不再累述。 cookie的总结到这里就结束，如果你感觉有一些收获，可以在页面底部扫码给我打赏哟，感谢O(∩_∩)O~</p>
-<h2 id="session"><a href="#session" class="headerlink" title="session"></a>session</h2><h3 id="SESSION没有值"><a href="#SESSION没有值" class="headerlink" title="$_SESSION没有值"></a>$_SESSION没有值</h3><p>这个session使用和cookie有一点不太一样，session使用前必须先调用session_start方法。否则会收到一个undefined的错误：</p>
-<p>Notice: Undefined variable: _SESSION</p>
-<h3 id="session存储在哪"><a href="#session存储在哪" class="headerlink" title="session存储在哪"></a>session存储在哪</h3><p>session存储在服务端，但是session究竟是存储在哪呢？php.ini中关于session有一个save_path的选项可以设置存放的目录，如果这个选项没有设置值，那么就存储在系统默认的tmp目录下。默认的tmp目录可以通过sys_get_temp_dir方法取到。 例如在mac下面，php的session一般会存储在/var/tmp目录下。</p>
-<p>session_start();<br>echo session_id();//本例输出ipkl446enhae25uq92c28u4lo3<br>$_SESSION[‘name’] = “tony”;<br>$_SESSION[‘users’] = array(“tony”, “andy”);</p>
-<p>通过session_id方法可以取到当前的session编号，通过这个编号可查看一下该session文件。</p>
-<p>$ sudo more /var/tmp/sess_ipkl446enhae25uq92c28u4lo3<br>name|s:4:”tony”;users|a:2:{i:0;s:4:”tony”;i:1;s:4:”andy”;}</p>
-<p>可以清楚的看到session存储数据的结构，其中值是用序列化的方式进行转化存储的。</p>
-<h3 id="session也用了cookie"><a href="#session也用了cookie" class="headerlink" title="session也用了cookie"></a>session也用了cookie</h3><p>session不是存储在服务端吗，怎么又和cookie扯上关系了？其实想想也简单，因为客户端再请求的时候，服务端怎么样才能知道该客户端的session存储在哪个文件呢？其实也是通过cookie PHPSESSID来进行标识。</p>
-<p><img src="http://qiniu.fengmumiao.com/zyqeQn.png">      <br>php中session的cookie标识</p>
-<p>php在进行session操作的时候会生成一个session id，而后把这个值以cookie的形式保存在客户端，就是图示中的PHPSESSID了。客户端在下次请求的时候就会带上这个PHPSESSID，服务端就能知道当前客户端对应的session文件了。</p>
-<h3 id="session超时设置"><a href="#session超时设置" class="headerlink" title="session超时设置"></a>session超时设置</h3><p>cookie超时设置比较简单，一个参数就搞定了。session这边有点小麻烦，既不能单独设置cookie PHPSESSID的超时时间，也不能单独设置服务端文件的超时时间。具体的可以参考鸟哥这篇文章：如何设置一个严格30分钟过期的Session，真的非常严谨，赞一下。</p>
-<h3 id="session服务器共享"><a href="#session服务器共享" class="headerlink" title="session服务器共享"></a>session服务器共享</h3><p>这个问题和cookie的跨域类似，面试的时候也很爱聊这个问题。 以前在做服务器集群的时候会碰到这样的一样问题，就是用户一会访问是处于正常登录状态，一会访问又没有登录了。这个问题偶尔才会出现。跟踪代码下去才发现session没有取到相应的值，想想也是醉了：原来服务器session没有设置共享，session存在在本地文件目录，当用户访问另外一台服务器的时候自然就取不到session了。 解决方法也不难，通过共享的存储在进行服务器之间的共享。这里使用redis的进行session存储。可以通过php.ini配置文件进行调整，也可以在代码中通过ini_set进行调整</p>
-<p>ini_set(“session.save_handler”, “redis”);<br>ini_set(“session.save_path”, “tcp://127.0.0.1:6379”);</p>
-<p>如果需要使用redis进行存储，需要session中的Registered save handlers支持redis</p>
-<p><img src="http://7xnd02.com1.z0.glb.clouddn.com/VRFNfyQ.png">       </p>
-<p>php中session是否支持redis</p>
-<p>当这样设置之后，session就会保存在redis中了，不同的集群服务器之间就可以通过该redis服务器进行共享了。 好吧，暂时就写到这里了，以后会发现新的坑会继续补充上来。</p>
-]]></content>
-      <categories>
-        <category>WEB技术</category>
-      </categories>
-      <tags>
-        <tag>WEB技术</tag>
+        <tag>channel</tag>
       </tags>
   </entry>
   <entry>
@@ -496,6 +472,72 @@ setcookie("sso", $_GET["sso"]);
       </tags>
   </entry>
   <entry>
+    <title>cookie跨域session共享</title>
+    <url>/2017/02/14/cookie%E8%B7%A8%E5%9F%9Fsession%E5%85%B1%E4%BA%AB/</url>
+    <content><![CDATA[<p>session是存储在服务器的。 本篇主要通过一些实践中的案例和大家分享一下踩到坑，重点说明了cookie跨域问题和session服务器共享问题，以php语言为使用语言进行说明。</p>
+<h2 id="先聊聊cookie"><a href="#先聊聊cookie" class="headerlink" title="先聊聊cookie"></a>先聊聊cookie</h2><h3 id="设置cookie无效"><a href="#设置cookie无效" class="headerlink" title="设置cookie无效"></a>设置cookie无效</h3><p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, 900);</p>
+<p>  这个问题很多刚入门php的小伙们都会碰到。这个代码的本意应当是想设置cookie sso的有效期为15分钟，可是执行这个代码后发现没有效果。为什么呢？因为第三个参数expire表示的是过期的时间节点，而不是有效时间，所以如果希望设置cookie为15分钟，正确的做法应当是获取当前的时间戳加上15分钟。</p>
+<p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, time() + 900);</p>
+<p>setcookie这个函数还有path、domain参数都比较常用，强烈建议刚学php的小伙们多翻阅手册。php手册地址： <a href="http://php.net/manual/zh/index.php">http://php.net/manual/zh/index.php</a></p>
+<h3 id="获取cookie值获取不到"><a href="#获取cookie值获取不到" class="headerlink" title="获取cookie值获取不到"></a>获取cookie值获取不到</h3><p>先看这样一段代码</p>
+<p>setcookie(“sso”, “e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW”, time() + 900);<br>var_dump($_COOKIE[“sso”]);</p>
+<p>明明设置了cookie，为什么第一次刷新页面取不到值，第二次刷新页面就可以了呢？ 要解决这个问题，要先了解一下setcookie后发生了什么？因为cookie是保存在客户端的，php是服务端语言，实际上setcookie之后只是在返回的http头增加一个cookie的头信息，告诉客户端需要设置一个酱紫的cookie，如下图：</p>
+<p><img src="http://qiniu.fengmumiao.com/Uz6zuiv.png">      </p>
+<p>php中setcookie返回的http头</p>
+<p>而$_COOKIE这个数组里面保存客户端传递上来的cookie。自然第一次刷新的时候因为客户端没有相应的cookie值，所以$_COOKIE是没有sso的信息的。第一次请求过后，因为服务器设置了cookie sso，所以第一次请求过来客户端就有了cookie sso的信息，所以第二次请求的时候就会带上sso的信息，服务端就能通过$_COOKIE取到值了。</p>
+<h3 id="cookie跨域问题"><a href="#cookie跨域问题" class="headerlink" title="cookie跨域问题"></a>cookie跨域问题</h3><p>这个可以说是cookie中一个比较热门的问题，面试的时候一般很爱聊这方面的问题。 跨域的业务需求大概是酱紫：用户在a.com进行了登录，希望在b.com也同步进行了登录。如果是同一个主域比较简单，可以通过setcookie中的domain参数进行设定：例如有x.a.com和xx.a.com，可以通过设置domain为a.com，从而a.com的所有二级域名都可以共享这一个cookie。基于安全方面的原因，在a.com下面设置domain为b.com是无效的。 那么是否真的没有办法可以实现这个了呢？这个还是有一些奇巧淫技的，这里介绍一种使用内框iframe的方法。 具体思路：在a.com下设置cookie后，嵌入一个iframe框链接b.com的页面，b.com设置好页面cookie后，再嵌入一个a.com的页面，然后通过parent.parent就可以调用最外层的a.com的js方法，从而进行跳转或者一些其它的操作。具体代码示例如下： 假设a.com有页面：login.php和callback.php，b.com有页面synclogin.php a.com的login.php代码：</p>
+<?php
+$sso = "e589hR6VnO8K1CNQZ4PSP/LWGBhRKE5VckawQwl1TdE8d4Q5E7tW";
+setcookie("sso", $sso);
+?>
+<p>login success…</p>
+<script type="text/javascript">
+    function jumpTo() {
+        location.href = "http://a.com";
+    }
+</script>
+<iframe src="http://b.com/synclogin.php?sso=<?php echo $sso; ?>"></iframe>
+
+<p>b.com的synclogin.php页面</p>
+<?php
+setcookie("sso", $_GET["sso"]);
+?>
+<iframe src="http://a.com/callback.php"></iframe>
+
+<p>a.com的callback.php页面</p>
+<script type="text/javascript">
+    parent.parent.jumpTo();
+</script>
+
+<p>代码看起来也不难，值得一提的是这里嵌入了两个iframe，因为如果只用一个iframe的话，即在b.com的synclogin.php内直接调用父窗体的jumpTo方法，在有些浏览器下会提示没有权限的错误：</p>
+<p>Error: Permission denied to access property</p>
+<p>这里只是演示了cookie跨域同步的思路，具体细节还有很多可以改进的地方，比如iframe链接的页面可以考虑改成静态的页面，这样效率会比php动态页面快很多，还有像参数校验、多个主域（比如还有c.om）同时登录等等，这里就不再累述。 cookie的总结到这里就结束，如果你感觉有一些收获，可以在页面底部扫码给我打赏哟，感谢O(∩_∩)O~</p>
+<h2 id="session"><a href="#session" class="headerlink" title="session"></a>session</h2><h3 id="SESSION没有值"><a href="#SESSION没有值" class="headerlink" title="$_SESSION没有值"></a>$_SESSION没有值</h3><p>这个session使用和cookie有一点不太一样，session使用前必须先调用session_start方法。否则会收到一个undefined的错误：</p>
+<p>Notice: Undefined variable: _SESSION</p>
+<h3 id="session存储在哪"><a href="#session存储在哪" class="headerlink" title="session存储在哪"></a>session存储在哪</h3><p>session存储在服务端，但是session究竟是存储在哪呢？php.ini中关于session有一个save_path的选项可以设置存放的目录，如果这个选项没有设置值，那么就存储在系统默认的tmp目录下。默认的tmp目录可以通过sys_get_temp_dir方法取到。 例如在mac下面，php的session一般会存储在/var/tmp目录下。</p>
+<p>session_start();<br>echo session_id();//本例输出ipkl446enhae25uq92c28u4lo3<br>$_SESSION[‘name’] = “tony”;<br>$_SESSION[‘users’] = array(“tony”, “andy”);</p>
+<p>通过session_id方法可以取到当前的session编号，通过这个编号可查看一下该session文件。</p>
+<p>$ sudo more /var/tmp/sess_ipkl446enhae25uq92c28u4lo3<br>name|s:4:”tony”;users|a:2:{i:0;s:4:”tony”;i:1;s:4:”andy”;}</p>
+<p>可以清楚的看到session存储数据的结构，其中值是用序列化的方式进行转化存储的。</p>
+<h3 id="session也用了cookie"><a href="#session也用了cookie" class="headerlink" title="session也用了cookie"></a>session也用了cookie</h3><p>session不是存储在服务端吗，怎么又和cookie扯上关系了？其实想想也简单，因为客户端再请求的时候，服务端怎么样才能知道该客户端的session存储在哪个文件呢？其实也是通过cookie PHPSESSID来进行标识。</p>
+<p><img src="http://qiniu.fengmumiao.com/zyqeQn.png">      <br>php中session的cookie标识</p>
+<p>php在进行session操作的时候会生成一个session id，而后把这个值以cookie的形式保存在客户端，就是图示中的PHPSESSID了。客户端在下次请求的时候就会带上这个PHPSESSID，服务端就能知道当前客户端对应的session文件了。</p>
+<h3 id="session超时设置"><a href="#session超时设置" class="headerlink" title="session超时设置"></a>session超时设置</h3><p>cookie超时设置比较简单，一个参数就搞定了。session这边有点小麻烦，既不能单独设置cookie PHPSESSID的超时时间，也不能单独设置服务端文件的超时时间。具体的可以参考鸟哥这篇文章：如何设置一个严格30分钟过期的Session，真的非常严谨，赞一下。</p>
+<h3 id="session服务器共享"><a href="#session服务器共享" class="headerlink" title="session服务器共享"></a>session服务器共享</h3><p>这个问题和cookie的跨域类似，面试的时候也很爱聊这个问题。 以前在做服务器集群的时候会碰到这样的一样问题，就是用户一会访问是处于正常登录状态，一会访问又没有登录了。这个问题偶尔才会出现。跟踪代码下去才发现session没有取到相应的值，想想也是醉了：原来服务器session没有设置共享，session存在在本地文件目录，当用户访问另外一台服务器的时候自然就取不到session了。 解决方法也不难，通过共享的存储在进行服务器之间的共享。这里使用redis的进行session存储。可以通过php.ini配置文件进行调整，也可以在代码中通过ini_set进行调整</p>
+<p>ini_set(“session.save_handler”, “redis”);<br>ini_set(“session.save_path”, “tcp://127.0.0.1:6379”);</p>
+<p>如果需要使用redis进行存储，需要session中的Registered save handlers支持redis</p>
+<p><img src="http://7xnd02.com1.z0.glb.clouddn.com/VRFNfyQ.png">       </p>
+<p>php中session是否支持redis</p>
+<p>当这样设置之后，session就会保存在redis中了，不同的集群服务器之间就可以通过该redis服务器进行共享了。 好吧，暂时就写到这里了，以后会发现新的坑会继续补充上来。</p>
+]]></content>
+      <categories>
+        <category>WEB技术</category>
+      </categories>
+      <tags>
+        <tag>WEB技术</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>equals和==区别</title>
     <url>/2017/05/19/equals%E5%92%8C%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<p>通俗点讲，==是看看左右是不是一个东西。equals是看看左右是不是长得一样。 如何记住嘛。如果单纯是想记住， ==：等于。 equals：相同。 两个长得一样的人，只能说长的相同(equals)，但是不等于他们俩是一个人。你只要记住equals，==就不用记了。 楼主你感受一下。 ——————————————————————————— 术语来讲的区别： 1.==是判断两个变量或实例是不是指向同一个内存空间 equals是判断两个变量或实例所指向的内存空间的值是不是相同 2.==是指对内存地址进行比较 equals()是对字符串的内容进行比较 3.==指引用是否相同 equals()指的是值是否相同</p>
@@ -540,7 +582,7 @@ setcookie("sso", $_GET["sso"]);
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#109;&#x61;&#x69;&#x6c;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#101;&#109;&#x61;&#x69;&#x6c;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#x65;&#109;&#x61;&#105;&#x6c;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#x65;&#109;&#x61;&#105;&#x6c;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#x63;&#x6f;&#x6d;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -663,7 +705,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;">&#103;&#105;&#x74;&#x40;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#64;&#x67;&#105;&#x74;&#104;&#x75;&#x62;&#46;&#99;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -913,54 +955,6 @@ wg.Wait()</code></pre>
       </tags>
   </entry>
   <entry>
-    <title>HashMap与HashTable的区别</title>
-    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
-<blockquote>
-<p>概览：</p>
-<p>hashmap</p>
-<p>线程不安全</p>
-<p>允许有null的键和值</p>
-<p>效率高一点、</p>
-<p>方法不是Synchronize的要提供外同步</p>
-<p>有containsvalue和containsKey方法</p>
-<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
-<p>HashMap是Hashtable的轻量级实现</p>
-<p>hashtable</p>
-<p>线程安全</p>
-<p>不允许有null的键和值</p>
-<p>效率稍低、</p>
-<p>方法是是Synchronize的</p>
-<p>有contains方法方法</p>
-<p>Hashtable 继承于Dictionary 类</p>
-<p>Hashtable 比HashMap 要旧</p>
-</blockquote>
-<p> </p>
-<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
-<ol>
-<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
-<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
-<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
-<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
-<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
-</ol>
-<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
-<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
-</ol>
-<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
-<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>guava缓存应用</title>
     <url>/2017/06/16/guava%E7%BC%93%E5%AD%98%E5%BA%94%E7%94%A8/</url>
     <content><![CDATA[<blockquote>
@@ -1128,6 +1122,54 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>HashMap与HashTable的区别</title>
+    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
+<blockquote>
+<p>概览：</p>
+<p>hashmap</p>
+<p>线程不安全</p>
+<p>允许有null的键和值</p>
+<p>效率高一点、</p>
+<p>方法不是Synchronize的要提供外同步</p>
+<p>有containsvalue和containsKey方法</p>
+<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
+<p>HashMap是Hashtable的轻量级实现</p>
+<p>hashtable</p>
+<p>线程安全</p>
+<p>不允许有null的键和值</p>
+<p>效率稍低、</p>
+<p>方法是是Synchronize的</p>
+<p>有contains方法方法</p>
+<p>Hashtable 继承于Dictionary 类</p>
+<p>Hashtable 比HashMap 要旧</p>
+</blockquote>
+<p> </p>
+<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
+<ol>
+<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
+<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
+<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
+<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
+<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
+</ol>
+<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
+<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
+</ol>
+<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
+<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>HashMap的工作原理</title>
     <url>/2017/06/18/hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -1196,6 +1238,30 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>Java中this和super的用法总结</title>
+    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p><strong>this</strong> </p>
+<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
+<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
+<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
+<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
+<p>super和this的异同：</p>
+<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java中常见的误解</title>
     <url>/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/</url>
     <content><![CDATA[<h5 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h5><p>Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。</p>
@@ -1223,30 +1289,6 @@ public void testCallableCache() throws Exception&#123;
 <p>[Ljava.lang.String;@45ee12a7</p>
 <p> </p>
 <p>很不幸你只知道这是个对象数组。如果你只有一个Object实例words，这样是不够的，你得调用下Arrays.toString(words)。这极其恶劣地破坏了封装的原则，在StackOverflow上面这也是最常见的一类问题。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java中this和super的用法总结</title>
-    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<p><strong>this</strong> </p>
-<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
-<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
-<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
-<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
-<p>super和this的异同：</p>
-<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
 ]]></content>
       <categories>
         <category>JAVA</category>
@@ -1381,6 +1423,44 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>json_encode json_decode 乱码问题</title>
+    <url>/2016/08/01/json-encode-json-decode-%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<p>使用json格式转换时发现中文乱码的问题，而且写接口的时候直接报错传输。 JSON和JS一样，对于客户端的字符都是以UTF8的形式进行处理的，也就是说，使用JSON作为提交和接收的数据格式时字符都采用UTF8编码处理，当我们的页面编码和数据库编码不是采用UTF8的时候，出现乱码问题，所以统一使用utf8编码。注意到json_encode只支持UTF8编码的字符，否则，中文乱码或者空值就出现了。 解决办法分为以下两个步骤。 Step1 保证在使用JSON处理的时候字符是以UTF8编码的。具体我们可以把数据库编码和页面编码都改为UTF8。我们公司网站坑的用gbk编码的话，可以在进行JSON处理前，把字符转为UTF8形式。</p>
+<?php  
+     $data="JSON中文";  
+     $newData=iconv("GB2312","UTF-8//IGNORE",$data);  
+     echo $newData;  
+     //ignore的意思是忽略转换时的错误，如果没有ignore参数，所有该字符后面的字符都不会被保存。  
+     //或是("GB2312","UTF-8",$data);  
+?>
+
+<p>  Step2 后台PHP页面（页面编码为UTF-8或者已经把字符转为UTF-8）使用json_encode将PHP中的array数组转为JSON字符串。例如：</p>
+<?php  
+    $testJSON=array('name'=>'中文字符串','value'=>'test');  
+    echo json_encode($testJSON);  
+?>
+
+<p>  查看输出结果为： {“name”:”\u4e2d\u6587\u5b57\u7b26\u4e32″,”value”:”test”} 可见即使用UTF8编码的字符，使用json_encode也出现了中文乱码。解决办法是在使用json_encode之前把字符用函数urlencode()处理一下，然后再json_encode，输出结果的时候在用函数urldecode()转回来。具体如下：</p>
+<?php 
+$testJSON=array('name'=>'中文字符串','value'=>'test'); 
+//echo json_encode($testJSON); 
+foreach ( $testJSON as $key => $value ) { 
+$testJSON\[$key\] = urlencode ( $value ); 
+} 
+echo urldecode ( json_encode ( $testJSON ) ); 
+?>
+
+<p>查看输出结果为： {“name”:”中文字符串”,”value”:”test”} 到此，成功地输出了中文字符。随意使用json_encode吧。这样子在PHP后台输出的JSON字符串在前台javascript中Ajax接收后eval出来也不会出现中文乱码，因为js在处理JSON格式数据是也是以UTF8的形式进行的，与PHP类似，故接收PHP页面的JSON字符串不会出现问题。</p>
+]]></content>
+      <categories>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JQuery动态修改a标签链接地址</title>
     <url>/2017/02/10/jquery%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9a%E6%A0%87%E7%AD%BE%E9%93%BE%E6%8E%A5%E5%9C%B0%E5%9D%80/</url>
     <content><![CDATA[<p>在一个项目中，想隐藏真实的链接地址，使用JQuery的事件可以解决这个问题，代码如下：</p>
@@ -1424,44 +1504,6 @@ public void testCallableCache() throws Exception&#123;
       <tags>
         <tag>JS</tag>
         <tag>内存溢出</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>json_encode json_decode 乱码问题</title>
-    <url>/2016/08/01/json-encode-json-decode-%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<p>使用json格式转换时发现中文乱码的问题，而且写接口的时候直接报错传输。 JSON和JS一样，对于客户端的字符都是以UTF8的形式进行处理的，也就是说，使用JSON作为提交和接收的数据格式时字符都采用UTF8编码处理，当我们的页面编码和数据库编码不是采用UTF8的时候，出现乱码问题，所以统一使用utf8编码。注意到json_encode只支持UTF8编码的字符，否则，中文乱码或者空值就出现了。 解决办法分为以下两个步骤。 Step1 保证在使用JSON处理的时候字符是以UTF8编码的。具体我们可以把数据库编码和页面编码都改为UTF8。我们公司网站坑的用gbk编码的话，可以在进行JSON处理前，把字符转为UTF8形式。</p>
-<?php  
-     $data="JSON中文";  
-     $newData=iconv("GB2312","UTF-8//IGNORE",$data);  
-     echo $newData;  
-     //ignore的意思是忽略转换时的错误，如果没有ignore参数，所有该字符后面的字符都不会被保存。  
-     //或是("GB2312","UTF-8",$data);  
-?>
-
-<p>  Step2 后台PHP页面（页面编码为UTF-8或者已经把字符转为UTF-8）使用json_encode将PHP中的array数组转为JSON字符串。例如：</p>
-<?php  
-    $testJSON=array('name'=>'中文字符串','value'=>'test');  
-    echo json_encode($testJSON);  
-?>
-
-<p>  查看输出结果为： {“name”:”\u4e2d\u6587\u5b57\u7b26\u4e32″,”value”:”test”} 可见即使用UTF8编码的字符，使用json_encode也出现了中文乱码。解决办法是在使用json_encode之前把字符用函数urlencode()处理一下，然后再json_encode，输出结果的时候在用函数urldecode()转回来。具体如下：</p>
-<?php 
-$testJSON=array('name'=>'中文字符串','value'=>'test'); 
-//echo json_encode($testJSON); 
-foreach ( $testJSON as $key => $value ) { 
-$testJSON\[$key\] = urlencode ( $value ); 
-} 
-echo urldecode ( json_encode ( $testJSON ) ); 
-?>
-
-<p>查看输出结果为： {“name”:”中文字符串”,”value”:”test”} 到此，成功地输出了中文字符。随意使用json_encode吧。这样子在PHP后台输出的JSON字符串在前台javascript中Ajax接收后eval出来也不会出现中文乱码，因为js在处理JSON格式数据是也是以UTF8的形式进行的，与PHP类似，故接收PHP页面的JSON字符串不会出现问题。</p>
-]]></content>
-      <categories>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -1689,7 +1731,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#x72;&#111;&#111;&#116;&#64;&#49;&#x39;&#x32;&#x2e;&#x31;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#50;">&#x72;&#111;&#111;&#116;&#64;&#49;&#x39;&#x32;&#x2e;&#x31;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#50;</a></p>
+<p>ssh <a href="mailto:&#114;&#111;&#x6f;&#116;&#64;&#49;&#57;&#50;&#x2e;&#49;&#54;&#x38;&#46;&#53;&#53;&#46;&#50;&#52;&#50;">&#114;&#111;&#x6f;&#116;&#64;&#49;&#57;&#50;&#x2e;&#49;&#54;&#x38;&#46;&#53;&#53;&#46;&#50;&#52;&#50;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1709,11 +1751,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#50;&#x34;&#x32;">&#x62;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#50;&#x34;&#x32;</a></p>
+<p>exit<br>ssh <a href="mailto:&#98;&#105;&#x6c;&#108;&#64;&#x31;&#x32;&#56;&#x2e;&#x31;&#57;&#x39;&#x2e;&#x32;&#48;&#57;&#x2e;&#50;&#x34;&#50;">&#98;&#105;&#x6c;&#108;&#64;&#x31;&#x32;&#56;&#x2e;&#x31;&#57;&#x39;&#x2e;&#x32;&#48;&#57;&#x2e;&#50;&#x34;&#50;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#50;&#x34;&#x32;">&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#50;&#x34;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#x69;&#108;&#108;&#x40;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#57;&#x2e;&#x32;&#48;&#57;&#46;&#x32;&#x34;&#x32;">&#x62;&#x69;&#108;&#108;&#x40;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#57;&#x2e;&#x32;&#48;&#57;&#46;&#x32;&#x34;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -2470,8 +2512,8 @@ echo $callback . '(' . $tmp .')';  //返回格式，必需
       </categories>
       <tags>
         <tag>JS</tag>
-        <tag>JQuery</tag>
         <tag>PHP</tag>
+        <tag>JQuery</tag>
       </tags>
   </entry>
   <entry>
