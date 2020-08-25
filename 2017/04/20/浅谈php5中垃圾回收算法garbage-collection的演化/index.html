@@ -19,13 +19,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"blog.onwise.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="前言PHP是一门托管型语言，在PHP编程中程序员不需要手工处理内存资源的分配与释放（使用C编写PHP或Zend扩展除外），这就意味着PHP本身实现了垃圾回收机制（Garbage Collection）。现在如果去PHP官方网站（php.net）可以看到，目前PHP5的两个分支版本PHP5.2和PHP5.3是分别更新的，这是因为许多项目仍然使用5.2版本的PHP，而5.3版本对5.2并不是完全兼容。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈PHP5中垃圾回收算法(Garbage Collection)的演化">
-<meta property="og:url" content="locallhost/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/index.html">
+<meta property="og:url" content="blog.onwise.xyz/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="前言PHP是一门托管型语言，在PHP编程中程序员不需要手工处理内存资源的分配与释放（使用C编写PHP或Zend扩展除外），这就意味着PHP本身实现了垃圾回收机制（Garbage Collection）。现在如果去PHP官方网站（php.net）可以看到，目前PHP5的两个分支版本PHP5.2和PHP5.3是分别更新的，这是因为许多项目仍然使用5.2版本的PHP，而5.3版本对5.2并不是完全兼容。">
 <meta property="og:locale">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://images.cnblogs.com/cnblogs_com/leoo2sk/201102/201102261654241747.png">
 
-<link rel="canonical" href="locallhost/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/">
+<link rel="canonical" href="blog.onwise.xyz/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/">
 
 
 <script id="page-configurations">
@@ -196,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="locallhost/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2017/04/20/%E6%B5%85%E8%B0%88php5%E4%B8%AD%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95garbage-collection%E7%9A%84%E6%BC%94%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -385,7 +385,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

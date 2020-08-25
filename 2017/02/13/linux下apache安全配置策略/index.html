@@ -19,24 +19,24 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"blog.onwise.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Apache具有灵活的设置，所有Apache的安全特性都要经过周密的设计与规划，进行认真地配置才能够实现。Apache安全配置包括很多层面，有运行环境、认证与授权设置等。Apache的安装配置和运行示例如下：  1、基本配置 1) 修改apache的版本信息，使外部访问看到的apache信息是经过伪装或错误的，这个可以尽可能的保证apache的安全。 2) 建立安全的apache的目录结构。Se">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux下apache安全配置策略">
-<meta property="og:url" content="locallhost/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/index.html">
+<meta property="og:url" content="blog.onwise.xyz/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="Apache具有灵活的设置，所有Apache的安全特性都要经过周密的设计与规划，进行认真地配置才能够实现。Apache安全配置包括很多层面，有运行环境、认证与授权设置等。Apache的安装配置和运行示例如下：  1、基本配置 1) 修改apache的版本信息，使外部访问看到的apache信息是经过伪装或错误的，这个可以尽可能的保证apache的安全。 2) 建立安全的apache的目录结构。Se">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-02-12T16:13:48.000Z">
 <meta property="article:modified_time" content="2020-08-19T09:05:56.736Z">
 <meta property="article:author" content="FengQiang">
-<meta property="article:tag" content="服务器">
 <meta property="article:tag" content="Apache">
+<meta property="article:tag" content="服务器">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="locallhost/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/">
+<link rel="canonical" href="blog.onwise.xyz/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/">
 
 
 <script id="page-configurations">
@@ -194,7 +194,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="locallhost/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/">
+    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2017/02/13/linux%E4%B8%8Bapache%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -292,8 +292,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 服务器</a>
               <a href="/tags/Apache/" rel="tag"><i class="fa fa-tag"></i> Apache</a>
+              <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 服务器</a>
           </div>
 
         
@@ -383,7 +383,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

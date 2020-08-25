@@ -19,13 +19,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"locallhost","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"blog.onwise.xyz","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="之前搭建mongo副本集时，好多地方提到了仲裁节点的概念，说的云里雾里，后来去我大知乎看下找到了满意的答案 &gt; https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;27648448 总结俩点就是 1. 为什么使用奇数个数成员？ 假设一种场景，偶数8节点，IDC网络故障发生分裂，,这两个分裂后的IDC各持有4个节点，因为投票数未超过半数，所以无法选举出新Primary。 2. 仲裁节">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MongDB之仲裁节点">
-<meta property="og:url" content="locallhost/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/index.html">
+<meta property="og:url" content="blog.onwise.xyz/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="之前搭建mongo副本集时，好多地方提到了仲裁节点的概念，说的云里雾里，后来去我大知乎看下找到了满意的答案 &gt; https:&#x2F;&#x2F;www.zhihu.com&#x2F;question&#x2F;27648448 总结俩点就是 1. 为什么使用奇数个数成员？ 假设一种场景，偶数8节点，IDC网络故障发生分裂，,这两个分裂后的IDC各持有4个节点，因为投票数未超过半数，所以无法选举出新Primary。 2. 仲裁节">
 <meta property="og:locale">
@@ -35,7 +35,7 @@
 <meta property="article:tag" content="MongoDB">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="locallhost/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/">
+<link rel="canonical" href="blog.onwise.xyz/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/">
 
 
 <script id="page-configurations">
@@ -193,7 +193,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="locallhost/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/">
+    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2017/01/23/mongdb%E4%B9%8B%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -381,7 +381,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-count">94</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
