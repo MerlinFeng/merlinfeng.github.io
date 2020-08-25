@@ -1265,7 +1265,7 @@ img:hover {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #1c530e;
+  background: #1cb567;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1635,6 +1635,9 @@ img:hover {
 }
 .use-motion .collection-header {
   opacity: 0;
+}
+.post-body a {
+  color: #428bca;
 }
 .posts-collapse {
   margin-left: 35px;
@@ -2041,6 +2044,13 @@ img:hover {
 }
 #qr p {
   text-align: center;
+}
+.post-copyright {
+  background: var(--card-bg-color);
+  border-left: 3px solid #ff2a2a;
+  list-style: none;
+  margin: 2em 0 0;
+  padding: 0.5em 1em;
 }
 .category-all-page .category-all-title {
   text-align: center;

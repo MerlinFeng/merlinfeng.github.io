@@ -204,28 +204,6 @@
       </tags>
   </entry>
   <entry>
-    <title>bootstrap modal 弹窗 数据清除</title>
-    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
-    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
-<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
-<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
-<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
-<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
-<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
-<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
-]]></content>
-      <categories>
-        <category>JAVAScript</category>
-        <category>编程</category>
-      </categories>
-      <tags>
-        <tag>JS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Apache 配置虚拟主机</title>
     <url>/2017/02/12/apache-%E9%85%8D%E7%BD%AE%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA/</url>
     <content><![CDATA[<p> </p>
@@ -272,6 +250,28 @@
       <tags>
         <tag>服务器</tag>
         <tag>Apache</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>bootstrap modal 弹窗 数据清除</title>
+    <url>/2015/09/13/bootstrap-modal-%E5%BC%B9%E7%AA%97-%E6%95%B0%E6%8D%AE%E6%B8%85%E9%99%A4/</url>
+    <content><![CDATA[<p>bootstrap modal操作简单易用， 但是发现当用于弹出不同的编辑页面时，数据总是显示第一次的数据， 查了好久是这样的：</p>
+<p>//清除弹窗原数据<br>$(“#create_modal”).on(“hidden.bs.modal”, <strong>function</strong>() {<br>    $(<strong>this</strong>).removeData(“bs.modal”);<br>});</p>
+<p><strong>另附上modal一些触发函数</strong> 事件描述实例show.bs.modal在调用 show 方法后触发。</p>
+<p>$(‘#identifier’).on(‘show.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>shown.bs.modal当模态框对用户可见时触发（将等待 CSS 过渡效果完成）。</p>
+<p>$(‘#identifier’).on(‘shown.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hide.bs.modal当调用 hide 实例方法时触发。</p>
+<p>$(‘#identifier’).on(‘hide.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+<p>hidden.bs.modal当模态框完全对用户隐藏时触发。</p>
+<p>$(‘#identifier’).on(‘hidden.bs.modal’, function () {<br>  // 执行一些动作…<br>})</p>
+]]></content>
+      <categories>
+        <category>JAVAScript</category>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JS</tag>
       </tags>
   </entry>
   <entry>
@@ -540,7 +540,7 @@ setcookie("sso", $_GET["sso"]);
 <p>查看是否安装git:</p>
 <p>$ git<br>The program ‘git’ is currently not installed.<br>You can install it by typing: sudo apt-get install git</p>
 <p>  安装git命令：<strong>sudo apt-get install git （cenos使用yum install）</strong>   安装完成后，还需要最后一步设置，在命令行输入：</p>
-<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#x6d;&#x61;&#x69;&#108;&#64;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;">&#101;&#x6d;&#x61;&#x69;&#108;&#64;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#x63;&#111;&#x6d;</a>]“</p>
+<p>$ git config –global user.name “Your Name”<br>$ git config –global user.email “[<a href="mailto:&#101;&#109;&#x61;&#x69;&#x6c;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;">&#101;&#109;&#x61;&#x69;&#x6c;&#x40;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#x6d;</a>]“</p>
 <p> </p>
 <blockquote>
 <p>因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，首先我们相信大家都是善良无知的群众，其次，真的有冒充的也是有办法可查的。</p>
@@ -663,7 +663,7 @@ setcookie("sso", $_GET["sso"]);
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#x63;&#x6f;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;">&#x67;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#116;&#x68;&#x75;&#98;&#x2e;&#99;&#111;&#x6d;</a>](mailto:<a href="mailto:&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#x69;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#98;&#x2e;&#99;&#x6f;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 ]]></content>
       <categories>
@@ -672,17 +672,6 @@ setcookie("sso", $_GET["sso"]);
       </categories>
       <tags>
         <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Slice扩容分析</title>
-    <url>/2019/05/08/golang_slice_append/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>Go</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -924,6 +913,54 @@ wg.Wait()</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>HashMap与HashTable的区别</title>
+    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
+<blockquote>
+<p>概览：</p>
+<p>hashmap</p>
+<p>线程不安全</p>
+<p>允许有null的键和值</p>
+<p>效率高一点、</p>
+<p>方法不是Synchronize的要提供外同步</p>
+<p>有containsvalue和containsKey方法</p>
+<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
+<p>HashMap是Hashtable的轻量级实现</p>
+<p>hashtable</p>
+<p>线程安全</p>
+<p>不允许有null的键和值</p>
+<p>效率稍低、</p>
+<p>方法是是Synchronize的</p>
+<p>有contains方法方法</p>
+<p>Hashtable 继承于Dictionary 类</p>
+<p>Hashtable 比HashMap 要旧</p>
+</blockquote>
+<p> </p>
+<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
+<ol>
+<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
+<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
+<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
+<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
+<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
+</ol>
+<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
+<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
+</ol>
+<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
+<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>guava缓存应用</title>
     <url>/2017/06/16/guava%E7%BC%93%E5%AD%98%E5%BA%94%E7%94%A8/</url>
     <content><![CDATA[<blockquote>
@@ -1091,54 +1128,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>HashMap与HashTable的区别</title>
-    <url>/2017/06/18/hashmap%E4%B8%8Ehashtable%E7%9A%84%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<p><strong>HashMap和Hashtable的区别</strong></p>
-<blockquote>
-<p>概览：</p>
-<p>hashmap</p>
-<p>线程不安全</p>
-<p>允许有null的键和值</p>
-<p>效率高一点、</p>
-<p>方法不是Synchronize的要提供外同步</p>
-<p>有containsvalue和containsKey方法</p>
-<p>HashMap 是Java1.2 引进的Map interface 的一个实现</p>
-<p>HashMap是Hashtable的轻量级实现</p>
-<p>hashtable</p>
-<p>线程安全</p>
-<p>不允许有null的键和值</p>
-<p>效率稍低、</p>
-<p>方法是是Synchronize的</p>
-<p>有contains方法方法</p>
-<p>Hashtable 继承于Dictionary 类</p>
-<p>Hashtable 比HashMap 要旧</p>
-</blockquote>
-<p> </p>
-<p>HashMap和Hashtable都实现了Map接口，但决定用哪一个之前先要弄清楚它们之间的分别。主要的区别有：线程安全性，同步(synchronization)，以及速度。</p>
-<ol>
-<li>HashMap几乎可以等价于Hashtable，除了HashMap是非synchronized的，并可以接受null(HashMap可以接受为null的键值(key)和值(value)，而Hashtable则不行)。</li>
-<li>HashMap是非synchronized，而Hashtable是synchronized，这意味着Hashtable是线程安全的，多个线程可以共享一个Hashtable；而如果没有正确的同步的话，多个线程是不能共享HashMap的。Java 5提供了ConcurrentHashMap，它是HashTable的替代，比HashTable的扩展性更好。</li>
-<li>另一个区别是HashMap的迭代器(Iterator)是fail-fast迭代器，而Hashtable的enumerator迭代器不是fail-fast的。所以当有其它线程改变了HashMap的结构（增加或者移除元素），将会抛出ConcurrentModificationException，但迭代器本身的remove()方法移除元素则不会抛出ConcurrentModificationException异常。但这并不是一个一定发生的行为，要看JVM。这条同样也是Enumeration和Iterator的区别。</li>
-<li>由于Hashtable是线程安全的也是synchronized，所以在单线程环境下它比HashMap要慢。如果你不需要同步，只需要单一线程，那么使用HashMap性能要好过Hashtable。</li>
-<li>HashMap不能保证随着时间的推移Map中的元素次序是不变的。</li>
-</ol>
-<h3 id="要注意的一些重要术语："><a href="#要注意的一些重要术语：" class="headerlink" title="要注意的一些重要术语："></a>要注意的一些重要术语：</h3><ol>
-<li>sychronized意味着在一次仅有一个线程能够更改Hashtable。就是说任何线程要更新Hashtable时要首先获得同步锁，其它线程要等到同步锁被释放之后才能再次获得同步锁更新Hashtable。 2) Fail-safe和iterator迭代器相关。如果某个集合对象创建了Iterator或者ListIterator，然后其它的线程试图“结构上”更改集合对象，将会抛出ConcurrentModificationException异常。但其它线程可以通过set()方法更改集合对象是允许的，因为这并没有从“结构上”更改集合。但是假如已经从结构上进行了更改，再调用set()方法，将会抛出IllegalArgumentException异常。 3) 结构上的更改指的是删除或者插入一个元素，这样会影响到map的结构。</li>
-</ol>
-<h3 id="我们能否让HashMap同步？"><a href="#我们能否让HashMap同步？" class="headerlink" title="我们能否让HashMap同步？"></a>我们能否让HashMap同步？</h3><p>HashMap可以通过下面的语句进行同步： Map m = Collections.synchronizeMap(hashMap);</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>Hashtable和HashMap有几个主要的不同：线程安全以及速度。仅在你需要完全的线程安全的时候使用Hashtable，而如果你使用Java 5或以上的话，请使用ConcurrentHashMap吧。</p>
-<p>1 HashMap不是线程安全的 HashMap是map接口的子类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而hashtable不允许。 2   HashTable是线程安全。 HashMap是Hashtable的轻量级实现（非线程安全的实现），他们都完成了Map接口，主要区别在于HashMap允许空（null）键值（key）,由于非线程安全，效率上可能高于Hashtable。 HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。 HashMap把Hashtable的contains方法去掉了，改成containsvalue和containsKey。因为contains方法容易让人引起误解。 Hashtable继承自Dictionary类，而HashMap是Java1.2引进的Map interface的一个实现。 最大的不同是，Hashtable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap 就必须为之提供外同步。 Hashtable和HashMap采用的hash/rehash算法都大概一样，所以性能不会有很大的差。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-        <tag>JAVA基础</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>HashMap的工作原理</title>
     <url>/2017/06/18/hashmap%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</url>
     <content><![CDATA[<blockquote>
@@ -1207,30 +1196,6 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
-    <title>Java中this和super的用法总结</title>
-    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<p><strong>this</strong> </p>
-<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
-<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
-<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
-<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
-<p>super和this的异同：</p>
-<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java中常见的误解</title>
     <url>/2017/05/30/java%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AF%AF%E8%A7%A3/</url>
     <content><![CDATA[<h5 id="概述"><a href="#概述" class="headerlink" title="概述"></a><strong>概述</strong></h5><p>Java是门极简风格的语言，比其它语言相比，它故意保持较少的特性，不仅在有些不常见的情况下会出些奇奇怪怪的错误，即使很一般的情况下也有可能让人栽根头。 如果你习惯了别的语言，你读Java 的代码很容易搞错一些概念。</p>
@@ -1258,6 +1223,30 @@ public void testCallableCache() throws Exception&#123;
 <p>[Ljava.lang.String;@45ee12a7</p>
 <p> </p>
 <p>很不幸你只知道这是个对象数组。如果你只有一个Object实例words，这样是不够的，你得调用下Arrays.toString(words)。这极其恶劣地破坏了封装的原则，在StackOverflow上面这也是最常见的一类问题。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java中this和super的用法总结</title>
+    <url>/2017/05/04/java%E4%B8%ADthis%E5%92%8Csuper%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p><strong>this</strong> </p>
+<p>this是自身的一个对象，代表对象本身，可以理解为：指向对象本身的一个指针。 this的用法在java中大体可以分为3种：<br> 1.普通的直接引用 这种就不用讲了，this相当于是指向当前对象本身。<br> 2.形参与成员名字重名，用this来区分：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123;</span><br><span class="line">    private int age &#x3D; 10;</span><br><span class="line">    public Person()&#123;</span><br><span class="line">    System.out.println(&quot;初始化年龄：&quot;+age);</span><br><span class="line">&#125;</span><br><span class="line">    public int GetAge(int age)&#123;</span><br><span class="line">        this.age &#x3D; age;</span><br><span class="line">        return this.age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public class test1 &#123;</span><br><span class="line">    public static void main(String\[\] args) &#123;</span><br><span class="line">        Person Harry &#x3D; new Person();</span><br><span class="line">        System.out.println(&quot;Harry&#39;s age is &quot;+Harry.GetAge(12));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 初始化年龄：10 Harry’s age is 12 可以看到，这里age是GetAge成员方法的形参，this.age是Person类的成员变量。 </p>
+<p>3.引用构造函数 这个和super放在一起讲，见下面。</p>
+<p><strong>super</strong><br>super可以理解为是指向自己超（父）类对象的一个指针，而这个超类指的是离自己最近的一个父类。 super也有三种用法：<br>1.普通的直接引用 与this类似，super相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员。<br>2.子类中的成员变量或方法与父类中的成员变量或方法同名  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">       name &#x3D; &quot;China&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">class City extends Country &#123;</span><br><span class="line">    String name;</span><br><span class="line">    void value() &#123;</span><br><span class="line">    name &#x3D; &quot;Shanghai&quot;;</span><br><span class="line">    super.value();      &#x2F;&#x2F;调用父类的方法</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    System.out.println(super.name);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">       City c&#x3D;new City();</span><br><span class="line">       c.value();</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  运行结果： Shanghai China 可以看到，这里既调用了父类的方法，也调用了父类的变量。若不调用父类方法value()，只调用父类变量name的话，则父类name值为默认值null。 </p>
+<p>3.引用构造函数 super（参数）：调用父类中的某一个构造函数（应该为构造函数中的第一条语句）。 this（参数）：调用本类中另一种形式的构造函数（应该为构造函数中的第一条语句）。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class Person &#123; </span><br><span class="line">    public static void prt(String s) &#123; </span><br><span class="line">       System.out.println(s); </span><br><span class="line">    &#125; </span><br><span class="line">   </span><br><span class="line">    Person() &#123; </span><br><span class="line">       prt(&quot;父类·无参数构造方法： &quot;+&quot;A Person.&quot;); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(1) </span><br><span class="line">    </span><br><span class="line">    Person(String name) &#123; </span><br><span class="line">       prt(&quot;父类·含一个参数的构造方法： &quot;+&quot;A person&#39;s name is &quot; + name); </span><br><span class="line">    &#125;&#x2F;&#x2F;构造方法(2) </span><br><span class="line">&#125; </span><br><span class="line">    </span><br><span class="line">public class Chinese extends Person &#123; </span><br><span class="line">    Chinese() &#123; </span><br><span class="line">       super(); &#x2F;&#x2F; 调用父类构造方法（1） </span><br><span class="line">       prt(&quot;子类·调用父类”无参数构造方法“： &quot;+&quot;A chinese coder.&quot;); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name) &#123; </span><br><span class="line">       super(name);&#x2F;&#x2F; 调用父类具有相同形参的构造方法（2） </span><br><span class="line">       prt(&quot;子类·调用父类”含一个参数的构造方法“： &quot;+&quot;his name is &quot; + name); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    Chinese(String name, int age) &#123; </span><br><span class="line">       this(name);&#x2F;&#x2F; 调用具有相同形参的构造方法（3） </span><br><span class="line">       prt(&quot;子类：调用子类具有相同形参的构造方法：his age is &quot; + age); </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    public static void main(String\[\] args) &#123; </span><br><span class="line">       Chinese cn &#x3D; new Chinese(); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;); </span><br><span class="line">       cn &#x3D; new Chinese(&quot;codersai&quot;, 18); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果： 父类·无参数构造方法： A Person. 子类·调用父类”无参数构造方法“： A chinese coder. 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 父类·含一个参数的构造方法： A person’s name is codersai 子类·调用父类”含一个参数的构造方法“： his name is codersai 子类：调用子类具有相同形参的构造方法：his age is 18 从本例可以看到，可以用super和this分别调用父类的构造方法和本类中其他形式的构造方法。 例子中Chinese类第三种构造方法调用的是本类中第二种构造方法，而第二种构造方法是调用父类的，因此也要先调用父类的构造方法，再调用本类中第二种，最后是重写第三种构造方法。 </p>
+<p>super和this的异同：</p>
+<p>super（参数）：调用基类中的某一个构造函数（应该为构造函数中的第一条语句<br>this（参数）：调用本类中另一种形成的构造函数（应该为构造函数中的第一条语句）<br>super:　它引用当前对象的直接父类中的成员（用来访问直接父类中被隐藏的父类中成员数据或函数，基类与派生类中有相同成员定义时如：super.变量名 super.成员函数据名（实参） this：它代表当前对象名（在程序中易产生二义性之处，应使用this来指明当前对象；如果函数的形参与类中的成员数据同名，这时需用this来指明成员变量名） 调用super()必须写在子类构造方法的第一行，否则编译不通过。每个子类构造方法的第一条语句，都是隐含地调用super()，如果父类没有这种形式的构造函数，那么在编译的时候就会报错。 super()和this()类似,区别是，super()从子类中调用父类的构造方法，this()在同一类内调用其它方法。<br> super()和this()均需放在构造方法内第一行。 尽管可以用this调用一个构造器，但却不能调用两个。 this和super不能同时出现在一个构造函数里面，因为this必然会调用其它的构造函数，其它的构造函数必然也会有super语句的存在，所以在同一个构造函数里面有相同的语句，就失去了语句的意义，编译器也不会通过。 this()和super()都指的是对象，所以，均不可以在static环境中使用。包括：static变量,static方法，static语句块。 从本质上讲，this是一个指向本对象的指针, 然而super是一个Java关键字。</p>
 ]]></content>
       <categories>
         <category>JAVA</category>
@@ -1410,6 +1399,34 @@ public void testCallableCache() throws Exception&#123;
       </tags>
   </entry>
   <entry>
+    <title>JS之闭包</title>
+    <url>/2015/02/19/js%E4%B9%8B%E9%97%AD%E5%8C%85/</url>
+    <content><![CDATA[<p>闭包（closure）是Javascript语言的一个难点，也是它的特色，很多高级应用都要依靠闭包实现。 下面就是我的学习笔记，对于Javascript初学者应该是很有用的。 <strong>一、变量的作用域</strong> 要理解闭包，首先必须理解Javascript特殊的变量作用域。 变量的作用域无非就是两种：全局变量和局部变量。 Javascript语言的特殊之处，就在于函数内部可以直接读取全局变量。</p>
+<p>var n=999;<br>　　function f1(){<br>　　　　alert(n);<br>　　}<br>　　f1(); // 999</p>
+<p>另一方面，在函数外部自然无法读取函数内的局部变量。</p>
+<p>function f1(){<br>　　　　var n=999;<br>　　}<br>　　alert(n); // error</p>
+<p>  这里有一个地方需要注意，函数内部声明变量的时候，一定要使用var命令。如果不用的话，你实际上声明了一个全局变量！</p>
+<p>function f1(){<br>　　　　n=999;<br>　　}<br>　　f1();<br>　　alert(n); // 999</p>
+<p>  <strong>二、如何从外部读取局部变量？</strong> 出于种种原因，我们有时候需要得到函数内的局部变量。但是，前面已经说过了，正常情况下，这是办不到的，只有通过变通方法才能实现。 那就是在函数的内部，再定义一个函数。</p>
+<p>function f1(){<br>　　　　var n=999;<br>　　　　function f2(){<br>　　　　　　alert(n); // 999<br>　　　　}<br>　　}</p>
+<p>在上面的代码中，函数f2就被包括在函数f1内部，这时f1内部的所有局部变量，对f2都是可见的。但是反过来就不行，f2内部的局部变量，对f1就是不可见的。这就是Javascript语言特有的”链式作用域”结构（chain scope），子对象会一级一级地向上寻找所有父对象的变量。所以，父对象的所有变量，对子对象都是可见的，反之则不成立。 既然f2可以读取f1中的局部变量，那么只要把f2作为返回值，我们不就可以在f1外部读取它的内部变量了吗！</p>
+<p>function f1(){<br>　　　　var n=999;<br>　　　　function f2(){<br>　　　　　　alert(n);<br>　　　　}<br>　　　　return f2;<br>　　}<br>　　var result=f1();<br>　　result(); // 999</p>
+<p><strong>三、闭包的概念</strong> 上一节代码中的f2函数，就是闭包。 各种专业文献上的”闭包”（closure）定义非常抽象，很难看懂。我的理解是，闭包就是能够读取其他函数内部变量的函数。 由于在Javascript语言中，只有函数内部的子函数才能读取局部变量，因此可以把闭包简单理解成”定义在一个函数内部的函数”。 所以，在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。 <strong>四、闭包的用途</strong> 闭包可以用在许多地方。它的最大用处有两个，一个是前面提到的可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。 怎么来理解这句话呢？请看下面的代码。</p>
+<p>function f1(){<br>　　　　var n=999;<br>　　　　nAdd=function(){n+=1}<br>　　　　function f2(){<br>　　　　　　alert(n);<br>　　　　}<br>　　　　return f2;<br>　　}<br>　　var result=f1();<br>　　result(); // 999<br>　　nAdd();<br>　　result(); // 1000</p>
+<p>在这段代码中，result实际上就是闭包f2函数。它一共运行了两次，第一次的值是999，第二次的值是1000。这证明了，函数f1中的局部变量n一直保存在内存中，并没有在f1调用后被自动清除。 为什么会这样呢？原因就在于f1是f2的父函数，而f2被赋给了一个全局变量，这导致f2始终在内存中，而f2的存在依赖于f1，因此f1也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。 这段代码中另一个值得注意的地方，就是”nAdd=function(){n+=1}”这一行，首先在nAdd前面没有使用var关键字，因此nAdd是一个全局变量，而不是局部变量。其次，nAdd的值是一个匿名函数（anonymous function），而这个匿名函数本身也是一个闭包，所以nAdd相当于是一个setter，可以在函数外部对函数内部的局部变量进行操作。 <strong>五、使用闭包的注意点</strong> 1）由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。 2）闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），这时一定要小心，不要随便改变父函数内部变量的值。 <strong>六、思考题</strong> 如果你能理解下面两段代码的运行结果，应该就算理解闭包的运行机制了。</p>
+<p>代码片段一。<br>　　var name = “The Window”;<br>　　var object = {<br>　　　　name : “My Object”,<br>　　　　getNameFunc : function(){<br>　　　　　　return function(){<br>　　　　　　　　return this.name;<br>　　　　　　};<br>　　　　}<br>　　};<br>　　alert(object.getNameFunc()());</p>
+<p>代码片段二。<br>　　var name = “The Window”;<br>　　var object = {<br>　　　　name : “My Object”,<br>　　　　getNameFunc : function(){<br>　　　　　　var that = this;<br>　　　　　　return function(){<br>　　　　　　　　return that.name;<br>　　　　　　};<br>　　　　}<br>　　};<br>　　alert(object.getNameFunc()());</p>
+]]></content>
+      <categories>
+        <category>JAVAScript</category>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JS</tag>
+        <tag>内存溢出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>json_encode json_decode 乱码问题</title>
     <url>/2016/08/01/json-encode-json-decode-%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<p>使用json格式转换时发现中文乱码的问题，而且写接口的时候直接报错传输。 JSON和JS一样，对于客户端的字符都是以UTF8的形式进行处理的，也就是说，使用JSON作为提交和接收的数据格式时字符都采用UTF8编码处理，当我们的页面编码和数据库编码不是采用UTF8的时候，出现乱码问题，所以统一使用utf8编码。注意到json_encode只支持UTF8编码的字符，否则，中文乱码或者空值就出现了。 解决办法分为以下两个步骤。 Step1 保证在使用JSON处理的时候字符是以UTF8编码的。具体我们可以把数据库编码和页面编码都改为UTF8。我们公司网站坑的用gbk编码的话，可以在进行JSON处理前，把字符转为UTF8形式。</p>
@@ -1445,34 +1462,6 @@ echo urldecode ( json_encode ( $testJSON ) );
       </categories>
       <tags>
         <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JS之闭包</title>
-    <url>/2015/02/19/js%E4%B9%8B%E9%97%AD%E5%8C%85/</url>
-    <content><![CDATA[<p>闭包（closure）是Javascript语言的一个难点，也是它的特色，很多高级应用都要依靠闭包实现。 下面就是我的学习笔记，对于Javascript初学者应该是很有用的。 <strong>一、变量的作用域</strong> 要理解闭包，首先必须理解Javascript特殊的变量作用域。 变量的作用域无非就是两种：全局变量和局部变量。 Javascript语言的特殊之处，就在于函数内部可以直接读取全局变量。</p>
-<p>var n=999;<br>　　function f1(){<br>　　　　alert(n);<br>　　}<br>　　f1(); // 999</p>
-<p>另一方面，在函数外部自然无法读取函数内的局部变量。</p>
-<p>function f1(){<br>　　　　var n=999;<br>　　}<br>　　alert(n); // error</p>
-<p>  这里有一个地方需要注意，函数内部声明变量的时候，一定要使用var命令。如果不用的话，你实际上声明了一个全局变量！</p>
-<p>function f1(){<br>　　　　n=999;<br>　　}<br>　　f1();<br>　　alert(n); // 999</p>
-<p>  <strong>二、如何从外部读取局部变量？</strong> 出于种种原因，我们有时候需要得到函数内的局部变量。但是，前面已经说过了，正常情况下，这是办不到的，只有通过变通方法才能实现。 那就是在函数的内部，再定义一个函数。</p>
-<p>function f1(){<br>　　　　var n=999;<br>　　　　function f2(){<br>　　　　　　alert(n); // 999<br>　　　　}<br>　　}</p>
-<p>在上面的代码中，函数f2就被包括在函数f1内部，这时f1内部的所有局部变量，对f2都是可见的。但是反过来就不行，f2内部的局部变量，对f1就是不可见的。这就是Javascript语言特有的”链式作用域”结构（chain scope），子对象会一级一级地向上寻找所有父对象的变量。所以，父对象的所有变量，对子对象都是可见的，反之则不成立。 既然f2可以读取f1中的局部变量，那么只要把f2作为返回值，我们不就可以在f1外部读取它的内部变量了吗！</p>
-<p>function f1(){<br>　　　　var n=999;<br>　　　　function f2(){<br>　　　　　　alert(n);<br>　　　　}<br>　　　　return f2;<br>　　}<br>　　var result=f1();<br>　　result(); // 999</p>
-<p><strong>三、闭包的概念</strong> 上一节代码中的f2函数，就是闭包。 各种专业文献上的”闭包”（closure）定义非常抽象，很难看懂。我的理解是，闭包就是能够读取其他函数内部变量的函数。 由于在Javascript语言中，只有函数内部的子函数才能读取局部变量，因此可以把闭包简单理解成”定义在一个函数内部的函数”。 所以，在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。 <strong>四、闭包的用途</strong> 闭包可以用在许多地方。它的最大用处有两个，一个是前面提到的可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。 怎么来理解这句话呢？请看下面的代码。</p>
-<p>function f1(){<br>　　　　var n=999;<br>　　　　nAdd=function(){n+=1}<br>　　　　function f2(){<br>　　　　　　alert(n);<br>　　　　}<br>　　　　return f2;<br>　　}<br>　　var result=f1();<br>　　result(); // 999<br>　　nAdd();<br>　　result(); // 1000</p>
-<p>在这段代码中，result实际上就是闭包f2函数。它一共运行了两次，第一次的值是999，第二次的值是1000。这证明了，函数f1中的局部变量n一直保存在内存中，并没有在f1调用后被自动清除。 为什么会这样呢？原因就在于f1是f2的父函数，而f2被赋给了一个全局变量，这导致f2始终在内存中，而f2的存在依赖于f1，因此f1也始终在内存中，不会在调用结束后，被垃圾回收机制（garbage collection）回收。 这段代码中另一个值得注意的地方，就是”nAdd=function(){n+=1}”这一行，首先在nAdd前面没有使用var关键字，因此nAdd是一个全局变量，而不是局部变量。其次，nAdd的值是一个匿名函数（anonymous function），而这个匿名函数本身也是一个闭包，所以nAdd相当于是一个setter，可以在函数外部对函数内部的局部变量进行操作。 <strong>五、使用闭包的注意点</strong> 1）由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。 2）闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），这时一定要小心，不要随便改变父函数内部变量的值。 <strong>六、思考题</strong> 如果你能理解下面两段代码的运行结果，应该就算理解闭包的运行机制了。</p>
-<p>代码片段一。<br>　　var name = “The Window”;<br>　　var object = {<br>　　　　name : “My Object”,<br>　　　　getNameFunc : function(){<br>　　　　　　return function(){<br>　　　　　　　　return this.name;<br>　　　　　　};<br>　　　　}<br>　　};<br>　　alert(object.getNameFunc()());</p>
-<p>代码片段二。<br>　　var name = “The Window”;<br>　　var object = {<br>　　　　name : “My Object”,<br>　　　　getNameFunc : function(){<br>　　　　　　var that = this;<br>　　　　　　return function(){<br>　　　　　　　　return that.name;<br>　　　　　　};<br>　　　　}<br>　　};<br>　　alert(object.getNameFunc()());</p>
-]]></content>
-      <categories>
-        <category>JAVAScript</category>
-        <category>编程</category>
-      </categories>
-      <tags>
-        <tag>JS</tag>
-        <tag>内存溢出</tag>
       </tags>
   </entry>
   <entry>
@@ -1700,7 +1689,7 @@ function validId15(_id){
     <url>/2016/12/23/linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>开发网站的时候，常常需要自己配置Linux服务器。 本文记录配置Linux服务器的初步流程，也就是系统安装完成后，下一步要做的事情。如果有遗漏，欢迎大家补充。 下面的操作针对Debian/Ubuntu系统，其他Linux系统也类似，就是部分命令稍有不同。  </p>
 <h2 id="第一步：root用户登录"><a href="#第一步：root用户登录" class="headerlink" title="第一步：root用户登录"></a>第一步：root用户登录</h2><p>首先，使用root用户登录远程主机（假定IP地址是192.168.55.242）。  </p>
-<p>ssh <a href="mailto:&#114;&#111;&#111;&#x74;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#56;&#x2e;&#53;&#x35;&#x2e;&#x32;&#x34;&#50;">&#114;&#111;&#111;&#x74;&#64;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#56;&#x2e;&#53;&#x35;&#x2e;&#x32;&#x34;&#50;</a></p>
+<p>ssh <a href="mailto:&#x72;&#111;&#111;&#116;&#64;&#49;&#x39;&#x32;&#x2e;&#x31;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#50;">&#x72;&#111;&#111;&#116;&#64;&#49;&#x39;&#x32;&#x2e;&#x31;&#54;&#x38;&#x2e;&#x35;&#x35;&#46;&#x32;&#x34;&#50;</a></p>
 <p>  这时，命令行会出现警告，表示这是一个新的地址，存在安全风险。键入yes，表示接受。然后，就应该可以顺利登入远程主机。 接着，修改root用户的密码。  </p>
 <p>passwd</p>
 <h2 id="第二步：新建用户"><a href="#第二步：新建用户" class="headerlink" title="第二步：新建用户"></a>第二步：新建用户</h2><p>首先，添加一个用户组（这里假定为admin用户组）。  </p>
@@ -1720,11 +1709,11 @@ function validId15(_id){
 <p>上面的NOPASSWD表示，切换sudo的时候，不需要输入密码，我喜欢这样比较省事。如果出于安全考虑，也可以强制要求输入密码。</p>
 <p>root ALL=(ALL:ALL) ALL<br>bill ALL=(ALL:ALL) ALL</p>
 <p>然后，先退出root用户的登录，再用新用户的身份登录，检查到这一步为止，是否一切正常。</p>
-<p>exit<br>ssh <a href="mailto:&#x62;&#105;&#108;&#x6c;&#x40;&#49;&#x32;&#56;&#46;&#49;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#x32;">&#x62;&#105;&#108;&#x6c;&#x40;&#49;&#x32;&#56;&#46;&#49;&#x39;&#57;&#x2e;&#50;&#48;&#57;&#46;&#50;&#52;&#x32;</a></p>
+<p>exit<br>ssh <a href="mailto:&#x62;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#50;&#x34;&#x32;">&#x62;&#105;&#x6c;&#x6c;&#64;&#x31;&#50;&#56;&#46;&#x31;&#x39;&#x39;&#46;&#x32;&#x30;&#57;&#46;&#50;&#x34;&#x32;</a></p>
 <h2 id="第三步：SSH设置"><a href="#第三步：SSH设置" class="headerlink" title="第三步：SSH设置"></a>第三步：SSH设置</h2><p>首先，确定本机有SSH公钥（一般是文件~/.ssh/id_rsa.pub），如果没有的话，使用ssh-keygen命令生成一个。 3，配置公私秘钥对</p>
 <p>#生成秘钥<br>$ ssh-keygen –t rsa<br># 运行后根据提示执行<br># 输入秘钥文件的名称<br>$ Enter file in which to save the key (/root/.ssh/id_rsa):test<br># 可以设置ssh秘钥文件密码<br>$ Enter passphrase (empty for no passphrase):<br># 再一次输入刚刚的密码<br>$ Enter same passphrase again:<br># 完成后会在当前目录生成秘钥test和test.pub，这两个文件一个是私钥，一个是公钥<br># 复制公钥到规定文件，顾名思义，公钥是存放在公共的地方，也就是服务器上。私钥就是存放到私人的电脑上。<br>$ vim ~/.ssh/authorized_keys<br>复制test.pub里面的内容到该文件内，保存退出<br># 更改authorized_keys的权限为600<br>$ chmod 600 ~/.ssh/authorized_keys</p>
 <p>  在本机上另开一个shell窗口，将本机的公钥拷贝到服务器的authorized_keys文件。</p>
-<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#98;&#x69;&#108;&#108;&#64;&#49;&#x32;&#x38;&#x2e;&#x31;&#x39;&#57;&#46;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;">&#98;&#x69;&#108;&#108;&#64;&#49;&#x32;&#x38;&#x2e;&#x31;&#x39;&#57;&#46;&#50;&#48;&#x39;&#x2e;&#x32;&#x34;&#50;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
+<p>cat ~/.ssh/id_rsa.pub | ssh <a href="mailto:&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#50;&#x34;&#x32;">&#x62;&#105;&#108;&#108;&#64;&#x31;&#x32;&#56;&#46;&#49;&#x39;&#57;&#46;&#x32;&#x30;&#57;&#x2e;&#50;&#x34;&#x32;</a> ‘mkdir -p .ssh &amp;&amp; cat - &gt;&gt; ~/.ssh/authorized_keys’</p>
 <p># 或者在服务器端，运行下面命令</p>
 <p>echo “ssh-rsa [your public key]“ &gt; ~/.ssh/authorized_keys</p>
 <p>然后，进入服务器，编辑SSH配置文件/etc/ssh/sshd_config。</p>
@@ -2411,6 +2400,81 @@ LINES TERMINATED BY &#39;\\n&#39;;
       </tags>
   </entry>
   <entry>
+    <title>PHP Ajax跨域请求</title>
+    <url>/2017/02/14/php-ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82/</url>
+    <content><![CDATA[<p>  在开发过程中，有时会碰到需要请求其它服务器接口的问题，这时候就要jsonp来解决这个问题 html前端</p>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<script src="jquery-1.5.2.min.js"></script>
+<script src="ajax.js"></script>
+</head>
+
+<body>
+<form name="form">
+<input type="text" name="sex">
+<input type="text" name="age">
+<input type="button" id="btn" value="button" />
+</form>
+</body>
+</html>
+
+<p>js前端</p>
+<p>$(document).ready(function(){</p>
+<pre><code>$(&quot;#btn&quot;).click(function(k) &#123;
+    //...
+    var j = $(&quot;form&quot;).serializeArray();//序列化name/value
+    $.ajax(&#123;
+        type: &#39;GET&#39;,  //这里用GET
+        url: &#39;ajax.php&#39;,
+        dataType: &#39;jsonp&#39;,  //类型
+        data: j,
+        jsonp: &#39;callback&#39;, //jsonp回调参数，必需
+        async: false,
+        success: function(result) &#123;//返回的json数据
+            alert(result.message); //回调输出
+
+            result = result || &#123;&#125;;
+            if (result.msg==&#39;err&#39;)&#123;
+                alert(result.info);
+            &#125;else if (result.msg==&quot;ok&quot;)&#123;
+                alert(&#39;提交成功&#39;);
+            &#125;else&#123;
+                alert(&#39;提交失败&#39;);
+            &#125;
+
+        &#125;,
+        timeout: 3000
+    &#125;)
+    //...
+&#125;);</code></pre>
+<p>php服务端</p>
+<?php
+$callback = isset($\_GET\['callback'\]) ? trim($\_GET\['callback'\]) : ''; //jsonp回调参数，必需
+$date = array("age"=>$\_GET\['age'\], "message"=>$\_GET\['age'\]);
+$date\["msg"\]="err";
+$date\["info"\]="因人品问题，发送失败";
+$tmp= json_encode($date); //json 数据
+echo $callback . '(' . $tmp .')';  //返回格式，必需
+?>
+
+<p><strong>另外随着HTML5的快速发展，支持HTML5的浏览器，只需要在PHP的头部加上如下这两句话即可：</strong></p>
+<p>//处理跨域<br>    header(“Access-Control-Allow-Origin:*”); //*号表示所有域名都可以访问<br>    header(“Access-Control-Allow-Method:POST,GET”);</p>
+]]></content>
+      <categories>
+        <category>JAVAScript</category>
+        <category>编程</category>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>JS</tag>
+        <tag>JQuery</tag>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PHP 命令行下的世界</title>
     <url>/2016/12/27/php-%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84%E4%B8%96%E7%95%8C/</url>
     <content><![CDATA[<p>PHP作为一门web开发语言，通常情况下我们都是在Web Server中运行PHP，使用浏览器访问，因此很少关注其命令行操作以及相关参数的使用，但是，特别是在类Unix操作系统上，PHP可以作为一门脚本语言执行与shell类似的处理任务。</p>
@@ -2489,81 +2553,6 @@ LINES TERMINATED BY &#39;\\n&#39;;
         <category>PHP</category>
       </categories>
       <tags>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PHP Ajax跨域请求</title>
-    <url>/2017/02/14/php-ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82/</url>
-    <content><![CDATA[<p>  在开发过程中，有时会碰到需要请求其它服务器接口的问题，这时候就要jsonp来解决这个问题 html前端</p>
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>test</title>
-<script src="jquery-1.5.2.min.js"></script>
-<script src="ajax.js"></script>
-</head>
-
-<body>
-<form name="form">
-<input type="text" name="sex">
-<input type="text" name="age">
-<input type="button" id="btn" value="button" />
-</form>
-</body>
-</html>
-
-<p>js前端</p>
-<p>$(document).ready(function(){</p>
-<pre><code>$(&quot;#btn&quot;).click(function(k) &#123;
-    //...
-    var j = $(&quot;form&quot;).serializeArray();//序列化name/value
-    $.ajax(&#123;
-        type: &#39;GET&#39;,  //这里用GET
-        url: &#39;ajax.php&#39;,
-        dataType: &#39;jsonp&#39;,  //类型
-        data: j,
-        jsonp: &#39;callback&#39;, //jsonp回调参数，必需
-        async: false,
-        success: function(result) &#123;//返回的json数据
-            alert(result.message); //回调输出
-
-            result = result || &#123;&#125;;
-            if (result.msg==&#39;err&#39;)&#123;
-                alert(result.info);
-            &#125;else if (result.msg==&quot;ok&quot;)&#123;
-                alert(&#39;提交成功&#39;);
-            &#125;else&#123;
-                alert(&#39;提交失败&#39;);
-            &#125;
-
-        &#125;,
-        timeout: 3000
-    &#125;)
-    //...
-&#125;);</code></pre>
-<p>php服务端</p>
-<?php
-$callback = isset($\_GET\['callback'\]) ? trim($\_GET\['callback'\]) : ''; //jsonp回调参数，必需
-$date = array("age"=>$\_GET\['age'\], "message"=>$\_GET\['age'\]);
-$date\["msg"\]="err";
-$date\["info"\]="因人品问题，发送失败";
-$tmp= json_encode($date); //json 数据
-echo $callback . '(' . $tmp .')';  //返回格式，必需
-?>
-
-<p><strong>另外随着HTML5的快速发展，支持HTML5的浏览器，只需要在PHP的头部加上如下这两句话即可：</strong></p>
-<p>//处理跨域<br>    header(“Access-Control-Allow-Origin:*”); //*号表示所有域名都可以访问<br>    header(“Access-Control-Allow-Method:POST,GET”);</p>
-]]></content>
-      <categories>
-        <category>JAVAScript</category>
-        <category>编程</category>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>JS</tag>
-        <tag>JQuery</tag>
         <tag>PHP</tag>
       </tags>
   </entry>
@@ -3145,6 +3134,55 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </categories>
       <tags>
         <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Slice扩容分析</title>
+    <url>/2020/08/25/slice_append/</url>
+    <content><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>slice</code> 翻译成中文就是切片，它和数组（array）很类似，可以用下标的方式进行访问，<br>如果越界，就会产生 panic, 但是它比数组更灵活，可以自动地进行扩容。</p>
+<h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// runtime/slice.go</span></span><br><span class="line"><span class="keyword">type</span> slice <span class="keyword">struct</span> &#123;</span><br><span class="line">    array unsafe.Pointer <span class="comment">// 元素指针</span></span><br><span class="line">    <span class="built_in">len</span>   <span class="keyword">int</span> <span class="comment">// 长度 </span></span><br><span class="line">    <span class="built_in">cap</span>   <span class="keyword">int</span> <span class="comment">// 容量</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>指针，指向底层数组；</li>
+<li>长度，表示切片可用元素的个数，也就是说使用下标对 slice 的元素进行访问时，下标不能超过 slice 的长度；</li>
+<li>容量，底层数组的元素个数，容量 &gt;= 长度。在底层数组不进行扩容的情况下，容量也是 slice 可以扩张的最大限度。</li>
+</ul>
+<h1 id="追加扩容"><a href="#追加扩容" class="headerlink" title="追加扩容"></a>追加扩容</h1><p>向切片中追加元素应该是最常见的切片操作，在 Go 语言中我们会使用 append 关键字向切片追加元素</p>
+<h2 id="代码栗子"><a href="#代码栗子" class="headerlink" title="代码栗子"></a>代码栗子</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">slice1 := <span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="number">1</span>,)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1&quot;</span>,<span class="built_in">cap</span>(slice1))</span><br><span class="line">slice1 = <span class="built_in">append</span>(slice1,<span class="number">1</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1&quot;</span>,<span class="built_in">cap</span>(slice1))</span><br><span class="line">slice1 = <span class="built_in">append</span>(slice1,<span class="number">2</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1&quot;</span>,<span class="built_in">cap</span>(slice1))</span><br><span class="line"></span><br><span class="line">fmt.Println()</span><br><span class="line"></span><br><span class="line">slice1024 := <span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="number">1024</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1024&quot;</span>,<span class="built_in">cap</span>(slice1024))</span><br><span class="line">slice1024 = <span class="built_in">append</span>(slice1024,<span class="number">1</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1024&quot;</span>,<span class="built_in">cap</span>(slice1024))</span><br><span class="line">slice1024 = <span class="built_in">append</span>(slice1024,<span class="number">2</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;cap of slice1024&quot;</span>,<span class="built_in">cap</span>(slice1024))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>output</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cap of slice1 1</span><br><span class="line">cap of slice1 2</span><br><span class="line">cap of slice1 4</span><br><span class="line"></span><br><span class="line">cap of slice1024 1024</span><br><span class="line">cap of slice1024 1280</span><br><span class="line">cap of slice1024 1280</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>append中间代码生成阶段的 <a href="https://github.com/golang/go/blob/a037582efff56082631508b15b287494df6e9b69/src/cmd/compile/internal/gc/ssa.go#L2732-L2884">cmd/compile/internal/gc.state.append</a> 方法会拆分 append 关键字，该方法<br>追加元素会根据返回值是否会覆盖原变量，分别进入两种流程，如果 append 返回的『新切片』不需要赋值回原有的变量，就会进入如下的处理流程：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// append(slice, 1, 2, 3)</span></span><br><span class="line">ptr, <span class="built_in">len</span>, <span class="built_in">cap</span> := slice</span><br><span class="line">newlen := <span class="built_in">len</span> + <span class="number">3</span></span><br><span class="line"><span class="keyword">if</span> newlen &gt; <span class="built_in">cap</span> &#123;</span><br><span class="line">    ptr, <span class="built_in">len</span>, <span class="built_in">cap</span> = growslice(slice, newlen)</span><br><span class="line">    newlen = <span class="built_in">len</span> + <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line">*(ptr+<span class="built_in">len</span>) = <span class="number">1</span></span><br><span class="line">*(ptr+<span class="built_in">len</span>+<span class="number">1</span>) = <span class="number">2</span></span><br><span class="line">*(ptr+<span class="built_in">len</span>+<span class="number">2</span>) = <span class="number">3</span></span><br><span class="line"><span class="keyword">return</span> makeslice(ptr, newlen, <span class="built_in">cap</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们会先对切片结构体进行解构获取它的数组指针、大小和容量，如果在追加元素后切片的大小大于容量，<br>那么就会调用 <a href="https://github.com/golang/go/blob/440f7d64048cd94cba669e16fe92137ce6b84073/src/runtime/slice.go#L76-L191">runtime.growslice</a> 对切片进行扩容并将新的元素依次加入切片；如果 append 后的切片会覆盖<br>原切片，即 slice = append(slice, 1, 2, 3)，<a href="https://github.com/golang/go/blob/a037582efff56082631508b15b287494df6e9b69/src/cmd/compile/internal/gc/ssa.go#L2732-L2884">cmd/compile/internal/gc.state.append</a> 就会使用另一种方式改写关键字：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// slice = append(slice, 1, 2, 3)</span></span><br><span class="line">a := &amp;slice</span><br><span class="line">ptr, <span class="built_in">len</span>, <span class="built_in">cap</span> := slice</span><br><span class="line">newlen := <span class="built_in">len</span> + <span class="number">3</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">uint</span>(newlen) &gt; <span class="keyword">uint</span>(<span class="built_in">cap</span>) &#123;</span><br><span class="line">   newptr, <span class="built_in">len</span>, newcap = growslice(slice, newlen)</span><br><span class="line">   vardef(a)</span><br><span class="line">   *a.<span class="built_in">cap</span> = newcap</span><br><span class="line">   *a.ptr = newptr</span><br><span class="line">&#125;</span><br><span class="line">newlen = <span class="built_in">len</span> + <span class="number">3</span></span><br><span class="line">*a.<span class="built_in">len</span> = newlen</span><br><span class="line">*(ptr+<span class="built_in">len</span>) = <span class="number">1</span></span><br><span class="line">*(ptr+<span class="built_in">len</span>+<span class="number">1</span>) = <span class="number">2</span></span><br><span class="line">*(ptr+<span class="built_in">len</span>+<span class="number">2</span>) = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>是否覆盖原变量的逻辑其实差不多，最大的区别在于最后的结果是不是赋值会原有的变量，<br>如果我们选择覆盖原有的变量，也不需要担心切片的拷贝，因为 Go 语言的编译器已经对这种情况作了优化。</p>
+<p>到这里我们已经通过 append 关键字被转换的控制流了解了在切片容量足够时如何向切片中追加元素，<br>但是当切片的容量不足时就会调用 <a href="https://github.com/golang/go/blob/440f7d64048cd94cba669e16fe92137ce6b84073/src/runtime/slice.go#L76-L191">runtime.growslice</a> 函数为切片扩容，<br>扩容就是为切片分配一块新的内存空间并将原切片的元素全部拷贝过去，我们分几部分分析该方法：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">growslice</span><span class="params">(et *_type, old slice, <span class="built_in">cap</span> <span class="keyword">int</span>)</span> <span class="title">slice</span></span> &#123;</span><br><span class="line">    newcap := old.<span class="built_in">cap</span></span><br><span class="line">    doublecap := newcap + newcap</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">cap</span> &gt; doublecap &#123;</span><br><span class="line">        newcap = <span class="built_in">cap</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> old.<span class="built_in">len</span> &lt; <span class="number">1024</span> &#123;</span><br><span class="line">            newcap = doublecap</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> <span class="number">0</span> &lt; newcap &amp;&amp; newcap &lt; <span class="built_in">cap</span> &#123;</span><br><span class="line">                newcap += newcap / <span class="number">4</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> newcap &lt;= <span class="number">0</span> &#123;</span><br><span class="line">                newcap = <span class="built_in">cap</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>在分配内存空间之前需要先确定新的切片容量，Go 语言根据切片的当前容量选择不同的策略进行扩容：</strong></p>
+<ol>
+<li>如果期望容量大于当前容量的两倍就会使用期望容量；</li>
+<li>如果当前切片的长度小于 1024 就会将容量翻倍；</li>
+<li>如果当前切片的长度大于 1024 就会每次增加 25% 的容量，直到新容量大于期望容量；</li>
+</ol>
+<p>确定了切片的容量之后，就可以计算切片中新数组占用的内存了，计算的方法就是将目标容量和元素大小相乘，<br>计算新容量时可能会发生溢出或者请求的内存超过上限，在这时就会直接 panic，不过相关的代码在这里就被省略了：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> overflow <span class="keyword">bool</span></span><br><span class="line">    <span class="keyword">var</span> newlenmem, capmem <span class="keyword">uintptr</span></span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        lenmem = <span class="keyword">uintptr</span>(old.<span class="built_in">len</span>) * et.size</span><br><span class="line">        newlenmem = <span class="keyword">uintptr</span>(<span class="built_in">cap</span>) * et.size</span><br><span class="line">        capmem, _ = math.MulUintptr(et.size, <span class="keyword">uintptr</span>(newcap))</span><br><span class="line">        capmem = roundupsize(capmem)</span><br><span class="line">        newcap = <span class="keyword">int</span>(capmem / et.size)</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">var</span> p unsafe.Pointer</span><br><span class="line">    <span class="keyword">if</span> et.kind&amp;kindNoPointers != <span class="number">0</span> &#123;</span><br><span class="line">        p = mallocgc(capmem, <span class="literal">nil</span>, <span class="literal">false</span>)</span><br><span class="line">        memclrNoHeapPointers(add(p, newlenmem), capmem-newlenmem)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        p = mallocgc(capmem, et, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> writeBarrier.enabled &#123;</span><br><span class="line">            bulkBarrierPreWriteSrcOnly(<span class="keyword">uintptr</span>(p), <span class="keyword">uintptr</span>(old.array), lenmem)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    memmove(p, old.array, lenmem)</span><br><span class="line">    <span class="keyword">return</span> slice&#123;p, old.<span class="built_in">len</span>, newcap&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>append的时候发生扩容的动作</p>
+<p>append单个元素，或者append少量的多个元素，这里的少量指double之后的容量能容纳，这样就会走以下扩容流程，不足1024，双倍扩容，超过1024的，1.25倍扩容。</p>
+<p>若是append多个元素，且double后的容量不能容纳，直接使用预估的容量。</p>
+<p><strong>此外，以上两个分支得到新容量后，均需要根据slice的类型size，算出新的容量所需的内存情况capmem，然后再进行capmem向上取整，得到新的所需内存，除上类型size，得到真正的最终容量,作为新的slice的容量。</strong></p>
+]]></content>
+      <categories>
+        <category>Go</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+        <tag>slice</tag>
       </tags>
   </entry>
   <entry>
@@ -3799,6 +3837,27 @@ auto-aof-rewrite-min-size 64mb</code></pre>
       </tags>
   </entry>
   <entry>
+    <title>进程与线程</title>
+    <url>/2017/05/04/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="进程与线程-—"><a href="#进程与线程-—" class="headerlink" title="进程与线程 —"></a>进程与线程 —</h1><p><strong>进程：是一个正在执行中的程序</strong></p>
+<p>每一个进程执行都有一个执行顺序。该顺序是一个执行路径，或者叫一个控制单元。</p>
+<p><strong>线程：就是进程中的一个独立的控制单元</strong></p>
+<p>线程在控制着进程的执行。 一个进程中至少有一个线程。 Java VM 启动的时候会有一个进程java.exe. 该进程中至少一个线程负责java程序的执行。 而且这个线程运行的代码存在于main方法中。 该线程称之为主线程。 扩展：其实更细节说明jvm，jvm启动不止一个线程，还有负责垃圾回收机制的线程。</p>
+<p>1,如何在自定义的代码中，自定义一个线程呢？ 通过对api的查找，java已经提供了对线程这类事物的描述。就Thread类。</p>
+<p>创建线程的第一种方式：继承Thread类。<br>步骤：<br> 1，定义类继承Thread。<br> 2，复写Thread类中的run方法。 目的：将自定义代码存储在run方法。让线程运行。<br> 3，调用线程的start方法， 该方法两个作用：启动线程，调用run方法。 发现运行结果每一次都不同。 因为多个线程都获取cpu的执行权。cpu执行到谁，谁就运行。 明确一点，在某一个时刻，只能有一个程序在运行。(多核除外) cpu在做着快速的切换，以达到看上去是同时运行的效果。 我们可以形象把多线程的运行行为在互相抢夺cpu的执行权。 这就是多线程的一个特性：随机性。谁抢到谁执行，至于执行多长，cpu说的算。</p>
+<p><strong>为什么要覆盖run方法呢？</strong></p>
+<p>Thread类用于描述线程。 该类就定义了一个功能，用于存储线程要运行的代码。该存储功能就是run方法。 也就是说Thread类中的run方法，用于存储线程要运行的代码。</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+        <category>编程</category>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>JAVA基础</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>阻止JS冒泡事件</title>
     <url>/2017/02/12/%E9%98%BB%E6%AD%A2js%E5%86%92%E6%B3%A1%E4%BA%8B%E4%BB%B6/</url>
     <content><![CDATA[<p><strong>什么是JS事件冒泡？：</strong> 在一个对象上触发某类事件（比如单击onclick事件），如果此对象定义了此事件的处理程序，那么此事件就会调用这个处理程序，如果没有定义此事件处理程序或者事件返回true，那么这个事件会向这个对象的父级对象传播，从里到外，直至它被处理（父级对象所有同类事件都将被激活），或者它到达了对象层次的最顶层，即document对象（有些浏览器是window）。  <strong>解决方法</strong> 1.JavaScript 阻止事件冒泡，无使用其它插件来辅助，原生JS代码，考虑到浏览器的兼容性问题，这里对IE/火狐、Operating以及Chrome都有针对性的判断，代码如下：</p>
@@ -3819,27 +3878,6 @@ $(function() {
       </categories>
       <tags>
         <tag>JS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>进程与线程</title>
-    <url>/2017/05/04/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="进程与线程-—"><a href="#进程与线程-—" class="headerlink" title="进程与线程 —"></a>进程与线程 —</h1><p><strong>进程：是一个正在执行中的程序</strong></p>
-<p>每一个进程执行都有一个执行顺序。该顺序是一个执行路径，或者叫一个控制单元。</p>
-<p><strong>线程：就是进程中的一个独立的控制单元</strong></p>
-<p>线程在控制着进程的执行。 一个进程中至少有一个线程。 Java VM 启动的时候会有一个进程java.exe. 该进程中至少一个线程负责java程序的执行。 而且这个线程运行的代码存在于main方法中。 该线程称之为主线程。 扩展：其实更细节说明jvm，jvm启动不止一个线程，还有负责垃圾回收机制的线程。</p>
-<p>1,如何在自定义的代码中，自定义一个线程呢？ 通过对api的查找，java已经提供了对线程这类事物的描述。就Thread类。</p>
-<p>创建线程的第一种方式：继承Thread类。<br>步骤：<br> 1，定义类继承Thread。<br> 2，复写Thread类中的run方法。 目的：将自定义代码存储在run方法。让线程运行。<br> 3，调用线程的start方法， 该方法两个作用：启动线程，调用run方法。 发现运行结果每一次都不同。 因为多个线程都获取cpu的执行权。cpu执行到谁，谁就运行。 明确一点，在某一个时刻，只能有一个程序在运行。(多核除外) cpu在做着快速的切换，以达到看上去是同时运行的效果。 我们可以形象把多线程的运行行为在互相抢夺cpu的执行权。 这就是多线程的一个特性：随机性。谁抢到谁执行，至于执行多长，cpu说的算。</p>
-<p><strong>为什么要覆盖run方法呢？</strong></p>
-<p>Thread类用于描述线程。 该类就定义了一个功能，用于存储线程要运行的代码。该存储功能就是run方法。 也就是说Thread类中的run方法，用于存储线程要运行的代码。</p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-        <category>编程</category>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>JAVA基础</tag>
       </tags>
   </entry>
   <entry>
