@@ -25,7 +25,7 @@
   <meta name="description" content="记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！  行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。 共享锁(Share Lock)共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL中的共享锁与排它锁">
-<meta property="og:url" content="blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/index.html">
+<meta property="og:url" content="https://blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="记得原来面试不知道共享锁和排它锁被人鄙视了，顾单独放上一篇！  行级锁分为共享锁和排他锁两种，本文将详细介绍共享锁及排他锁的概念、使用方式及注意事项等。 共享锁(Share Lock)共享锁又称读锁，是读取操作创建的锁。其他用户可以并发读取数据，但任何事务都不能对数据进行修改（获取数据上的排他锁），直到已释放所有共享锁。 如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁">
 <meta property="og:locale">
@@ -35,7 +35,7 @@
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/">
+<link rel="canonical" href="https://blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/">
 
 
 <script id="page-configurations">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/">
+    <link itemprop="mainEntityOfPage" href="https://blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -339,7 +339,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="/blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/" title="MySQL中的共享锁与排它锁">blog.onwise.xyz/2017/03/10/mysql中的共享锁与排它锁/</a>
+    <a href="https://blog.onwise.xyz/2017/03/10/mysql%E4%B8%AD%E7%9A%84%E5%85%B1%E4%BA%AB%E9%94%81%E4%B8%8E%E6%8E%92%E5%AE%83%E9%94%81/" title="MySQL中的共享锁与排它锁">https://blog.onwise.xyz/2017/03/10/mysql中的共享锁与排它锁/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -442,7 +442,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -503,12 +503,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">346k</span>
+    <span title="站点总字数">351k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:14</span>
+    <span title="站点阅读时长">5:19</span>
 </div>
 
         

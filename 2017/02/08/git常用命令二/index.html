@@ -25,7 +25,7 @@
   <meta name="description" content="Git鼓励大量使用分支： 查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d 小结 当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。  用git log –graph命令可以看到分支合并图。 通">
 <meta property="og:type" content="article">
 <meta property="og:title" content="git常用命令二">
-<meta property="og:url" content="blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/index.html">
+<meta property="og:url" content="https://blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="Git鼓励大量使用分支： 查看分支：git branch 创建分支：git branch 切换分支：git checkout 创建+切换分支：git checkout -b 合并某分支到当前分支：git merge 删除分支：git branch -d 小结 当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。  用git log –graph命令可以看到分支合并图。 通">
 <meta property="og:locale">
@@ -37,7 +37,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/220694-a54e1c1c80a4585d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
-<link rel="canonical" href="blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/">
+<link rel="canonical" href="https://blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/">
 
 
 <script id="page-configurations">
@@ -208,7 +208,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/">
+    <link itemprop="mainEntityOfPage" href="https://blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -320,7 +320,7 @@
 <p> </p>
 <p>甚至还有人丧心病狂地把lg配置成了：</p>
 <p><strong>git config –global alias.lg “log –color –graph –pretty= format:’%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset’ –abbrev-commit”</strong> 配置文件配置Git的时候，加上–global是针对当前用户起作用的，电脑下所有库都起作用；如果不加，那只针对当前的仓库起作用。 <strong>配置文件放哪了？</strong> 每个仓库的Git配置文件都放在**.git/config**文件中：</p>
-<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#104;&#117;&#x62;&#46;&#x63;&#111;&#109;">&#x67;&#105;&#116;&#64;&#x67;&#105;&#116;&#104;&#117;&#x62;&#46;&#x63;&#111;&#109;</a>](mailto:<a href="mailto:&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#46;&#99;&#111;&#x6d;">&#x67;&#105;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#x75;&#98;&#46;&#99;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
+<p>$ cat .git/config<br>[core]    repository<br>formatversion = 0<br>filemode = true<br>bare = false<br>logallrefupdates = true<br>ignorecase = true<br>precomposeunicode = true[remote “origin”]<br>url = [<a href="mailto:&#x67;&#105;&#116;&#64;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;">&#x67;&#105;&#116;&#64;&#103;&#105;&#x74;&#x68;&#117;&#98;&#46;&#99;&#111;&#109;</a>](mailto:<a href="mailto:&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;">&#x67;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#x62;&#46;&#x63;&#111;&#x6d;</a>):michaelliao/learngit.git<br>fetch = +refs/heads/*:refs/remotes/origin/*[branch “master”]<br>remote = origin<br>merge = refs/heads/master<br>[alias]    last = log -1</p>
 <p>  别名就在[alias]后面，要<strong>删除别名，直接把对应的行删掉</strong>即可。 而当前用户的Git配置文件放在<strong>用户主目录下</strong>的一个隐藏文件**.gitconfig<strong>中：</strong>Git的官方网站：<a target="_blank" rel="noopener" href="http://git-scm.com,英文自我感觉不错的童鞋,可以经常去官网看看/">http://git-scm.com，英文自我感觉不错的童鞋，可以经常去官网看看</a>**</p>
 
     </div>
@@ -362,7 +362,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="/blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/" title="git常用命令二">blog.onwise.xyz/2017/02/08/git常用命令二/</a>
+    <a href="https://blog.onwise.xyz/2017/02/08/git%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BA%8C/" title="git常用命令二">https://blog.onwise.xyz/2017/02/08/git常用命令二/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -465,7 +465,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -526,12 +526,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">346k</span>
+    <span title="站点总字数">351k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:14</span>
+    <span title="站点阅读时长">5:19</span>
 </div>
 
         

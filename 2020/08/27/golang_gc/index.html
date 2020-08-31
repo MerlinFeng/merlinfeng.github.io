@@ -25,7 +25,7 @@
   <meta name="description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制。  GC背景C&#x2F;C++等传统编程语言需要对内存手动释放，操作繁琐，处理不好容易内存泄露，尤其系统比较错综复杂情况下，释放内存可能会产生连锁问题。应对这个问题，后续出现的语言都引入了自动内存管理，内存释放由虚拟机（virtual machine）或运行时（runtime）来自动进行管理。而这种对不再使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang垃圾回收">
-<meta property="og:url" content="blog.onwise.xyz/2020/08/27/golang_gc/index.html">
+<meta property="og:url" content="https://blog.onwise.xyz/2020/08/27/golang_gc/index.html">
 <meta property="og:site_name" content="MerlinFeng&#39;s blog">
 <meta property="og:description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制。  GC背景C&#x2F;C++等传统编程语言需要对内存手动释放，操作繁琐，处理不好容易内存泄露，尤其系统比较错综复杂情况下，释放内存可能会产生连锁问题。应对这个问题，后续出现的语言都引入了自动内存管理，内存释放由虚拟机（virtual machine）或运行时（runtime）来自动进行管理。而这种对不再使用">
 <meta property="og:locale">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://image-static.segmentfault.com/273/244/2732449449-5c66324354fa8_articlex">
 
-<link rel="canonical" href="blog.onwise.xyz/2020/08/27/golang_gc/">
+<link rel="canonical" href="https://blog.onwise.xyz/2020/08/27/golang_gc/">
 
 
 <script id="page-configurations">
@@ -209,7 +209,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="blog.onwise.xyz/2020/08/27/golang_gc/">
+    <link itemprop="mainEntityOfPage" href="https://blog.onwise.xyz/2020/08/27/golang_gc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -399,7 +399,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="/blog.onwise.xyz/2020/08/27/golang_gc/" title="golang垃圾回收">blog.onwise.xyz/2020/08/27/golang_gc/</a>
+    <a href="https://blog.onwise.xyz/2020/08/27/golang_gc/" title="golang垃圾回收">https://blog.onwise.xyz/2020/08/27/golang_gc/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -424,7 +424,10 @@
     <a href="/2020/08/26/golang_select/" rel="prev" title="golang select详解">
       <i class="fa fa-chevron-left"></i> golang select详解
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/31/why_go_so_fast/" rel="next" title="Go为什么这么"快"">
+      Go为什么这么"快" <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -500,7 +503,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-count">98</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -561,12 +564,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">346k</span>
+    <span title="站点总字数">351k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:14</span>
+    <span title="站点阅读时长">5:19</span>
 </div>
 
         
